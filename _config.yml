@@ -1,0 +1,3 @@
+# GitHub Pages (Jekyll) のビルド対象から特定のファイルを除外する設定
+exclude:
+  - googlef0587da5f8f69fa8.html

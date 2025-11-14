@@ -100,6 +100,15 @@ Google Geminiの応答をVOICEVOXで自動読み上げするUserScriptです。
 
 ---
 
+## 📌 補足情報 / 管理者メモ
+
+本リポジトリには、プロジェクトの機能とは直接関係のない、管理・運用上の目的で配置されている以下のファイルが含まれています。
+
+* **`googlef0587da5f8f69fa8.html`**: Google Search Consoleの所有権確認のために必須なファイルです。
+* **`_config.yml`**: GitHub Pagesのビルド設定ファイルです。
+
+---
+
 ## 開発者 (Author)
 
 **ねおん (Neon)**

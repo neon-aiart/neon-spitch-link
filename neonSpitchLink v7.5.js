@@ -32,7 +32,7 @@
 /*
  * -------------------------------------------------------------------------------------------------
  * 著作権情報: Copyright (c) 2025 ねおん
- * 対象: 🔊 ねおんすぴっち リンク (VOICEVOX/RVC連携UserScript)
+ * 対象: 🔊 ねおん すぴっち リンク (VOICEVOX/RVC連携UserScript)
  * 基本ライセンス: Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
  * -------------------------------------------------------------------------------------------------
  * * ■ ライセンス要点（日本の利用者向け）
@@ -3245,4 +3245,5 @@
     document.addEventListener('keydown', handleGlobalKeyDown);
 
 })();
+
 

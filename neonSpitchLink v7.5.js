@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ねおん すぴっち リンク
-// @name:ja        ねおんすぴっち リンク
-// @name:en        NeonSpitch Link
+// @name:ja        ねおん すぴっち リンク
+// @name:en        Neon Spitch Link
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/gemini-to-voicevox/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔊</text></svg>
@@ -3245,3 +3245,4 @@
     document.addEventListener('keydown', handleGlobalKeyDown);
 
 })();
+

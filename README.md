@@ -5,6 +5,8 @@
 **"AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。"**  
 **"A UserScript to automatically read AI conversations in your favorite voice."**
 
+➡️ いますぐ[**インストール**](#%F0%9F%8C%90-%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95-installation-guide)！ (Skip to Installation)
+
 ---
 
 ## 🚀 概要 (Overview)
@@ -159,16 +161,23 @@ This script is generally **ready to use with default settings**.
 3.  **設定画面 (Settings Screen):** Tampermonkeyのメニューから本スクリプトを選択すると、声質や音量、キャッシュ設定などのオプションを変更できます。  
     Select this script from the Tampermonkey menu to change options such as voice quality, volume, and cache settings.
 4. **中断時の注意 (Note on Interruption):**
-    * **非同期処理**（裏側で変換や合成が動いている）の性質上、[停止]ボタンを押した後でも、**中断前に開始されていた音声の受信が完了してしまう**ことがあります。その場合、意図せず再生が自動で再開されることがあるので、お手数ですが**再度 [停止] ボタンを押して**完全に止めてください。  
-    **Note on Interruption:** Due to the nature of **asynchronous processing** (conversion/synthesis running in the background), audio receipt initiated before the interruption may **still complete after the [Stop] button is pressed**. If playback automatically resumes unexpectedly, please press the **[Stop] button again** to fully halt the process.
+    * **非同期処理**（裏側で変換や合成が動いている）の性質上、[停止]ボタンを押した後でも、**中断前に開始されていた音声の受信が完了してしまう**ことがあります。  
+      その場合、意図せず再生が自動で再開されることがあるので、お手数ですが**再度 [停止] ボタンを押して**完全に止めてください。  
+    **Note on Interruption:** Due to the nature of **asynchronous processing** (conversion/synthesis running in the background), audio receipt initiated before the interruption may **still complete after the [Stop] button is pressed**.  
+      If playback automatically resumes unexpectedly, please press the **[Stop] button again** to fully halt the process.
 
 ---
 
 #### 🚨 誤解に関する重要な注意事項 (Critical Note on RVC Misconception)
 
-🚨 **【RVCの誤解について】** 多くのユーザーが **「音声モデルの声（C）をそのまま聞ける」** と誤解しがちですが、実際は「VOICEVOXの素の音声（A）をモデル（C）の声質に**変換した音声（B）**」が聞こえています。出力される声（B）は、元の声（C）とは完全には一致せず、**変換元の素の声（A）の特徴も残る**という事実にご注意ください。
-
-🚨 **[RVC Misconception]** Many users mistakenly believe they can hear the voice of the model (C) directly. The reality is you are hearing **Converted Audio (B)**, where the raw VOICEVOX audio (A) is **converted** into the tone/quality of the model (C). Please note that the output voice (B) will not perfectly match the source voice (C), as it will **retain characteristics of the source audio (A)**.
+**【RVCの誤解について】**  
+多くのユーザーが **「音声モデルの声（C）をそのまま聞ける」** と誤解しがちですが  
+実際は「VOICEVOXの素の音声（A）をモデル（C）の声質に**変換した音声（B）**」が聞こえています。  
+出力される声（B）は、元の声（C）とは完全には一致せず、**変換元の素の声（A）の特徴も残る**という事実にご注意ください。  
+**[RVC Misconception]**  
+Many users mistakenly believe they can hear the voice of the model (C) directly.  
+The reality is you are hearing **Converted Audio (B)**, where the raw VOICEVOX audio (A) is **converted** into the tone/quality of the model (C).  
+Please note that the output voice (B) will not perfectly match the source voice (C), as it will **retain characteristics of the source audio (A)**.
 
 ---
 
@@ -195,9 +204,25 @@ This is a rough guide for those who wish to create their own RVC model for use w
 4. **トレーニング:** RVC WebUIを使ってトレーニングを実施すれば、モデルが完成するよ！  
    **Training:** Run the training using RVC WebUI, and your model will be complete!
 
+#### 💡 この技術の「新しい価値」について (New Value of This Technology)
+
+本スクリプトの **「無制限・ファイルレス」** 技術は、**ファンとクリエイターの関係**に**今までになかった、新しい価値**をもたらします。  
+**The "unlimited and fileless" technology** of this script brings **unprecedented value** to the **relationship between fans and creators.**
+
+* **クリエイターへ:** Vtuber、声優、アナウンサーなど、**声を届ける活動をされている方**は、自身の音声モデルをファンに提供することで  
+  **「ファンがいつでも、好きな時に、自分の声で応答を聞ける」**という、**究極のパーソナルなファンサービス**を実現できるようになります。  
+  これは、**「声を届ける側」にとっての大発見**です。  
+  **To Creators:** Those whose **activity is centered on vocal expression** (such as VTubers, voice actors, and announcers) can provide their voice models to fans,  
+  enabling **"the ultimate personal fan service"** where **fans can hear responses in their voice anytime they want**.  
+  This is **a great discovery for those delivering the voice**.
+* **リスク:** しかし、この技術は音声の**悪用リスク**も高めます。**ねおん**が**著作権とプライバシー保護**を強く呼びかけるのはそのためです。  
+  **Risk:** However, this technology also increases the **risk of audio misuse**. This is why **Neon strongly advocates for copyright and privacy protection.**
+
 #### 🚨 著作権に関する重要なお知らせ (Critical Note on Copyright)
-**【絶対厳守】** 自分の声以外の音声モデルをSNSやインターネットで公開することは、**著作権・肖像権の侵害**などの**違法行為になる**ので、**絶対に行わないでください！** 利用は必ず**私的利用の範囲内**に留めてください。  
-**[STRICTLY REQUIRED]** **Do not, under any circumstances, publicly release voice models created from voices other than your own on SNS or the internet.** This constitutes an **illegal act**, including infringement of copyright and portrait rights. **Usage must be strictly limited to private use.**
+**【絶対厳守】** 自分の声以外の音声モデルをSNSやインターネットで公開することは、**著作権・肖像権の侵害**などの**違法行為になる**ので  
+**絶対に行わないでください！** 利用は必ず**私的利用の範囲内**に留めてください。  
+**[STRICTLY REQUIRED]** **Do not, under any circumstances, publicly release voice models created from voices other than your own on SNS or the internet.**  
+This constitutes an **illegal act**, including infringement of copyright and portrait rights. **Usage must be strictly limited to private use.**
 
 ---
 

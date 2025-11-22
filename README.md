@@ -70,8 +70,10 @@ To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix file
 * **注意**: この修正は、**RVC本体にファイルレス連携のロジックが正式に組み込まれるまでの間**に必要です。  
   **この修正ファイルがオープンソースとして公開されたことで**、将来的に修正される可能性があります。  
   RVCの最新版を利用する場合は、この手順が**不要になる可能性**があります。  
-  **Note**: This fix is required **until Neon's logic is officially merged into the RVC core**.  
-  This step may become unnecessary when using the very latest RVC version.
+  **Note**: This fix is required **until the fileless integration logic is officially incorporated into the RVC core**.  
+  **Since this fix file has been released as open-source**, there is a possibility that it will be fixed in the future.  
+  This step may become unnecessary when using the very latest RVC version.  
+
 
 1.  **VOICEVOX本体**と**RVCの実行環境（Pythonサーバー）** が必要です。  
    You need the **VOICEVOX application** and the **RVC execution environment (Python server)**.

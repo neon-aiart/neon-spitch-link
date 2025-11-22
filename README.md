@@ -87,7 +87,7 @@ No configuration switching required! The UserScript automatically identifies the
 
 ### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)
 
-RVCでの音声変換機能を利用するには、**現在公開されているRVC本体のプログラム**に対して、ねおんが作成した**修正ファイル**の適用が必須です。
+RVCでの音声変換機能を利用するには、**現在公開されているRVC本体のプログラム**に対して、ねおんが**修正した３つのファイル**の適用が必須です。
 
 To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix files** created by Neon to the **currently available RVC program**.
 

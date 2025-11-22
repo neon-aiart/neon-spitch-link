@@ -5,7 +5,8 @@
 **"AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。"**  
 **"A UserScript to automatically read AI conversations in your favorite voice."**
 
-➡️ いますぐ[**インストール**](#-%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95-installation-guide)！ (Skip to Installation)
+➡️ [**いますぐインストール！**](#-インストール方法-installation-guide) (Skip to Installation)  
+💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)
 
 ---
 
@@ -65,6 +66,25 @@ No configuration switching required! The UserScript automatically identifies the
 * **必須 (Required)**: UserScript管理のための拡張機能、VOICEVOX、RVC（音声変換を利用する場合）  
   **Required**: Extension for UserScript management, VOICEVOX, RVC (for voice conversion)
 
+---
+
+## 🌐 インストール方法 (Installation Guide)
+
+1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**
+   * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
+   * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).
+
+2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**
+   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。
+   * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.
+
+3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**
+   * **Tampermonkey**: [Chrome ウェブストア](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) / [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/addon/tampermonkey/)
+   * **Violentmonkey**: [Chrome ウェブストア](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag) / [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/addon/violentmonkey/)
+
+4. **スクリプトをインストールします (Install the script):**
+   * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。Access and click the "Install" button.
+
 ### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)
 
 RVCでの音声変換機能を利用するには、**現在公開されているRVC本体のプログラム**に対して、ねおんが作成した**修正ファイル**の適用が必須です。
@@ -77,7 +97,6 @@ To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix file
   **Note**: This fix is required **until the fileless integration logic is officially incorporated into the RVC core**.  
   **Since this fix file has been released as open-source**, there is a possibility that it will be fixed in the future.  
   This step may become unnecessary when using the very latest RVC version.  
-
 
 1.  **VOICEVOX本体**と**RVCの実行環境（Pythonサーバー）** が必要です。  
    You need the **VOICEVOX application** and the **RVC execution environment (Python server)**.
@@ -127,25 +146,6 @@ Configure the Windows **Task Scheduler** to run the above batch file **every hou
     * **有効**にチェック。(Ensure the task is **Enabled**)
 4.  **操作**タブで、「新しい操作」を作成し、**「プログラムの開始」**を選択。プログラムにバッチファイルの**フルパス**を指定します。  
     In the **Actions** tab, create a "New Action" and select **"Start a program"**. Specify the **full path** to the batch file in the Program field.
-
----
-
-## 🌐 インストール方法 (Installation Guide)
-
-1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**
-   * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
-   * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).
-
-2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**
-   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。
-   * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.
-
-3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**
-   * **Tampermonkey**: [Chrome ウェブストア](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) / [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/addon/tampermonkey/)
-   * **Violentmonkey**: [Chrome ウェブストア](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag) / [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/addon/violentmonkey/)
-
-4. **スクリプトをインストールします (Install the script):**
-   * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。Access and click the "Install" button.
 
 ---
 

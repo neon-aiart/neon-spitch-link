@@ -209,7 +209,7 @@ This is a rough guide for those who wish to create their own RVC model for use w
 本スクリプトの **「無制限・ファイルレス」** 技術は、**ファンとクリエイターの関係**に**今までになかった、新しい価値**をもたらします。  
 **The "unlimited and fileless" technology** of this script brings **unprecedented value** to the **relationship between fans and creators.**
 
-* **クリエイターへ:** Vtuber、声優、アナウンサーなど、**声を届ける活動をされている方**は、自身の音声モデルをファンに提供することで  
+* **クリエイター様へ:** Vtuber、声優、アナウンサーなど、**声を届ける活動をされている方**は、自身の音声モデルをファンに提供することで  
   **「ファンがいつでも、好きな時に、自分の声で応答を聞ける」**という、**究極のパーソナルなファンサービス**を実現できるようになります。  
   これは、**「声を届ける側」にとっての大発見**です。  
   **To Creators:** Those whose **activity is centered on vocal expression** (such as VTubers, voice actors, and announcers) can provide their voice models to fans,  

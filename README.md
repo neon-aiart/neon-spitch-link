@@ -131,7 +131,7 @@ Configure the Windows **Task Scheduler** to run the above batch file **every hou
 ## 🌐 インストール方法 (Installation Guide)
 
 1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**
-   * 公式サイト [https://voicevox.hiroshiba.jp/] からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
+   * 公式サイト (https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
    * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).
 
 2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**

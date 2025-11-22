@@ -89,7 +89,7 @@ To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix file
      * \RVC\infer\lib\ [audio.py](audio.py)
    * **注意**: ファイルは**圧縮されていません**。必要なファイルを個別にダウンロードし、RVC本体の対応する場所に上書きしてください。
    * **Note**: Files are **not compressed**. Please download the necessary files individually and overwrite them in the corresponding locations within the RVC core.
-4. VOICEVOX、RVCサーバーを起動し、本スクリプトをインストールしてください。  
+3. VOICEVOX、RVCサーバーを起動し、本スクリプトをインストールしてください。  
    Start the VOICEVOX and RVC servers, and install this script.
 
 ### 🧹 一時ファイルの手動クリーンアップと自動化 (Temporary File Cleanup and Automation)

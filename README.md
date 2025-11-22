@@ -46,10 +46,12 @@ Even with long AI responses, playback starts **instantly** without waiting for f
 設定切り替えは不要！UserScriptが自動でサービスを判別します。  
 No configuration switching required! The UserScript automatically identifies the service.
 
-* **対応サービス:** **Gemini (Google)**, **ChatGPT**, **Google検索AIモード**  
-  **Supported Services:** **Gemini (Google)**, **ChatGPT**, **and Google Search AI Mode**
-* **UXの完成度:** ブラウザの**自動再生ブロックポリシー**を克服するため、**疑似onstart（再生開始検知ロジック）**　を実装。音声がブロックされても、ユーザーが画面をクリックした瞬間を見逃さず、**途切れることなく再生を再開**します。  
-  **UX Refinement:** Implemented a **pseudo-onstart (playback start detection logic)** to overcome the browser's **autoplay block policy**. Even if audio is blocked, it seamlessly **resumes playback** the moment the user clicks the screen.
+* **対応サービス:** **Gemini (Google)**, **ChatGPT**, **Google検索AIモード**, **Grok**, **X** (※サイドパネルは非対応)  
+  **Supported Services:** **Gemini (Google)**, **ChatGPT**, **Google Search AI Mode**, **Grok**, **and X** (*Excluding the sidebar panel*)
+* **UXの完成度:** ブラウザの**自動再生ブロックポリシー**を克服するため、**疑似onstart（再生開始検知ロジック）**　を実装。  
+  音声がブロックされても、ユーザーが画面をクリックした瞬間を見逃さず、**途切れることなく再生を再開**します。  
+  **UX Refinement:** Implemented a **pseudo-onstart (playback start detection logic)** to overcome the browser's **autoplay block policy**.  
+  Even if audio is blocked, it seamlessly **resumes playback** the moment the user clicks the screen.
 
 ---
 

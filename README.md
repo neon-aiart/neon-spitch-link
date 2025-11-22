@@ -209,14 +209,18 @@ This is a rough guide for those who wish to create their own RVC model for use w
 本スクリプトの **「無制限・ファイルレス」** 技術は、**ファンとクリエイターの関係**に**今までになかった、新しい価値**をもたらします。  
 **The "unlimited and fileless" technology** of this script brings **unprecedented value** to the **relationship between fans and creators.**
 
-* **クリエイター様へ:** Vtuber、声優、アナウンサーなど、**声を届ける活動をされている方**は、自身の音声モデルをファンに提供することで  
+* **クリエイター様へ (To Creators):**  
+  Vtuber、声優、アナウンサーなど、**声を届ける活動をされている方**は、自身の音声モデルをファンに提供することで  
   **「ファンがいつでも、好きな時に、自分の声で応答を聞ける」**という、**究極のパーソナルなファンサービス**を実現できるようになります。  
   これは、**「声を届ける側」にとっての大発見**です。  
-  **To Creators:** Those whose **activity is centered on vocal expression** (such as VTubers, voice actors, and announcers) can provide their voice models to fans,  
+  Those whose **activity is centered on vocal expression** (such as VTubers, voice actors, and announcers) can provide their voice models to fans,  
   enabling **"the ultimate personal fan service"** where **fans can hear responses in their voice anytime they want**.  
   This is **a great discovery for those delivering the voice**.
-* **リスク:** しかし、この技術は音声の**悪用リスク**も高めます。**ねおん**が**著作権とプライバシー保護**を強く呼びかけるのはそのためです。  
-  **Risk:** However, this technology also increases the **risk of audio misuse**. This is why **Neon strongly advocates for copyright and privacy protection.**
+* **音声モデル公開に関するリスク (Risk on Voice Model Publication):**  
+  音声モデルを一般公開する場合、複製や悪用のリスクも伴います。  
+  公開前には、著作権・肖像権に関するリスク、および**音声モデルがネットの海に放流され、予期せぬ場所で利用される可能性**を十分に考慮し、自己責任で実施してください。  
+  When publicly releasing a voice model, there are risks of unauthorized duplication and misuse.  
+  Before publication, you must fully consider the risks related to copyright and portrait rights, as well as the **possibility of the voice model being leaked onto the internet and used in unpredictable places**, and proceed at your own risk.
 
 #### 🚨 著作権に関する重要なお知らせ (Critical Note on Copyright)
 **【絶対厳守】** 自分の声以外の音声モデルをSNSやインターネットで公開することは、**著作権・肖像権の侵害**などの**違法行為になる**ので  

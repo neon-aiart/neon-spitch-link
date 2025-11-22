@@ -5,7 +5,7 @@
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/gemini-to-voicevox/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔊</text></svg>
-// @version        7.5
+// @version        7.6
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -13,6 +13,8 @@
 // @match          https://gemini.google.com/*
 // @match          https://chatgpt.com/*
 // @include        https://www.google.*/search*
+// @include        https://x.com/*
+// @include        https://grok.com/*
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
 // @grant          GM_getValue
@@ -26,7 +28,7 @@
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '7.5';
+    const SCRIPT_VERSION = '7.6';
     const STORE_KEY = 'gemini_voicevox_config';
 
 /*
@@ -84,14 +86,17 @@
 
     // クエリ検索（コンテナ・フッター）
     const SELECTORS_RESPONSE = [
-        { container: 'response-container', footer: '.more-menu-button-container' }, // Gemini
-        { container: 'article[data-turn="assistant"]', footer: 'button' },          // ChatGPT
-        { container: 'div[data-container-id="main-col"]', footer: 'button' },       // Google AIモード
+        { container: 'response-container', footer: '.more-menu-button-container' },                     // Gemini
+        { container: 'article[data-turn="assistant"]', footer: 'button' },                              // ChatGPT
+        { container: 'div[data-container-id="main-col"]', footer: 'button' },                           // Google AIモード
+        { container: 'div[id^="response-"].items-start', footer: '.group-focus-within\\:opacity-100' }, // Grok
+        { container: 'div.r-16lk18l.r-13qz1uu', footer: 'div.r-18u37iz.r-1jnkns4' },　                  // x.com/i/grok*
+        { container: 'div:has(div > div > div > div > div > button > div > svg path[d^="M21.869 16h-3.5c-.77"])', footer: 'button:has(svg path[d^="M21.869 16h-3.5c-.77"])' },
     ];
 
     // URL制御用セクレタ配列（shouldExecuteで使用）
     const WHITELIST_PATHS = [
-        '/app*', '/gem*', '/u/*/app*', '/u/*/gem*', '/c/*', '/g/*', '/search?*udm=50*',
+        '/app*', '/gem*', '/u/*/app*', '/u/*/gem*', '/c', '/c/*', '/g/*', '/search?*udm=50*', '/i/grok*',
     ];
     const BLACKLIST_PATHS = [
         '/saved-info', '/apps', '/sharing', '/gems/*','/settings',
@@ -115,6 +120,7 @@
         'pre', 'code-block', 'mat-paginator', 'immersive-entry-chip',
         'inline-location', 'model-thoughts',
         'div[style*="display: none"]', 'div[role="status"]',
+        'div[role="link"]', 'button', '.action-buttons', '.text-secondary',
     ];
 
     // 処理中断用セクレタ配列（getGeminiAnswerTextで使用）
@@ -3223,8 +3229,44 @@
         const observerConfig = { childList: true, subtree: true };
         observer.observe(TARGET_NODE, observerConfig);
 
-        // 初回実行
-        if (!isChatPage(window.location.href)) addConvertButton();
+        // 初回レンダリング幽霊現象を撃退
+        if (isChatPage(window.location.href)) {
+            let initialRetryCount = 0;
+            const initialRetryInterval = setInterval(() => {
+                initialRetryCount++;
+                // console.log(`[Fix] 初回発動リトライ #${initialRetryCount}`);
+
+                // ここでも念のためチェック（URLが変わる可能性もある）
+                if (!isChatPage(window.location.href)) {
+                    // console.log("[Fix] URLがチャットページじゃなくなったのでリトライ中止");
+                    clearInterval(initialRetryInterval);
+                    return;
+                }
+
+                addConvertButton();
+
+                // 成功判定
+                if (document.getElementById('convertButton')) {
+                    // console.log("[Fix] 初回ボタン成功！これで安心だね！");
+                    clearInterval(initialRetryInterval);
+                }
+                // 20回（10秒）で諦める
+                else if (initialRetryCount >= 20) {
+                    // console.log("[Fix] 初回リトライ上限…でも次からはdebounceで大丈夫！");
+                    clearInterval(initialRetryInterval);
+                }
+            }, 500);
+
+            // クリック保険もガード付き
+            const clickHandler = () => {
+                if (isChatPage(window.location.href)) {
+                    // console.log("[Fix] クリックで強制発動！");
+                    addConvertButton();
+                }
+                document.removeEventListener('click', clickHandler);
+            };
+            document.addEventListener('click', clickHandler, { once: true, capture: true });
+        }
     }
 
     // メニュー登録
@@ -3245,5 +3287,3 @@
     document.addEventListener('keydown', handleGlobalKeyDown);
 
 })();
-
-

@@ -5,7 +5,7 @@
 **"AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。"**  
 **"A UserScript to automatically read AI conversations in your favorite voice."**
 
-➡️ いますぐ[**インストール**](#%F0%9F%8C%90-インストール方法-installation-guide)！ (Skip to Installation)
+➡️ いますぐ[**インストール**](#インストール方法-installation-guide)！ (Skip to Installation)
 
 ---
 

@@ -207,8 +207,8 @@ This is a rough guide for those who wish to create their own RVC model for use w
 
 ### v7.6 (Current Release)
 * ✅ **「ねおん すぴっち リンク」として正式公開。**
-* ✅ Grokに対応 (https://grok.com)
-* ✅ XのGrokに対応 (https://x.com/i/grok*) (サイドパネルは非対応)
+* ✅ Grokに対応 ( /grok.com )
+* ✅ XのGrokに対応 ( /x.com/i/grok* ) (サイドパネルは非対応)
 
 ### v7.5
 * ✅ **UX向上:** 自動再生ブロック解除のための「疑似onstart」ロジックを実装。

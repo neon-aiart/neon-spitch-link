@@ -131,11 +131,11 @@ Configure the Windows **Task Scheduler** to run the above batch file **every hou
 ## 🌐 インストール方法 (Installation Guide)
 
 1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**
-   * 公式サイト (https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
+   * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
    * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).
 
 2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**
-   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI] から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。
+   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。
    * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.
 
 3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**

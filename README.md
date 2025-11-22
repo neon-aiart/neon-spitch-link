@@ -164,6 +164,14 @@ This script is generally **ready to use with default settings**.
 
 ---
 
+#### 🚨 誤解に関する重要な注意事項 (Critical Note on RVC Misconception)
+
+🚨 **【RVCの誤解について】** 多くのユーザーが **「音声モデルの声（C）をそのまま聞ける」** と誤解しがちですが、実際は「VOICEVOXの素の音声（A）をモデル（C）の声質に**変換した音声（B）**」が聞こえています。出力される声（B）は、元の声（C）とは完全に一致せず、**変換元の素の声（A）の特徴も残る**という事実にご注意ください。
+
+🚨 **[RVC Misconception]** Many users mistakenly believe they can hear the voice of the model (C) directly. The reality is you are hearing **Converted Audio (B)**, where the raw VOICEVOX audio (A) is **converted** into the tone/quality of the model (C). Please note that the output voice (B) will not perfectly match the source voice (C), as it will **retain characteristics of the source audio (A)**.
+
+---
+
 ### 🔨 RVC音声モデル作成ガイドと注意事項 (RVC Voice Model Creation Guide & Notes)
 
 本スクリプトで利用するRVCモデルを自作したい方向けの、ざっくりとしたガイドです。  

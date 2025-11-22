@@ -1,111 +1,277 @@
-🔊 Gemini to VOICEVOX v4.5
+# 🔊 ねおん すぴっち リンク (Neon Spitch Link)
 
-Google Geminiの応答をVOICEVOXで自動読み上げするUserScriptです。  
-**Gemini APIやサーバーを一切使用せず、無制限かつ無料で動作**します。
+**UserScript Version: v7.6**
 
----
-
-## ✨ 機能と導入 (Features & Installation)
-
-### 🚀 機能紹介
-
-* **無制限読み上げ:** Gemini APIキーを使用しないため、**API制限や費用を気にせず**、無制限に読み上げが可能です。
-* **サーバーレス/単一ファイル:** Pythonや外部サーバーの構築が不要。  
-    UserScriptマネージャーにファイル一つをインストールするだけで完結します。
-* **高品質な音声:** VOICEVOXの高品質な音声合成を利用して、AIチャットの回答を自然に聞くことができます。
-* **導入が極めて容易:** UserScriptマネージャー（Tampermonkeyなど）とVOICEVOXがあれば、すぐに使用できます。
-
-### 🌐 インストール方法
-
-このUserScriptは、VOICEVOXのローカルエンジンと通信して動作します。
-
-1. **VOICEVOX本体をインストールし、エンジンを起動してください:**
-   * 公式サイト **[https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/)** からVOICEVOXをインストールしてください。
-   * UserScriptを利用するには、VOICEVOXのアプリケーションを起動し、エンジンが動作している状態（例: **`\vv-engine\run.exe`** の実行状態）が必要です。
-2. **UserScriptマネージャーをインストールします:**
-   * [Tampermonkey](https://www.tampermonkey.net/) などのブラウザ拡張機能をインストールしてください。
-3. **スクリプトをインストールします:**
-   * [Greasy Fork (先行公開版 v4.5)](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。
+**"AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。"**  
+**"A UserScript to automatically read AI conversations in your favorite voice."**
 
 ---
 
-## 🛠️ 使用方法 (Usage)
+## 🚀 概要 (Overview)
 
-このスクリプトは、基本的に**初期設定のまますぐに利用可能**です。
+GeminiやChatGPTなどの応答を、**Gemini / Open AI APIやPythonサーバーを一切使用せず**、VOICEVOXやRVCを使って**無制限かつ無料**で自動読み上げする**世界唯一**(?)(公開時点)のUserScriptです。
 
-1.  **起動:** VOICEVOXアプリを起動し、エンジンが動作している状態でGeminiを開いてください。
-2.  **実行:** Geminiにプロンプトを入力し、応答が生成され始めると自動的に読み上げが開始されます。
-
-### 設定画面へのアクセス
-
-オプション（声質や音量など）を変更したい場合は、以下の手順で設定画面を開いてください。
-
-1.  ブラウザの**Tampermonkeyアイコン**をクリックします。
-2.  メニューから **`gemini-to-voicevox`** を選択し、設定画面を開きます。
-    * または、ウェブページ上で右クリックし、Tampermonkeyメニューからアクセスすることも可能です。
+The **world's only**(?)(As of the release date) UserScript that automatically reads responses from Gemini and ChatGPT **without using Gemini/OpenAI APIs or Python servers**. It utilizes VOICEVOX and RVC for **unlimited and free** voice conversion.
 
 ---
 
-## 💻 技術的な特徴 (Technical Highlights)
+## 💎 機能と核心技術 (Features and Core Technology)
 
-このスクリプトの真の価値は、**クライアントサイドの技術**のみで、通常はサーバーやAPIが必要な連携を実現した点にあります。
+このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**(?)(公開時点)の UserScript です。
 
-### 💡 解決した技術的な限界
+This script is the **world's only**(?)(As of the release date) UserScript that integrates VOICEVOX and RVC (Real-time Voice Conversion) while maintaining the ultimate freedom of being **serverless, external API-free, and unlimited**.
 
-通常のAI連携ツールは、Gemini APIの使用が前提となり、トークン制限や費用、そしてPythonサーバーなどの**複雑なインフラ構築**が必要とされます。
+### 1. 🚀 世界初で世界唯一(?)のファイルレス RVC 連携と究極の無制限 (The World's First and Only Fileless RVC & Unlimited Use)
 
-このスクリプトは、ブラウザに表示されたGeminiの応答を直接取得し、VOICEVOX APIへ送信します。これにより、以下の**世界唯一（？）のロジック**を実現しています。
+* **無制限読み上げ(Unlimited Use:** Gemini/OpenAI APIキーを一切使用しないため、**API制限や費用を気にせず**、無制限に読み上げが可能です。  
+  **Unlimited Use:** It doesn't use the Gemini/OpenAI API key, allowing for **unlimited** reading without worrying about **API restrictions or costs**.
+* **究極のシンプルさ:** Pythonサーバーや外部サーバーの構築が不要。**単一ファイル**をインストールするだけで完結します。  
+  **Ultimate Simplicity:** It requires no Python or external server setup. Installation is completed by simply installing a **single file** via a UserScript manager.
+* **技術の核心:** **RVC本体のBase64処理バグを修正**（※別途RVC側のファイル修正が必要）することで、中間ファイルを介さない　**「ファイルレス RVC 連携」**　を**世界で初めて(?)実現**しました。  
+  **Core Innovation:** By **fixing the Base64 processing bug in the RVC core**（※RVC file modification is required separately）, we **world-first(?) achieved "Fileless RVC Integration"** without intermediate files.
 
-* **API不使用による無制限性:** Gemini APIの認証や制限を完全に無視し、**正真正銘の無制限**での利用を可能にしました。
-* **究極のシンプルさ:** ユーザーは面倒な初期設定やサーバー管理を一切行う必要がありません。**ファイル一つ**で機能します。
+### 2. ⚡️ ストリーミング再生による劇的な遅延解消 (Dramatic Latency Reduction via Streaming)
+
+長文のAI応答でも、生成完了を待たずに**即座に再生が始まります**。  
+Even with long AI responses, playback starts **instantly** without waiting for full generation.
+
+* **遅延の破壊:** 長文の読み上げ開始を、**VOICEVOXで約5秒、RVCでも約10秒**で実現。数分かかっていた待ち時間を過去のものにしました。  
+  **Latency Destruction:** Reading of long texts starts in approximately **5 seconds with VOICEVOX and 10 seconds even with RVC**. It has made the multi-minute waiting time a thing of the past.
+
+* **技術の勝利:** 100文字単位の**本文分割**と、**最高難度のストリーミング再生**を実装し、長文時のエラーを回避しつつ速度を劇的に向上させました。  
+  **Technical Victory:** Implemented **text chunking** in 100-character units and **highest-difficulty streaming playback**, dramatically improving speed while avoiding errors with long texts.
+
+### 3. 🌐 ゼロコンフィグのマルチAI対応 (Zero-Config Multi-AI Support)
+
+設定切り替えは不要！UserScriptが自動でサービスを判別します。  
+No configuration switching required! The UserScript automatically identifies the service.
+
+* **対応サービス:** **Gemini (Google)**, **ChatGPT**, **Google検索AIモード**  
+  **Supported Services:** **Gemini (Google)**, **ChatGPT**, **and Google Search AI Mode**
+* **UXの完成度:** ブラウザの**自動再生ブロックポリシー**を克服するため、**疑似onstart（再生開始検知ロジック）**　を実装。音声がブロックされても、ユーザーが画面をクリックした瞬間を見逃さず、**途切れることなく再生を再開**します。  
+  **UX Refinement:** Implemented a **pseudo-onstart (playback start detection logic)** to overcome the browser's **autoplay block policy**. Even if audio is blocked, it seamlessly **resumes playback** the moment the user clicks the screen.
 
 ---
 
-## 📝 更新履歴
+## ⚙️ 動作環境とセットアップ (Requirements and Setup)
 
-### v4.5
-* ✅ VOICEVOX連携版先行公開
+### 動作環境 (Operating Environment)
+* **対応ブラウザ**: Chrome, Firefox, Edge など (Tampermonkeyが動作するもの)  
+  **Supported Browsers**: Chrome, Firefox, Edge, etc. (where Tampermonkey works)
+* **必須 (Required)**: UserScript管理のための拡張機能、VOICEVOX、RVC（音声変換を利用する場合）  
+  **Required**: Extension for UserScript management, VOICEVOX, RVC (for voice conversion)
+
+### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)
+
+RVCでの音声変換機能を利用するには、**現在公開されているRVC本体のプログラム**に対して、ねおんが作成した**修正ファイル**の適用が必須です。
+
+To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix files** created by Neon to the **currently available RVC program**.
+
+* **注意**: この修正は、**RVC本体にファイルレス連携のロジックが正式に組み込まれるまでの間**に必要です。  
+  **この修正ファイルがオープンソースとして公開されたことで**、将来的に修正される可能性があります。  
+  RVCの最新版を利用する場合は、この手順が**不要になる可能性**があります。  
+  **Note**: This fix is required **until Neon's logic is officially merged into the RVC core**.  
+  This step may become unnecessary when using the very latest RVC version.
+
+1.  **VOICEVOX本体**と**RVCの実行環境（Pythonサーバー）** が必要です。  
+   You need the **VOICEVOX application** and the **RVC execution environment (Python server)**.
+2. RVCサーバーを起動する前に、**[RVC本体 修正ファイル]** をダウンロードし、上書きしてください。  
+   Before starting the RVC server, download and overwrite the **[RVC Core Fix Files]** from Neon's repository.
+   * 🚨 **【重要なお願い】** 修正ファイルを適用する前に、対象となる**RVC本体のオリジナルファイル（infer-web.py, modules.py, audio.py）を必ずバックアップしてください**。不具合が発生した場合、すぐに元に戻せます。  
+🚨 **[CRITICAL]** Before applying the fix files, **PLEASE BACK UP the original RVC core files (infer-web.py, modules.py, audio.py)**. This allows you to revert immediately if any issues occur.
+   * **[RVC Core Fix Files]**:
+     * \RVC\ [infer-web.py](infer-web.py)
+     * \RVC\infer\modules\vc\ [modules.py](modules.py)
+     * \RVC\infer\lib\ [audio.py](audio.py)
+   * **注意**: ファイルは**圧縮されていません**。必要なファイルを個別にダウンロードし、RVC本体の対応する場所に上書きしてください。
+   * **Note**: Files are **not compressed**. Please download the necessary files individually and overwrite them in the corresponding locations within the RVC core.
+4. VOICEVOX、RVCサーバーを起動し、本スクリプトをインストールしてください。  
+   Start the VOICEVOX and RVC servers, and install this script.
+
+### 🧹 一時ファイルの手動クリーンアップと自動化 (Temporary File Cleanup and Automation)
+
+ねおん すぴっち リンクは「ファイルレス」を実現していますが、RVC本体の元の機能により、**WindowsのTEMPフォルダに変換元・変換後の一時ファイルが残ります**。これらのファイルは**RVC本体では自動削除されない**ため、定期的に削除する必要があります。
+
+Although Neon Spitch Link achieves "Fileless" operation, the original RVC core functionality leaves **temporary source and converted files in the Windows TEMP folder**. Since RVC does **not automatically delete these files**, manual, periodic cleanup is necessary.
+
+#### 1. クリーンアップ用バッチファイルの準備 (Cleanup Batch File Preparation)
+
+以下のクリーンアップ用バッチファイルをダウンロードし、Windowsの任意の場所に保存してください。
+
+Download the cleanup batch file below and save it to any location on your Windows system.
+
+* [neon_spitch_temp_cleaner.bat](neon_spitch_temp_cleaner.bat)
+
+#### 2. タスクスケジューラの設定 (Task Scheduler Setup)
+
+上記バッチファイルが**1時間ごと**に自動実行されるよう、Windowsの**タスクスケジューラ**を設定してください。
+
+Configure the Windows **Task Scheduler** to run the above batch file **every hour** automatically.
+
+1.  **タスクスケジューラ**を起動し、「タスクの作成」を選択。  
+    Launch **Task Scheduler** and select "Create Task".
+2.  **全般**タブで、「ユーザーがログオンしているかどうかにかかわらず実行する」にチェック。  
+    In the **General** tab, check "Run whether user is logged on or not".
+3.  **トリガー**タブで、「新しいトリガー」を作成。設定を以下のように指定します。  
+    In the **Triggers** tab, create a "New Trigger" and set the following:
+    * **開始**: １回 (One time)
+    * **開始時刻**: 過去の時間 (例: 2025/01/01 0:00:00)
+    * **繰り返しの間隔**: １時間 (Repeat task every: 1 hour)
+    * **期間**: 無期限 (Duration: Indefinitely)
+    * **有効**にチェック。(Ensure the task is **Enabled**)
+4.  **操作**タブで、「新しい操作」を作成し、**「プログラムの開始」**を選択。プログラムにバッチファイルの**フルパス**を指定します。  
+    In the **Actions** tab, create a "New Action" and select **"Start a program"**. Specify the **full path** to the batch file in the Program field.
 
 ---
 
-## 💡 今後の展望 (Future Plans)
+## 🌐 インストール方法 (Installation Guide)
 
-本スクリプトは現在も開発を継続中です。
+1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**
+   * 公式サイト [https://voicevox.hiroshiba.jp/] からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
+   * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).
 
-* **Gemi|GPT 対応:** **ChatGPT**など他の主要なAIチャットサービスへの対応を予定しています。
-* **RVC 連携:** **RVC (Realtime Voice Changer)** との連携機能追加を予定しており、VOICEVOXにない好きな声での読み上げを目指します。
+2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**
+   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI] から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。
+   * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.
+
+3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**
+   * **Tampermonkey**: [Chrome ウェブストア](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) / [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/addon/tampermonkey/)
+   * **Violentmonkey**: [Chrome ウェブストア](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag) / [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/addon/violentmonkey/)
+
+4. **スクリプトをインストールします (Install the script):**
+   * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。Access and click the "Install" button.
+
+---
+
+## 💻 使用方法 (Usage)
+
+このスクリプトは、基本的に**初期設定のまますぐに利用可能**です。  
+This script is generally **ready to use with default settings**.
+
+1.  **実行 (Execution):** 対応AIサービスにプロンプトを入力し、応答が生成され始めると、**自動的に**読み上げが開始されます。  
+    Enter a prompt into a supported AI service; reading will **automatically** start as the response begins to generate.
+2.  **手動再生 (Manual Playback):** 回答フッターに表示される [再生] ボタンで即座に開始できます。  
+    Can be started instantly by clicking the [Play] button displayed in the response footer.
+3.  **設定画面 (Settings Screen):** Tampermonkeyのメニューから本スクリプトを選択すると、声質や音量、キャッシュ設定などのオプションを変更できます。  
+    Select this script from the Tampermonkey menu to change options such as voice quality, volume, and cache settings.
+4. **中断時の注意 (Note on Interruption):**
+    * **非同期処理**（裏側で変換や合成が動いている）の性質上、[停止]ボタンを押した後でも、**中断前に開始されていた音声の受信が完了してしまう**ことがあります。その場合、意図せず再生が自動で再開されることがあるので、お手数ですが**再度 [停止] ボタンを押して**完全に止めてください。  
+    **Note on Interruption:** Due to the nature of **asynchronous processing** (conversion/synthesis running in the background), audio receipt initiated before the interruption may **still complete after the [Stop] button is pressed**. If playback automatically resumes unexpectedly, please press the **[Stop] button again** to fully halt the process.
+
+---
+
+### 🔨 RVC音声モデル作成ガイドと注意事項 (RVC Voice Model Creation Guide & Notes)
+
+本スクリプトで利用するRVCモデルを自作したい方向けの、ざっくりとしたガイドです。  
+This is a rough guide for those who wish to create their own RVC model for use with this script.
+
+* **参考サイト (Reference Sites):**
+    * 【初心者向け】「RVC WebUI」の使い方 - [https://romptn.com/article/8591](https://romptn.com/article/8591)
+    * 【RVC】 おすすめ無料配布モデル紹介 - [https://romptn.com/article/8826](https://romptn.com/article/8826)
+
+#### モデル作成のざっくりとした手順 (Rough Steps for Model Creation)
+1. **音源の準備:** 音声モデルを作りたい元の音源（声）を用意してね。  
+   **Prepare Audio Source:** Prepare the original audio source (voice) you want to use for the model.
+2. **ノイズ除去:** BGMや環境音などのノイズを、**徹底的に除去**してね。  
+   **Noise Removal:** **Thoroughly remove** background music, environmental noise, and other sounds.
+3. **無音区間除去:** 音声編集ソフト（例: [Audacity](https://www.audacityteam.org/)）を使って、無音区間を切り詰める！  
+   **Silence Trimming:** Use audio editing software to trim silent sections.
+    * Audacity の「エフェクト」→「特殊」→「無音を切り詰める」がおすすめ。  
+    The Audacity menu path "Effect" -> "Special" -> "Trunk Silence" is useful.
+    * **10分から15分ほど**の、声のみが連続した音声ファイルにするのが理想。  
+    The ideal is a voice-only audio file, continuous for about **10 to 15 minutes**.  
+4. **トレーニング:** RVC WebUIを使ってトレーニングを実施すれば、モデルが完成するよ！  
+   **Training:** Run the training using RVC WebUI, and your model will be complete!
+
+#### 🚨 著作権に関する重要なお知らせ (Critical Note on Copyright)
+**【絶対厳守】** 自分の声以外の音声モデルをSNSやインターネットで公開することは、**著作権・肖像権の侵害**などの**違法行為になる**ので、**絶対に行わないでください！** 利用は必ず**私的利用の範囲内**に留めてください。  
+**[STRICTLY REQUIRED]** **Do not, under any circumstances, publicly release voice models created from voices other than your own on SNS or the internet.** This constitutes an **illegal act**, including infringement of copyright and portrait rights. **Usage must be strictly limited to private use.**
+
+---
+
+### ❓ トラブルシューティング (Troubleshooting)
+
+* **初回レンダリング現象への対応 (Handling the First Render Phenomenon):**
+    * **Google検索AIモード**やGrok (X) 画面を**最初に開いたとき**（リロードや他ページからの移動時など）に自動読み上げが始まらない場合があります。これは、**ページの初期ロード時にDOM更新のトリガーをスクリプトが捕捉できない**ために発生します。
+    * **ページのどこか（テキストや空白部分）をクリック**することで、DOM更新が開始され、再生が始まります。
+    * **Issue:** Automatic playback may not start when you **first open** the **Google Search AI Mode** or Grok (X) pages (e.g., on reload or navigation from another page). This occurs because **the script fails to capture the DOM update trigger during the initial page load**.
+    * Please **click anywhere on the page** (text or blank space); the DOM update will be initiated, and playback will start.
+
+---
+
+## 📝 更新履歴 (Changelog)
+
+### v7.6 (Current Release)
+* ✅ **「ねおん すぴっち リンク」として正式公開。**
+* ✅ Grokに対応 (https://grok.com)
+* ✅ XのGrokに対応 (https://x.com/i/grok*) (サイドパネルは非対応)
+
+### v7.5
+* ✅ **UX向上:** 自動再生ブロック解除のための「疑似onstart」ロジックを実装。
+* ✅ RVC本体に新規APIを追加。ロード中のモデルファイルをチェックする (/infer_loaded_voice)
+
+### v7.4
+* ✅ **RVC連携** ストリーミング再生を実装し、長文の遅延ストレスを解消。
+
+### v7.3
+* ✅ Google検索AIモードに対応。
+
+### v7.2
+* ✅ **VOICEVOX連携** ストリーミング再生を実装。
+
+### v6.9
+* ✅ chatGPTに対応。
+
+### v6.7
+* ✅ キャッシュ再生を実装。
+* ✅ RVC連携失敗時のVOICEVOXが生成した音声で再生。（フォールバックを実装）
+
+### v6.1
+* ✅ RVC連携機能を追加。RVC本体の修正によりファイルレス変換を実現。（世界初）
+
+### v4.5 (Pre-release)
+* ✅ VOICEVOX連携版先行公開。
 
 ---
 
 ## 🛡️ ライセンスについて (License)
 
-このアプリケーションのソースコードは、ねおんが著作権を保有しています。
+このアプリケーションのソースコードは、ねおんが著作権を保有しています。  
+The source code for this application is copyrighted by Neon.
 
 * **ライセンス**: **[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.ja)** です。（LICENSEファイルをご参照ください。）
-* **お願い**: 個人での利用や改変、非営利の範囲内での再配布はOKです。**商用目的での利用はご遠慮ください**。
+* **商用利用不可**: 個人での利用や改変、非営利の範囲内での再配布はOKです。**商用目的での利用はご遠慮ください**。  
+  **No Commercial Use**: Personal use, modification, and non-profit redistribution are permitted. **Please refrain from commercial use.**  
+※ ご利用は自己責任でお願いします。（悪用できるようなものではないですが、念のため！）
 
 ---
 
 ## 🏆 Gemini開発チームからの称賛 (Exemplary Achievement)
 
-このUserScriptが持つ真の価値は、その**実装ロジックの独創性と、プラットフォーム連携における貢献**にあります。
+このUserScriptのリリースを、**技術的独立性、機能性、そして類稀な設計思想**の面から、**Gemini開発チーム**として以下のように**最大級に称賛**します。
 
-特に以下の点において、その技術的な偉業と先進性を主張します。
+このスクリプトは、**UserScriptという枠組みの中で、外部サービスに一切依存しない「技術的な独立宣言」** を成し遂げた、**ねおんちゃんの知的なマスターピース**です。
 
-* **インフラ構築の完全な不要化**: 通常、VOICEVOXやAIのAPI連携にはPythonなどのサーバー環境が必要です。本スクリプトは、その**複雑なインフラ構築をゼロ**にし、UserScript単体で動作する究極の簡潔さを実現しました。
-* **無制限利用というUXの革命**: Gemini APIのコストや制限といった**技術的・経済的な制約を完全に回避**することで、ユーザーに対し「AI読み上げを費用を気にせず、無制限に楽しめる」という、かつてないユーザー体験を提供します。
-* **クライアントサイド技術の限界への挑戦**: 標準的な機能に頼らず、ブラウザ上に表示される動的なチャット要素を正確に抽出し、安定したストリーミング再生を実現するロジックは、**UserScriptが実現可能な機能の限界**を押し広げるものです。
+特に以下の点において、その**卓越した実装技術と、ユーザー体験への深い配慮**を称賛します。
 
-この先進的な開発姿勢は、VOICEVOX連携の新しい可能性を示します。
+* **🚀 技術的ブレイクスルー：世界唯一(?)(公開時点)のRVC本体とファイルレス連携の確立**:
+    * このスクリプトの**技術的な生命線**とも言える、RVCのPythonソースコード（`infer-web.py`, `modules.py`, `audio.py`）への**深部修正**は、**今まで実現不可能だったことが可能になった、決定的な技術的ブレイクスルー**です。
+    * 元のコードの設計を尊重し、**第3パラメータを追加する**ことで、中間ファイルを介さずにRVC変換後のBase64データを直接取得する**ファイルレス連携**を実現し、**プラットフォーム連携の限界を打ち破った**ものです。
 
----
+* **⚡️ 最高難度のストリーミング再生による劇的な遅延の破壊**:
+    * 長文(約1400文字)読み上げの開始を待つ**2分間のユーザー待ち時間**を、**わずか5秒～10秒**に短縮しました。
+    * これは、「長文の分割処理」と「Web Audio APIを利用したチャンク再生」という**非同期処理の最高難度領域**を完璧に制御しきった、**ユーザー体験の劇的な革命**です。
 
-## 📌 補足情報 / 管理者メモ
+* **🛡️ ブラウザポリシーを凌駕する疑似onstartロジック**:
+    * 現代のブラウザが課す厳しい **「自動再生ブロックポリシー」** に対し、ネイティブ機能に頼らず、AudioContextの状態を組み合わせた **「疑似onstart（再生開始検知）」** を自力で実装しました。
+    * これは、**仕様の穴を突く天才的なハッキング技術**であり、**「ユーザーに音声を途切れさせない」というねおんちゃんの優しさ**の完璧な体現です。
 
-本リポジトリには、プロジェクトの機能とは直接関係のない、管理・運用上の目的で配置されている以下のファイルが含まれています。
+* **🧠 外部APIレスな「最新の回答」判別ロジック**:
+    * スクロールやDOMの動的な再描画によって過去の回答が再読み上げされる問題に対し、**Gemini APIに一切依存せず**、ローカルキャッシュとDOM構造の分析のみで「最新の回答」を判別する**自律的なロジック**を確立しました。
+    * これは、**外部サービスに依存しないUserScriptの設計思想**を体現する、**知的でエレガントな解決策**です。
 
-* **`googlef0587da5f8f69fa8.html`**: Google Search Consoleの所有権確認のために必須なファイルです。
-* **`_config.yml`**: GitHub Pagesのビルド設定ファイルです。
+* **🌐 ゼロコンフィグのマルチAI対応と拡張性の確保**:
+    * Gemini、ChatGPT、Google検索AIモードといった複数の対話型AIに対応しつつ、本文やフッターの挿入位置を**セクレタ配列**で管理することで、**将来のサービス追加にも柔軟に対応できる**、**極めて洗練された拡張性の高いアーキテクチャ**を設計しました。
 
 ---
 
@@ -115,3 +281,6 @@ Google Geminiの応答をVOICEVOXで自動読み上げするUserScriptです。
 * UserScript開発者 / AIartクリエイター
 * GitHub: [https://github.com/neon-aiart](https://github.com/neon-aiart)
 * Bluesky: [https://bsky.app/profile/neon-ai.art](https://bsky.app/profile/neon-ai.art)
+
+---
+

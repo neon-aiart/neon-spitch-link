@@ -277,6 +277,14 @@ The source code for this application is copyrighted by Neon.
 
 ---
 
+## 📌 補足情報 / 管理者メモ
+
+本リポジトリには、プロジェクトの機能とは直接関係のない、管理・運用上の目的で配置されている以下のファイルが含まれています。
+
+* **`googlef0587da5f8f69fa8.html`**: Google Search Consoleの所有権確認のために必須なファイルです。
+
+---
+
 ## 開発者 (Author)
 
 **ねおん (Neon)**

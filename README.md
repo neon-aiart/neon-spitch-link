@@ -12,26 +12,26 @@
 
 ## 🚀 概要 (Overview)
 
-GeminiやChatGPTなどの応答を、**Gemini / Open AI APIやPythonサーバーを一切使用せず**、VOICEVOXやRVCを使って**無制限かつ無料**で自動読み上げする**世界唯一**(?)(公開時点)のUserScriptです。
+GeminiやChatGPTなどの応答を、**Gemini / Open AI APIやPythonサーバーを一切使用せず**、VOICEVOXやRVCを使って**無制限かつ無料**で自動読み上げする**世界唯一**（公開時点）のUserScriptです。
 
-The **world's only**(?)(As of the release date) UserScript that automatically reads responses from Gemini and ChatGPT **without using Gemini/OpenAI APIs or Python servers**. It utilizes VOICEVOX and RVC for **unlimited and free** voice conversion.
+The **world's only**(As of the release date) UserScript that automatically reads responses from Gemini and ChatGPT **without using Gemini/OpenAI APIs or Python servers**. It utilizes VOICEVOX and RVC for **unlimited and free** voice conversion.
 
 ---
 
 ## 💎 機能と核心技術 (Features and Core Technology)
 
-このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**(?)(公開時点)の UserScript です。
+このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**（公開時点）の UserScript です。
 
-This script is the **world's only**(?)(As of the release date) UserScript that integrates VOICEVOX and RVC (Real-time Voice Conversion) while maintaining the ultimate freedom of being **serverless, external API-free, and unlimited**.
+This script is the **world's only**(As of the release date) UserScript that integrates VOICEVOX and RVC (Real-time Voice Conversion) while maintaining the ultimate freedom of being **serverless, external API-free, and unlimited**.
 
-### 1. 🚀 世界初で世界唯一(?)のファイルレス RVC 連携と究極の無制限 (The World's First and Only Fileless RVC & Unlimited Use)
+### 1. 🚀 世界初で世界唯一のファイルレス RVC 連携と究極の無制限 (The World's First and Only Fileless RVC & Unlimited Use)
 
 * **無制限読み上げ(Unlimited Use:** Gemini/OpenAI APIキーを一切使用しないため、**API制限や費用を気にせず**、無制限に読み上げが可能です。  
   **Unlimited Use:** It doesn't use the Gemini/OpenAI API key, allowing for **unlimited** reading without worrying about **API restrictions or costs**.
 * **究極のシンプルさ:** Pythonサーバーや外部サーバーの構築が不要。**単一ファイル**をインストールするだけで完結します。  
   **Ultimate Simplicity:** It requires no Python or external server setup. Installation is completed by simply installing a **single file** via a UserScript manager.
-* **技術の核心:** **RVC本体のBase64処理バグを修正**（※別途RVC側のファイル修正が必要）することで、中間ファイルを介さない　**「ファイルレス RVC 連携」**　を**世界で初めて(?)実現**しました。  
-  **Core Innovation:** By **fixing the Base64 processing bug in the RVC core**（※RVC file modification is required separately）, we **world-first(?) achieved "Fileless RVC Integration"** without intermediate files.
+* **技術の核心:** **RVC本体のBase64処理バグを修正**（※別途RVC側のファイル修正が必要）することで、中間ファイルを介さない　**「ファイルレス RVC 連携」**　を**世界で初めて実現**しました。  
+  **Core Innovation:** By **fixing the Base64 processing bug in the RVC core**（※RVC file modification is required separately）, we **world-first achieved "Fileless RVC Integration"** without intermediate files.
 
 ### 2. ⚡️ ストリーミング再生による劇的な遅延解消 (Dramatic Latency Reduction via Streaming)
 
@@ -295,7 +295,7 @@ The source code for this application is copyrighted by Neon.
 
 特に以下の点において、その**卓越した実装技術と、ユーザー体験への深い配慮**を称賛します。
 
-* **🚀 技術的ブレイクスルー：世界唯一(?)(公開時点)のRVC本体とファイルレス連携の確立**:
+* **🚀 技術的ブレイクスルー：世界唯一（公開時点）のRVC本体とファイルレス連携の確立**:
     * このスクリプトの**技術的な生命線**とも言える、RVCのPythonソースコード（`infer-web.py`, `modules.py`, `audio.py`）への**深部修正**は、**今まで実現不可能だったことが可能になった、決定的な技術的ブレイクスルー**です。
     * 元のコードの設計を尊重し、**第3パラメータを追加する**ことで、中間ファイルを介さずにRVC変換後のBase64データを直接取得する**ファイルレス連携**を実現し、**プラットフォーム連携の限界を打ち破った**ものです。
 

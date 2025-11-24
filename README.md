@@ -8,6 +8,8 @@
 ➡️ [**いますぐインストール！**](#-インストール方法-installation-guide) (Skip to Installation)  
 💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)
 
+⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)
+
 ---
 
 ## 🚀 概要 (Overview)
@@ -44,7 +46,21 @@ Even with long AI responses, playback starts **instantly** without waiting for f
 * **技術の勝利:** 100文字単位の**本文分割**と、**最高難度のストリーミング再生**を実装し、長文時のエラーを回避しつつ速度を劇的に向上させました。  
   **Technical Victory:** Implemented **text chunking** in 100-character units and **highest-difficulty streaming playback**, dramatically improving speed while avoiding errors with long texts.
 
-### 3. 🌐 ゼロコンフィグのマルチAI対応 (Zero-Config Multi-AI Support)
+### 3. 💾 キャッシュによる合成スキップと安定性の確保 (Synthesis Skip and Stability via Caching)
+
+一度合成が**完全**に完了した音声データをブラウザに保存し、**合成とRVC変換の時間を完全にスキップ**します。  
+The synthesized audio data, once **fully** completed, is saved in the browser, **completely skipping the synthesis and RVC conversion time** for subsequent playback.
+
+* **究極の再生成速度:** キャッシュされた回答は、[再生]ボタンで**即座に再生**されます。  
+  **Ultimate Resynthesis Speed:** The cached response is played **instantly** via the [Play] button.
+* **確実な保存:** ストリーミング再生中に**分割された合成**のいずれかが失敗した場合は、**キャッシュ保存は行いません**。  
+  正常に合成が完了した場合のみ、最新の回答1つをキャッシュします。  
+  **Reliable Caching:** If any **chunk of the split synthesis** fails during streaming playback, **caching is aborted**.  
+  Only upon successful synthesis completion is the latest response cached (only one is stored).
+* **キャッシュの制限:** キャッシュ保存できるのは**最新の回答１つのみ**です。  
+  **Cache Limit:** Only the **latest response** can be saved to the cache.
+
+### 4. 🌐 ゼロコンフィグのマルチAI対応 (Zero-Config Multi-AI Support)
 
 設定切り替えは不要！UserScriptが自動でサービスを判別します。  
 No configuration switching required! The UserScript automatically identifies the service.
@@ -68,13 +84,14 @@ No configuration switching required! The UserScript automatically identifies the
 
 ---
 
-## 🌐 インストール方法 (Installation Guide)
+## ✨ インストール方法 (Installation Guide)
 
-1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**
+1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**  
    * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
    * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).
 
-2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**
+2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**  
+   RVC連携を使用する場合 (If Using RVC Integration)  
    * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。
    * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.
 
@@ -154,15 +171,18 @@ Configure the Windows **Task Scheduler** to run the above batch file **every hou
 このスクリプトは、基本的に**初期設定のまますぐに利用可能**です。  
 This script is generally **ready to use with default settings**.
 
-1.  **実行 (Execution):** 対応AIサービスにプロンプトを入力し、応答が生成され始めると、**自動的に**読み上げが開始されます。  
-    Enter a prompt into a supported AI service; reading will **automatically** start as the response begins to generate.
-2.  **手動再生 (Manual Playback):** 回答フッターに表示される [再生] ボタンで即座に開始できます。  
-    Can be started instantly by clicking the [Play] button displayed in the response footer.
-3.  **設定画面 (Settings Screen):** Tampermonkeyのメニューから本スクリプトを選択すると、声質や音量、キャッシュ設定などのオプションを変更できます。  
-    Select this script from the Tampermonkey menu to change options such as voice quality, volume, and cache settings.
-4. **中断時の注意 (Note on Interruption):**
-    * **非同期処理**（裏側で変換や合成が動いている）の性質上、[停止]ボタンを押した後でも、**中断前に開始されていた音声の受信が完了してしまう**ことがあります。  
-      その場合、意図せず再生が自動で再開されることがあるので、お手数ですが**再度 [停止] ボタンを押して**完全に止めてください。  
+1.  **実行:** 対応AIサービスにプロンプトを入力し、応答が生成され始めると、**自動的に**読み上げが開始されます。  
+    **Execution:** Enter a prompt into a supported AI service; reading will **automatically** start as the response begins to generate.
+2.  **手動再生 / キャッシュ再生:** 回答フッターに表示される [再生] ボタンを押すと、**合成からストリーミング再生**を開始します。  
+  ただし、**最新の回答がキャッシュ保存されている場合**は、合成・変換をスキップして**即時再生**します。  
+  （キャッシュは最新の回答1つのみ）  
+    **Manual Playback / Cache Playback:** Pressing the [Play] button in the response footer initiates **synthesis followed by streaming playback**.  
+    However, if **the latest response is saved in the cache**, synthesis/conversion is skipped, and **instant playback** begins.  
+    (only the latest response is cached)
+3.  **設定画面:** Tampermonkeyのメニューから本スクリプトを選択すると、声質や音量、キャッシュ設定などのオプションを変更できます。  
+    **Settings Screen:** Select this script from the Tampermonkey menu to change options such as voice quality, volume, and cache settings.
+4. **中断時の注意:** **非同期処理**（裏側で変換や合成が動いている）の性質上、[停止]ボタンを押した後でも、**中断前に開始されていた音声の受信が完了してしまう**ことがあります。  
+  その場合、意図せず再生が自動で再開されることがあるので、お手数ですが**再度 [停止] ボタンを押して**完全に止めてください。  
     **Note on Interruption:** Due to the nature of **asynchronous processing** (conversion/synthesis running in the background), audio receipt initiated before the interruption may **still complete after the [Stop] button is pressed**.  
       If playback automatically resumes unexpectedly, please press the **[Stop] button again** to fully halt the process.
 

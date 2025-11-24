@@ -223,13 +223,17 @@ This is a rough guide for those who wish to create their own RVC model for use w
     The ideal is a voice-only audio file, continuous for about **10 to 15 minutes**.  
 4. **トレーニング:** RVC WebUIを使ってトレーニングを実施すれば、モデルが完成するよ！  
    **Training:** Run the training using RVC WebUI, and your model will be complete!
+5. **🌟 変換元（VOICEVOX）の選択と調整（重要）:** RVCでの最終的な音声変換は、**VOICEVOXで選択した変換元の声質に強く影響を受けます**。  
+   モデルの完成度を最大限に引き出すためには、**VOICEVOXのライブラリから元の声（ターゲット）に最も近い声**を選択し、必要に応じて**ピッチ（F0）や感情パラメーターを調整**することが非常に重要です。  
+   **Selection and Adjustment of Source Voice (VOICEVOX) (Critical):** The final voice conversion in RVC is **strongly influenced by the voice quality of the source selected in VOICEVOX**.  
+   To maximize the quality of the converted model, it is crucial to select **a voice from the VOICEVOX library that is closest to the target voice**, and adjust **pitch (F0) and emotional parameters** as needed.
 
 #### 💡 この技術の「新しい価値」について (New Value of This Technology)
 
 本スクリプトの **「無制限・ファイルレス」** 技術は、**ファンとクリエイターの関係**に**今までになかった、新しい価値**をもたらします。  
 **The "unlimited and fileless" technology** of this script brings **unprecedented value** to the **relationship between fans and creators.**
 
-* **活動者様へ (To Creators):**  
+* **活動者様へ (To Vocal Creators):**  
   Vtuber、声優、アナウンサーなど、**声を届ける活動をされている方**は、自身の音声モデルをファンに提供することで  
   **「ファンがいつでも、好きな時に、自分の声で応答を聞ける」**という、**究極のパーソナルなファンサービス**を実現できるようになります。  
   これは、**「声を届ける側」にとっての大発見**です。  

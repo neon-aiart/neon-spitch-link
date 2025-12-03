@@ -257,10 +257,16 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ### ❓ トラブルシューティング (Troubleshooting)
 
 * **初回レンダリング現象への対応 (Handling the First Render Phenomenon):**
-    * **Google検索AIモード**やGrok (X) 画面を**最初に開いたとき**（リロードや他ページからの移動時など）に自動読み上げが始まらない場合があります。これは、**ページの初期ロード時にDOM更新のトリガーをスクリプトが捕捉できない**ために発生します。
-    * **ページのどこか（テキストや空白部分）をクリック**することで、DOM更新が開始され、再生が始まります。
-    * **Issue:** Automatic playback may not start when you **first open** the **Google Search AI Mode** or Grok (X) pages (e.g., on reload or navigation from another page). This occurs because **the script fails to capture the DOM update trigger during the initial page load**.
-    * Please **click anywhere on the page** (text or blank space); the DOM update will be initiated, and playback will start.
+  * **Google検索AIモード**やGrok (X) 画面を**最初に開いたとき**（リロードや他ページからの移動時など）に自動読み上げが始まらない場合があります。これは、**ページの初期ロード時にDOM更新のトリガーをスクリプトが捕捉できない**ために発生します。
+  * **ページのどこか（テキストや空白部分）をクリック**することで、DOM更新が開始され、再生が始まります。
+  * **Issue:** Automatic playback may not start when you **first open** the **Google Search AI Mode** or Grok (X) pages (e.g., on reload or navigation from another page). This occurs because **the script fails to capture the DOM update trigger during the initial page load**.
+  * Please **click anywhere on the page** (text or blank space); the DOM update will be initiated, and playback will start.
+
+* **[応急処置] X/Google AIモードで自動再生しない場合 ([Emergency Fix] For Unstable Playback in X/Google AI Mode):**
+  * X (Grok) および Google AI モードで自動再生やボタン配置が不安定な場合、スクリプトの174行目付近にある `const DEBOUNCE_DELAY = 1000;` を**200**に**書き換えて**ください。  
+    **注意**: この変更は現在テスト段階です。問題がなければ次期バージョンで正式に適用されます。
+  * If automatic playback or button placement is unstable in X (Grok) or Google AI Mode, please **manually change** `const DEBOUNCE_DELAY = 1000;` (found around line 174 of the script) to **200**.  
+    **Note**: This change is currently in the testing phase. If successful, it will be officially applied in the next version.
 
 ---
 

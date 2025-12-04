@@ -352,12 +352,15 @@ The source code for this application is copyrighted by Neon.
 
 * **`googlef0587da5f8f69fa8.html`**: Google Search Consoleの所有権確認のために必須なファイルです。
 
-### 📝 現状の課題 / 今後のタスク
+### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）
+
+* ✅ AIモード/X(Grok)でワンクリックしないと監視ループが止まってるいる
+
+* RVC連携のストリーミング再生キャッシュ保存後のキャッシュ再生で１つめしか再生されない(VOICEVOX側は正常)
 
 * 中断した後に勝手に再生が再開される
 * VOICEVOX接続エラー時にトーストがでていない
 * VOICEVOXへのフォールバック再生時にフォールバック再生のトーストがでてない
-* AIモード/X(Grok)でワンクリックしないと監視ループが止まってるいる
 
 ---
 

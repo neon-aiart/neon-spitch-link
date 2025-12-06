@@ -354,8 +354,9 @@ The source code for this application is copyrighted by Neon.
 
 ### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）
 
-* ✅ AIモード/X(Grok)でワンクリックしないと監視ループが止まってるいる
-
+* ✅ AIモード/X(Grok)でワンクリックしないと監視ループが止まってるいる（修正方法：DEBOUNCE_DELAYを200にする）
+* ✅ 中断したお返事も読み上げされてしまう（修正方法：SELECTORS_TO_REMOVEから '.stopped-draft-message', を削除）
+  
 * RVC連携のストリーミング再生キャッシュ保存後のキャッシュ再生で１つめしか再生されない(VOICEVOX側は正常)
 
 * 中断した後に勝手に再生が再開される

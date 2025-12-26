@@ -308,7 +308,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 ## 🛡️ ライセンスについて (License)
 
-このアプリケーションのソースコードは、ねおんが著作権を保有しています。  
+このユーザースクリプトのソースコードは、ねおんが著作権を保有しています。  
 The source code for this application is copyrighted by Neon.
 
 * **ライセンス**: **[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.ja)** です。（LICENSEファイルをご参照ください。）

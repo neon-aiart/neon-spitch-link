@@ -1,6 +1,6 @@
-# 💬 ねおん すぴっち リンク (Neon Spitch Link)
+# 💬 ねおん すぴっち リンク (Neon Spitch Link) v7.6
 
-**UserScript Version: v7.6**
+<img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="Meshi Art Sample" />
 
 **"AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。"**  
 **"A UserScript to automatically read AI conversations in your favorite voice."**
@@ -9,6 +9,8 @@
 💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)
 
 ⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)
+
+<br clear="right">
 
 ---
 

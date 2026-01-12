@@ -125,9 +125,10 @@ To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix file
    * 🚨 **【重要なお願い】** 修正ファイルを適用する前に、対象となる**RVC本体のオリジナルファイル（infer-web.py, modules.py, audio.py）を必ずバックアップしてください**。不具合が発生した場合、すぐに元に戻せます。  
 🚨 **[CRITICAL]** Before applying the fix files, **PLEASE BACK UP the original RVC core files (infer-web.py, modules.py, audio.py)**. This allows you to revert immediately if any issues occur.
    * **[RVC Core Fix Files]**:
-     * \RVC\ <a href="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/rvc-2.2.231006-fix/infer-web.py" download="infer-web.py">infer-web.py</a>
-     * \RVC\infer\modules\vc\ <a href="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/rvc-2.2.231006-fix/modules.py" download="modules.py">modules.py</a>
-     * \RVC\infer\lib\ <a href="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/rvc-2.2.231006-fix/audio.py" download="audio.py">audio.py</a>
+     * \RVC\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/infer-web.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">infer-web.py</a>
+     * \RVC\infer\modules\vc\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/modules.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">modules.py</a>
+     * \RVC\infer\lib\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/audio.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">audio.py</a>
+
    * **注意**: ファイルは**圧縮されていません**。必要なファイルを個別にダウンロードし、RVC本体の対応する場所に上書きしてください。
    * **Note**: Files are **not compressed**. Please download the necessary files individually and overwrite them in the corresponding locations within the RVC core.
 3. VOICEVOX、RVCサーバーを起動し、本スクリプトをインストールしてください。  
@@ -145,7 +146,7 @@ Although Neon Spitch Link achieves "Fileless" operation, the original RVC core f
 
 Download the cleanup batch file below and save it to any location on your Windows system.
 
-* <a href="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/cleaner/neon_spitch_temp_cleaner.bat" download="neon_spitch_temp_cleaner.bat">neon_spitch_temp_cleaner.bat</a>
+* <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/neon_spitch_temp_cleaner.bat" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">neon_spitch_temp_cleaner.bat</a>
 
 #### 2. タスクスケジューラの設定 (Task Scheduler Setup)
 

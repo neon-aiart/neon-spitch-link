@@ -1,0 +1,7 @@
+archive/
+rvc-*
+!rvc-2.2.231006-fix/
+*m4a/
+*wav/
+*.wav
+*.code-workspace

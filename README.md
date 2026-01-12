@@ -145,8 +145,7 @@ Although Neon Spitch Link achieves "Fileless" operation, the original RVC core f
 
 Download the cleanup batch file below and save it to any location on your Windows system.
 
-* [neon_spitch_temp_cleaner.bat](neon_spitch_temp_cleaner.bat)
-<a href="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/cleaner/neon_spitch_temp_cleaner.bat" download="neon_spitch_temp_cleaner.bat">neon_spitch_temp_cleaner.bat</a>
+* <a href="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/cleaner/neon_spitch_temp_cleaner.bat" download="neon_spitch_temp_cleaner.bat">neon_spitch_temp_cleaner.bat</a>
 
 #### 2. タスクスケジューラの設定 (Task Scheduler Setup)
 

@@ -815,6 +815,7 @@ with gr.Blocks(title="RVC WebUI") as app:
             with gr.TabItem(i18n("单次推理")):
                 # UserScript向け Base64データ用の隠し出力先
                 vc_output3_base64 = gr.JSON(label="US_Base64_Data", visible=False)
+                # 新API infer_loaded_voice
                 vc_status_output_json = gr.JSON(
                     label=i18n("現在のロード状態JSON"), # JSON出力コンポーネント
                     visible=False, # UI上は隠すわ

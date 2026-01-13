@@ -19,6 +19,7 @@
 // @grant          GM_addStyle
 // @grant          GM_getValue
 // @grant          GM_setValue
+// @grant          GM_deleteValue
 // @grant          GM_registerMenuCommand
 // @grant          GM_unregisterMenuCommand
 // @connect        localhost
@@ -87,32 +88,31 @@
     const LAST_CACHE_DATA = 'latest_audio_cache_data'; // Base64 WAVデータを保存
 
     // クエリ検索（コンテナ・フッター）
-    const SELECTORS_RESPONSE = [{
-            // Gemini
-            container: 'response-container',
-            footer: '.more-menu-button-container'
-        }, {
-            // ChatGPT
-            container: 'article[data-turn="assistant"]',
-            footer: 'button'
-        }, {
-            // Google AIモード
-            container: 'div[data-container-id="main-col"]',
-            footer: 'button'
-        }, {
-            // Grok
-            container: 'div[id^="response-"].items-start',
-            footer: '.group-focus-within\\:opacity-100'
-        }, {
-            // x.com/i/grok*
-            container: 'div.r-16lk18l.r-13qz1uu',
-            footer: 'div.r-18u37iz.r-1jnkns4'
-        }, {
-            // x.com/i/grok* （予備）
-            container: 'div:has(div > div > div > div > div > button > div > svg path[d^="M21.869 16h-3.5c-.77"])',
-            footer: 'button:has(svg path[d^="M21.869 16h-3.5c-.77"])'
-        },
-    ];
+    const SELECTORS_RESPONSE = [ {
+        // Gemini
+        container: 'response-container',
+        footer: '.more-menu-button-container',
+    }, {
+        // ChatGPT
+        container: 'article[data-turn="assistant"]',
+        footer: 'button',
+    }, {
+        // Google AIモード
+        container: 'div[data-container-id="main-col"]',
+        footer: 'button',
+    }, {
+        // Grok
+        container: 'div[id^="response-"].items-start',
+        footer: '.group-focus-within\\:opacity-100',
+    }, {
+        // x.com/i/grok*
+        container: 'div.r-16lk18l.r-13qz1uu',
+        footer: 'div.r-18u37iz.r-1jnkns4',
+    }, {
+        // x.com/i/grok* （予備）
+        container: 'div:has(div > div > div > div > div > button > div > svg path[d^="M21.869 16h-3.5c-.77"])',
+        footer: 'button:has(svg path[d^="M21.869 16h-3.5c-.77"])',
+    }, ];
 
     // URL制御用セクレタ配列（shouldExecuteで使用）
     const WHITELIST_PATHS = [
@@ -189,7 +189,7 @@
     let savedConfig = GM_getValue(STORE_KEY, DEFAULT_CONFIG);
     let config = {
         ...DEFAULT_CONFIG,
-        ...savedConfig
+        ...savedConfig,
     };
     GM_setValue(STORE_KEY, config);
 
@@ -477,7 +477,9 @@
         function updateSpeakerNameDisplay(id) {
             const apiUrl = config.apiUrl;
             const display = document.getElementById('speakerNameDisplay');
-            if (!display) return;
+            if (!display) {
+                return;
+            }
 
             display.textContent = '（確認中...）';
             display.style.color = '#5bc0de'; // Info Blue
@@ -521,7 +523,9 @@
                                         break;
                                     }
                                 }
-                                if (styleName) break;
+                                if (styleName) {
+                                    break;
+                                }
                             }
 
                             if (styleName) {
@@ -552,7 +556,7 @@
                     display.style.color = '#d9534f';
                     // 接続エラーをログ出力
                     console.error('[VOICEVOX_NAME] 接続エラー！', error);
-                }
+                },
             });
         }
 
@@ -711,7 +715,9 @@
         });
 
         const recordKey = (e) => {
-            if (!isRecording) return;
+            if (!isRecording) {
+                return;
+            }
             e.preventDefault();
             e.stopPropagation();
 
@@ -726,7 +732,9 @@
             }
 
             // IME入力中は処理しない
-            if (e.isComposing || e.keyCode === 229) return;
+            if (e.isComposing || e.keyCode === 229) {
+                return;
+            }
 
             // Keyを大文字化
             let key = e.key;
@@ -738,9 +746,15 @@
 
             let shortcut = '';
 
-            if (isControl) shortcut += 'Ctrl+';
-            if (isAlt) shortcut += 'Alt+';
-            if (isShift) shortcut += 'Shift+';
+            if (isControl) {
+                shortcut += 'Ctrl+';
+            }
+            if (isAlt) {
+                shortcut += 'Alt+';
+            }
+            if (isShift) {
+                shortcut += 'Shift+';
+            }
 
             // 組み合わせがない場合は、エラーを出す
             if (!isControl && !isAlt && !isShift) {
@@ -766,7 +780,9 @@
         keyInput.addEventListener('keydown', recordKey);
         panel.addEventListener('keydown', (e) => {
             // Spaceキーが押された場合にスクロールを防ぐ
-            if (e.key === ' ' && isRecording) e.preventDefault();
+            if (e.key === ' ' && isRecording) {
+                e.preventDefault();
+            }
         });
 
         // 最終フッターグループ: RVCボタン + 保存 + 閉じる
@@ -851,7 +867,7 @@
                 autoPlay: newAutoPlay,
                 minTextLength: newMinTextLength,
                 maxTextLength: newMaxTextLength,
-                shortcutKey: newShortcutKey
+                shortcutKey: newShortcutKey,
             };
 
             GM_setValue(STORE_KEY, newConfig);
@@ -943,16 +959,24 @@
             input.value = value;
             input.classList.add('mei-input-field');
             input.style.width = width;
-            if (min !== null) input.min = min;
-            if (max !== null) input.max = max;
-            if (step !== null) input.step = step;
-            if (placeholder) input.setAttribute('placeholder', placeholder);
+            if (min !== null) {
+                input.min = min;
+            }
+            if (max !== null) {
+                input.max = max;
+            }
+            if (step !== null) {
+                input.step = step;
+            }
+            if (placeholder) {
+                input.setAttribute('placeholder', placeholder);
+            }
             input.setAttribute('autocomplete', 'off');
 
             group.appendChild(input);
             return {
                 group,
-                input
+                input,
             };
         };
 
@@ -976,14 +1000,16 @@
                 const option = document.createElement('option');
                 option.value = opt.value;
                 option.textContent = opt.text;
-                if (currentValue === opt.value) option.selected = true;
+                if (currentValue === opt.value) {
+                    option.selected = true;
+                }
                 select.appendChild(option);
             });
 
             group.appendChild(select);
             return {
                 group,
-                select
+                select,
             };
         };
 
@@ -1008,10 +1034,10 @@
                         method: 'POST',
                         url: refreshUrl,
                         data: JSON.stringify({
-                            data: []
+                            data: [],
                         }),
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
                         },
                         responseType: 'json',
                         timeout: 10000,
@@ -1039,7 +1065,7 @@
                 let modelFound = false;
 
                 modelChoices.forEach(choice => {
-                    const [value, text] = Array.isArray(choice) ? choice : [choice, choice];
+                    const [value, text,] = Array.isArray(choice) ? choice : [choice, choice,];
                     const option = document.createElement('option');
                     option.value = value;
                     option.textContent = text;
@@ -1079,7 +1105,7 @@
 
                 let indexFound = false;
                 indexChoices.forEach(choice => {
-                    const [value] = Array.isArray(choice) ? choice : [choice];
+                    const [value,] = Array.isArray(choice) ? choice : [choice,];
                     const option = document.createElement('option');
                     option.value = value;
                     option.textContent = value;
@@ -1123,8 +1149,8 @@
         // --- RVC MODEL NAME ---
         const rvcModelOptions = [{
             value: config.rvcModel,
-            text: config.rvcModel
-        }];
+            text: config.rvcModel,
+        },];
         const rvcModel = createSettingSelect('モデルファイル名 (.pth):', 'rvcModel', config.rvcModel, rvcModelOptions);
         rvcModel.select.style.height = '36px'; // align-items: center; が効きにくい場合の保険として、selectの高さをボタン(+2px)に合わせる
 
@@ -1138,7 +1164,9 @@
         rvcModel.group.appendChild(rvcRefreshButton);
         rvcRefreshButton.addEventListener('click', (e) => {
             e.preventDefault();
-            if (rvcRefreshButton.disabled) return;
+            if (rvcRefreshButton.disabled) {
+                return;
+            }
             rvcRefreshButton.disabled = true;
             rvcRefreshButton.textContent = '取得中...';
             updateRvcChoices(rvcRefreshButton);
@@ -1148,12 +1176,12 @@
 
         // --- RVC INDEX NAME ---
         const rvcIndexOptions = [{
-                value: '',
-                text: '[None] 使用しない' // クリアするための選択肢
-            }, {
-                value: config.rvcIndex,
-                text: config.rvcIndex
-            }
+            value: '',
+            text: '[None] 使用しない', // クリアするための選択肢
+        }, {
+            value: config.rvcIndex,
+            text: config.rvcIndex,
+        },
         ];
         const rvcIndex = createSettingSelect(
             'インデックスファイル名 (.index):',
@@ -1194,11 +1222,13 @@
         rvcAlgorithmSelect.id = 'rvcAlgorithm';
         rvcAlgorithmSelect.style.width = '100px';
         rvcAlgorithmSelect.classList.add('mei-input-field');
-        ['pm', 'harvest', 'crepe', 'rmvpe'].forEach(alg => {
+        ['pm', 'harvest', 'crepe', 'rmvpe',].forEach(alg => {
             const option = document.createElement('option');
             option.value = alg;
             option.textContent = alg;
-            if (config.rvcAlgorithm === alg) option.selected = true;
+            if (config.rvcAlgorithm === alg) {
+                option.selected = true;
+            }
             rvcAlgorithmSelect.appendChild(option);
         });
         rvcAlgorithmGroup.appendChild(rvcAlgorithmSelect);
@@ -1311,10 +1341,14 @@
     // グローバルキーイベントリスナー
     function handleGlobalKeyDown(e) {
         // IME入力中は処理しない
-        if (e.isComposing || e.keyCode === 229) return;
+        if (e.isComposing || e.keyCode === 229) {
+            return;
+        }
 
         // 設定が読み込まれていない、または設定が無効な場合は何もしない
-        if (!config || !config.shortcutKey) return;
+        if (!config || !config.shortcutKey) {
+            return;
+        }
 
         const isControl = e.ctrlKey || e.metaKey; // CtrlまたはCommand
         const isAlt = e.altKey;
@@ -1322,7 +1356,9 @@
         const button = document.getElementById('convertButton');
 
         // ボタンが存在しないか、設定パネルが開いている場合は何もしない
-        if (!button || document.getElementById('mei-settings-overlay')) return;
+        if (!button || document.getElementById('mei-settings-overlay')) {
+            return;
+        }
 
         // Keyを大文字化
         let key = e.key;
@@ -1334,9 +1370,15 @@
 
         let pressedShortcut = '';
 
-        if (isControl) pressedShortcut += 'Ctrl+'; // 'Ctrl' に統一
-        if (isAlt) pressedShortcut += 'Alt+';
-        if (isShift) pressedShortcut += 'Shift+';
+        if (isControl) {
+            pressedShortcut += 'Ctrl+';
+        } // 'Ctrl' に統一
+        if (isAlt) {
+            pressedShortcut += 'Alt+';
+        }
+        if (isShift) {
+            pressedShortcut += 'Shift+';
+        }
 
         // 最後のキーが修飾キーではないことを確認（Control, Shift, Alt, Meta）
         if (key !== 'Control' && key !== 'Shift' && key !== 'Alt' && key !== 'Meta') {
@@ -1449,7 +1491,9 @@
 
         // 最後の回答パネルを取得
         const textContainer = allResponseContainers[allResponseContainers.length - 1];
-        if (!textContainer) return '';
+        if (!textContainer) {
+            return '';
+        }
 
         // DOMを汚染しないようにクローンを作成
         const clonedContainer = textContainer.cloneNode(true);
@@ -1569,7 +1613,7 @@
             method: 'POST',
             url: synthesizeUrl,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             data: JSON.stringify(audioQuery),
             responseType: 'blob',
@@ -1582,6 +1626,7 @@
 
                     // --- RVC変換ロジック ---
                     if (currentConfig.rvcEnabled) {
+                        let rvcXhr = null;
                         try {
                             showToast('RVC変換中...', null);
 
@@ -1590,10 +1635,9 @@
                             const cacheKey = 'sample_rvc'; // サンプル再生用のシンプルなキー
 
                             // 2. RVC変換を実行
-                            const {
-                                promise: rvcConversionPromise,
-                                xhr: rvcXhr
-                            } = convertRvcChunk(arrayBuffer, currentConfig, cacheKey);
+                            const rvcResult = convertRvcChunk(arrayBuffer, currentConfig, cacheKey);
+                            const rvcConversionPromise = rvcResult.promise;
+                            rvcXhr = rvcResult.xhr;
                             currentXhrs.push(rvcXhr); // RVC XHRを一時的に保存
 
                             const rvcBase64Data = await rvcConversionPromise; // 変換が完了するまで待つわ
@@ -1607,15 +1651,17 @@
                             for (let i = 0; i < binary.length; i++) {
                                 array[i] = binary.charCodeAt(i);
                             }
-                            playableBlob = new Blob([array], {
-                                type: 'audio/wav'
+                            playableBlob = new Blob([array,], {
+                                type: 'audio/wav',
                             });
                             isRvcSuccess = true;
                             showToast('RVC変換完了！再生するわ！', true);
 
                         } catch (rvcError) {
                             // 【フォールバック】RVC変換失敗時の処理
-                            currentXhrs = currentXhrs.filter(item => item !== rvcXhr); // RVC XHRを削除
+                            if (rvcXhr) {
+                                currentXhrs = currentXhrs.filter(item => item !== rvcXhr); // RVC XHRを削除
+                            }
                             console.error('[Sample Playback] ❌ RVC変換失敗（フォールバック）:', rvcError);
                             showToast('😭 RVC連携失敗！VOICEVOXオリジナル音声で代替再生するわ。', false);
                             // playableBlob は VOICEVOX original Blob のまま（フォールバック）
@@ -1660,7 +1706,7 @@
                 console.error('VOICEVOX Synthesize Connection Error:', error);
                 resetOperation();
                 resetSampleButtonState(button);
-            }
+            },
         });
         currentXhrs.push(xhr); // XHRオブジェクトを保存
     }
@@ -1676,7 +1722,9 @@
         }
 
         // 入力値を取得し、不正な値ならエラー
-        if (!speakerIdInput) return; // 念の為のガード
+        if (!speakerIdInput) {
+            return;
+        } // 念の為のガード
         const currentSpeakerId = parseInt(speakerIdInput.value, 10);
 
         if (isNaN(currentSpeakerId) || currentSpeakerId < 0) {
@@ -1697,14 +1745,14 @@
         const audioQueryUrl = `${currentConfig.apiUrl}/audio_query`;
         const queryParams = new URLSearchParams({
             text: SAMPLE_TEXT,
-            speaker: currentSpeakerId
+            speaker: currentSpeakerId,
         });
 
         const xhr = GM_xmlhttpRequest({
             method: 'POST',
             url: `${audioQueryUrl}?${queryParams.toString()}`,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             onload: function(response) {
                 currentXhrs = currentXhrs.filter(item => item !== xhr); // 完了したXHRを配列から削除
@@ -1724,7 +1772,7 @@
                 console.error('VOICEVOX Connection Error:', error);
                 resetOperation();
                 resetSampleButtonState(button);
-            }
+            },
         });
         currentXhrs.push(xhr); // XHRオブジェクトを保存
     }
@@ -1832,8 +1880,8 @@
             array[i] = binary.charCodeAt(i);
         }
 
-        return new Blob([array.buffer], {
-            type: mimeType
+        return new Blob([array.buffer,], {
+            type: mimeType,
         });
     }
 
@@ -1854,7 +1902,7 @@
         // RVC APIのペイロード形式に合わせるわ
         const inputAudioBase64 = {
             name: "voicevox_source.wav",
-            data: inputAudioDataUri
+            data: inputAudioDataUri,
         };
         // URLの末尾のスラッシュを削除し、エンドポイントを結合
         const convertUrl = `${currentConfig.rvcApiUrl.replace(/\/$/, '')}/run/infer_convert`;
@@ -1874,7 +1922,7 @@
                 currentConfig.rvcResample,     // 09. リサンプリング (0～48000) [0]
                 currentConfig.rvcEnvelope,     // 10. エンベロープの融合率 (0～1) [0.25]
                 currentConfig.rvcArtefact,     // 11. 明確な子音と呼吸音を保護 (0～0.5) [0.33]
-            ]
+            ],
         };
 
         try {
@@ -1884,7 +1932,7 @@
                     url: convertUrl,
                     data: JSON.stringify(rvcRequestBody),
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     responseType: 'json',
                     timeout: VOICEVOX_TIMEOUT_MS, // グローバル定数を使用
@@ -1916,7 +1964,7 @@
                         currentXhrs = currentXhrs.filter(item => item !== xhr); // タイムアウトでも削除！
                         updateButtonState();
                         reject('RVC infer_convert タイムアウト (変換に時間がかかりすぎたわ)');
-                    }
+                    },
                 });
                 currentXhrs.push(xhr); // XHRリストに追加
                 updateButtonState();
@@ -1965,7 +2013,7 @@
         const inputAudioDataUri = 'data:audio/wav;base64,' + base64Audio;
         const inputAudioBase64 = {
             name: "voicevox_source.wav",
-            data: inputAudioDataUri
+            data: inputAudioDataUri,
         };
         const convertUrl = `${currentConfig.rvcApiUrl.replace(/\/$/, '')}/run/infer_convert`;
         const rvcRequestBody = {
@@ -1982,7 +2030,7 @@
                 currentConfig.rvcResample,     // 09. リサンプリング (0～48000) [0]
                 currentConfig.rvcEnvelope,     // 10. エンベロープの融合率 (0～1) [0.25]
                 currentConfig.rvcArtefact,     // 11. 明確な子音と呼吸音を保護 (0～0.5) [0.33]
-            ]
+            ],
         };
 
         let xhr;
@@ -2038,7 +2086,7 @@
         });
         return {
             promise,
-            xhr
+            xhr,
         }; // PromiseとXHRオブジェクトを一緒に返すわ
     }
 
@@ -2050,7 +2098,9 @@
      * @param {string} cacheKey - 生成されたキャッシュキー (ストリーミング中はキャッシュ処理をスキップ)
      */
     async function synthesizeRvcAudio(text, currentConfig, isAutoPlay, cacheKey) {
-        if (!currentConfig.rvcEnabled) return; // RVC無効なら即終了（ガード句）
+        if (!currentConfig.rvcEnabled) {
+            return;
+        } // RVC無効なら即終了（ガード句）
 
         const MAX_CHUNK_LENGTH = currentConfig.chunkSize || DEFAULT_CHUNK_SIZE;
         const chunks = splitTextForSynthesis(text, MAX_CHUNK_LENGTH);
@@ -2085,7 +2135,9 @@
                     throw new Error('RVC Synthesis Aborted by User Request');
                 }
 
-                if (!isPlaying) showToast(`WAVデータを生成中... （${text.length}文字）[${i + 1}/${totalChunks}]`, null);
+                if (!isPlaying) {
+                    showToast(`WAVデータを生成中... （${text.length}文字）[${i + 1}/${totalChunks}]`, null);
+                }
                 console.log(`[VOICEVOX|RVC] [${getFormattedDateTime()}] WAVデータを生成中... (${i + 1}/${totalChunks})`);
 
                 // --- 1. VOICEVOX Query & Synthesis (Chunk Text -> WAV ArrayBuffer) ---
@@ -2095,14 +2147,14 @@
                     const audioQueryUrl = `${currentConfig.apiUrl}/audio_query`;
                     const queryParams = new URLSearchParams({
                         text: chunk,
-                        speaker: currentConfig.speakerId
+                        speaker: currentConfig.speakerId,
                     });
                     const audioQuery = await new Promise((resolve, reject) => {
                         const xhr = GM_xmlhttpRequest({
                             method: 'POST',
                             url: `${audioQueryUrl}?${queryParams.toString()}`,
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
                             },
                             timeout: VOICEVOX_TIMEOUT_MS,
                             onload: (response) => {
@@ -2113,7 +2165,7 @@
                                 }
                             },
                             onerror: () => reject('VOICEVOX Query 接続エラー'),
-                            ontimeout: () => reject('VOICEVOX Query タイムアウト')
+                            ontimeout: () => reject('VOICEVOX Query タイムアウト'),
                         });
                         currentXhrs.push(xhr);
                     });
@@ -2121,14 +2173,14 @@
                     // VOICEVOX Synthesis
                     const synthesisUrl = `${currentConfig.apiUrl}/synthesis`;
                     const synthesisParams = new URLSearchParams({
-                        speaker: currentConfig.speakerId
+                        speaker: currentConfig.speakerId,
                     });
                     voicevoxArrayBuffer = await new Promise((resolve, reject) => {
                         const xhr = GM_xmlhttpRequest({
                             method: 'POST',
                             url: `${synthesisUrl}?${synthesisParams.toString()}`,
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
                             },
                             responseType: 'arraybuffer',
                             data: JSON.stringify(audioQuery),
@@ -2141,7 +2193,7 @@
                                 }
                             },
                             onerror: () => reject('VOICEVOX Synthesis 接続エラー'),
-                            ontimeout: () => reject('VOICEVOX Synthesis タイムアウト')
+                            ontimeout: () => reject('VOICEVOX Synthesis タイムアウト'),
                         });
                         currentXhrs.push(xhr);
                     });
@@ -2163,8 +2215,8 @@
                 if (rvcFailed) {
                     // RVCが既に失敗している場合は、VOICEVOXオリジナル音声で再生（フォールバック）
                     // console.warn('[RVC Fallback] RVC変換が失敗中のため、VOICEVOXのオリジナル音声で代替再生します。');
-                    audioBlobToPlay = new Blob([voicevoxArrayBuffer], {
-                        type: 'audio/wav'
+                    audioBlobToPlay = new Blob([voicevoxArrayBuffer,], {
+                        type: 'audio/wav',
                     });
                 } else {
                     // RVC変換を試みる
@@ -2172,8 +2224,8 @@
                         // `convertRvcAudioToArrayBuffer` を呼び出し、ArrayBufferを取得するわ
                         chunkResultBuffer = await convertRvcAudioToArrayBuffer(voicevoxArrayBuffer, currentConfig);
                         // ArrayBufferをBlobに変換して再生用変数に格納
-                        audioBlobToPlay = new Blob([chunkResultBuffer], {
-                            type: 'audio/wav'
+                        audioBlobToPlay = new Blob([chunkResultBuffer,], {
+                            type: 'audio/wav',
                         });
                     } catch (rvcError) {
                         console.error('[RVC Conversion] RVC変換エラー発生:', rvcError);
@@ -2182,8 +2234,8 @@
 
                         // 失敗したこのチャンクは、VOICEVOXオリジナル音声で再生
                         console.warn('[RVC Fallback] RVC変換に失敗したため、VOICEVOXのオリジナル音声で代替再生を試みます。');
-                        audioBlobToPlay = new Blob([voicevoxArrayBuffer], {
-                            type: 'audio/wav'
+                        audioBlobToPlay = new Blob([voicevoxArrayBuffer,], {
+                            type: 'audio/wav',
                         });
                     }
                 }
@@ -2211,8 +2263,8 @@
                     offset += buffer.byteLength;
                 }
 
-                const finalBlob = new Blob([combinedArray], {
-                    type: 'audio/wav'
+                const finalBlob = new Blob([combinedArray,], {
+                    type: 'audio/wav',
                 });
                 await saveCache(cacheKey, finalBlob, 'RVC');
             }
@@ -2239,10 +2291,10 @@
                     method: 'POST',
                     url: statusUrl,
                     data: JSON.stringify({
-                        data: []
+                        data: [],
                     }), // 引数は空でOKだけど、GradioのAPI形式に合わせるわ
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     responseType: 'json',
                     timeout: 5000, // 高速なAPIだからタイムアウトは短くて大丈夫よ
@@ -2275,7 +2327,9 @@
      * @returns {Promise<boolean>} - ロードに成功した場合はtrue、失敗した場合はfalse
      */
     async function loadRvcModel(currentConfig) {
-        if (!currentConfig.rvcEnabled) return false;
+        if (!currentConfig.rvcEnabled) {
+            return false;
+        }
 
         const requiredModel = currentConfig.rvcModel;
 
@@ -2317,7 +2371,7 @@
                         requiredModel,             // 0. RVC モデルファイルパス
                         currentConfig.rvcArtefact, // 1. rvcArtefact
                         currentConfig.rvcArtefact, // 2. rvcArtefact
-                    ]
+                    ],
                 };
 
                 const xhr = GM_xmlhttpRequest({
@@ -2325,7 +2379,7 @@
                     url: loadUrl,
                     data: JSON.stringify(rvcRequestBody),
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     responseType: 'json',
                     timeout: 30000, // モデルロードなので長めに30秒
@@ -2397,14 +2451,16 @@
                 }
 
                 // 進捗状況を更新
-                if (!isPlaying) showToast(`WAVデータを生成中... （${text.length}文字）[${i + 1}/${totalChunks}]`, null);
+                if (!isPlaying) {
+                    showToast(`WAVデータを生成中... （${text.length}文字）[${i + 1}/${totalChunks}]`, null);
+                }
                 console.log(`[VOICEVOX|RVC] [${getFormattedDateTime()}] WAVデータを生成中... (${i + 1}/${totalChunks})`);
 
                 // --- 1. audio_query (Text -> Query JSON) ---
                 const audioQuery = await new Promise((resolve, reject) => {
                     const queryParams = new URLSearchParams({
                         text: chunk,
-                        speaker: speakerId
+                        speaker: speakerId,
                     });
                     const audioQueryUrl = `${apiUrl}/audio_query?${queryParams.toString()}`;
 
@@ -2412,7 +2468,7 @@
                         method: 'POST',
                         url: audioQueryUrl,
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
                         },
                         timeout: VOICEVOX_TIMEOUT_MS, // タイムアウト設定
                         onload: (response) => {
@@ -2429,8 +2485,8 @@
                         },
                         ontimeout: () => {
                             currentXhrs = currentXhrs.filter(item => item !== xhr); // タイムアウトでも削除！
-                            reject(`VOICEVOX Query タイムアウト (${i + 1}/${totalChunks})`)
-                        }
+                            reject(`VOICEVOX Query タイムアウト (${i + 1}/${totalChunks})`);
+                        },
                     });
                     currentXhrs.push(xhr);
                 });
@@ -2443,7 +2499,7 @@
                         method: 'POST',
                         url: synthesizeUrl,
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
                         },
                         data: JSON.stringify(audioQuery),
                         responseType: 'blob',
@@ -2464,7 +2520,7 @@
                         ontimeout: () => {
                             currentXhrs = currentXhrs.filter(item => item !== xhr); // タイムアウトでも削除！
                             reject(`VOICEVOX Synthesis タイムアウト (${i + 1}/${totalChunks})`);
-                        }
+                        },
                     });
                     currentXhrs.push(xhr); // 実行直後に配列に追加！
                 });
@@ -2539,7 +2595,9 @@
         // 2. 分割されたピースを結合し、文字数制限をかけるわ。
         for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
-            if (!segment || segment.trim() === "") continue;
+            if (!segment || segment.trim() === "") {
+                continue;
+            }
 
             // 次のセグメントを結合すると最大長を超えるかチェック
             // ただし、currentChunkが空の場合は、そのセグメント自体が長すぎるかチェック
@@ -2849,7 +2907,7 @@
                     // ⚠️ convertRvcChunkがPromiseとXHRを返すわ
                     const {
                         promise: rvcConversionPromise,
-                        xhr
+                        xhr,
                     } = convertRvcChunk(arrayBuffer, currentConfig, cacheKey + `_chunk_${chunkIndex}`);
 
                     // RVC変換のXHRをキャンセルできるように記録
@@ -2965,8 +3023,12 @@
      * @returns {Promise<Blob>} - 結合された単一のWAV Blob
      */
     async function connectWavBlobs(blobs) {
-        if (!blobs || blobs.length === 0) return new Blob([]);
-        if (blobs.length === 1) return blobs[0];
+        if (!blobs || blobs.length === 0) {
+            return new Blob([]);
+        }
+        if (blobs.length === 1) {
+            return blobs[0];
+        }
 
         // 全てのBlobをArrayBufferに変換
         const buffers = await Promise.all(blobs.map(blob => blob.arrayBuffer()));
@@ -3037,8 +3099,8 @@
             finalDataOffset += dataChunk.byteLength;
         }
 
-        return new Blob([finalBuffer], {
-            type: 'audio/wav'
+        return new Blob([finalBuffer,], {
+            type: 'audio/wav',
         });
     }
 
@@ -3211,10 +3273,14 @@
     // 再生ボタンの状態を更新するわ！
     function updateButtonState() {
         const button = document.getElementById('convertButton');
-        if (!button) return;
+        if (!button) {
+            return;
+        }
         const icon = document.getElementById('convertButtonIcon');
         const text = document.getElementById('convertButtonText');
-        if (!icon || !text) return;
+        if (!icon || !text) {
+            return;
+        }
 
         // 現在の状態を保存しておき、不要な DOM 操作を避ける
         const currentText = text.textContent.trim();
@@ -3387,7 +3453,9 @@
                 }
             } else {
                 button = document.getElementById(buttonId);
-                if (!button) return;
+                if (!button) {
+                    return;
+                }
             }
 
             let iconSpan = document.getElementById('convertButtonIcon');
@@ -3442,7 +3510,9 @@
         // --- 1. ホワイトリストチェック (許可パターン) ---
         const isWhiteListed = WHITELIST_PATHS.some(path => {
             // ルート ('/') は完全一致で確認するわ
-            if (path === '/') return pathAndQuery === '/';
+            if (path === '/') {
+                return pathAndQuery === '/';
+            }
 
             // 正規表現でマッチするかチェック
             return pathAndQuery.match(pathToRegex(path));
@@ -3524,7 +3594,7 @@
 
         const observerConfig = {
             childList: true,
-            subtree: true
+            subtree: true,
         };
         observer.observe(TARGET_NODE, observerConfig);
 
@@ -3550,11 +3620,9 @@
                 if (document.getElementById('convertButton')) {
                     // console.log("[Fix] 初回ボタン成功！これで安心だね！");
                     clearInterval(initialRetryInterval);
-                }
-                // 20回（10秒）で諦める
-                else if (initialRetryCount >= initialRetryLimit) {
+                } else if (initialRetryCount >= initialRetryLimit) {
                     // console.log("[Fix] 初回リトライ上限…でも次からはdebounceで大丈夫！");
-                    clearInterval(initialRetryInterval);
+                    clearInterval(initialRetryInterval);  // initialRetryLimit で諦める (20回で約10秒)
                 }
             }, 500);
 
@@ -3568,15 +3636,21 @@
             };
             document.addEventListener('click', clickHandler, {
                 once: true,
-                capture: true
+                capture: true,
             });
         }
     }
 
     // メニュー登録
-    if (settingsMenuId) GM_unregisterMenuCommand(settingsMenuId);
-    if (rvcSettingsMenuId) GM_unregisterMenuCommand(rvcSettingsMenuId);
-    if (DownloadMenuId) GM_unregisterMenuCommand(DownloadMenuId);
+    if (settingsMenuId) {
+        GM_unregisterMenuCommand(settingsMenuId);
+    }
+    if (rvcSettingsMenuId) {
+        GM_unregisterMenuCommand(rvcSettingsMenuId);
+    }
+    if (DownloadMenuId) {
+        GM_unregisterMenuCommand(DownloadMenuId);
+    }
     settingsMenuId = GM_registerMenuCommand('🔊 VOICEVOX連携 設定', openSettings);
     rvcSettingsMenuId = GM_registerMenuCommand('🔊 RVC連携 設定', openRvcSettings);
     DownloadMenuId = GM_registerMenuCommand('💾 ダウンロード', startVoiceDownload);

@@ -3,9 +3,9 @@
 // @name:ja        ねおん すぴっち リンク
 // @name:en        Neon Spitch Link
 // @namespace      https://bsky.app/profile/neon-ai.art
-// @homepage       https://neon-aiart.github.io/gemini-to-voicevox/
-// @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔊</text></svg>
-// @version        7.7
+// @homepage       https://neon-aiart.github.io/
+// @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>
+// @version        7.9
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -22,51 +22,51 @@
 // @grant          GM_registerMenuCommand
 // @grant          GM_unregisterMenuCommand
 // @connect        localhost
-// @license        CC BY-NC 4.0
+// @license        PolyForm Noncommercial 1.0.0; https://polyformproject.org/licenses/noncommercial/1.0.0/
 // @downloadURL    https://update.greasyfork.org/scripts/552996/%E3%81%AD%E3%81%8A%E3%82%93%20%E3%81%99%E3%81%B4%E3%81%A3%E3%81%A1%20%E3%83%AA%E3%83%B3%E3%82%AF.user.js
 // @updateURL      https://update.greasyfork.org/scripts/552996/%E3%81%AD%E3%81%8A%E3%82%93%20%E3%81%99%E3%81%B4%E3%81%A3%E3%81%A1%20%E3%83%AA%E3%83%B3%E3%82%AF.meta.js
 // ==/UserScript==
 
+/**
+ * ==============================================================================
+ * IMPORTANT NOTICE / 重要事項
+ * ==============================================================================
+ * Copyright (c) 2025 ねおん (Neon)
+ * Licensed under the PolyForm Noncommercial License 1.0.0.
+ * * [JP] 本スクリプトは個人利用・非営利目的でのみ使用・改変が許可されます。
+ * 無断転載、作者名の書き換え、およびクレジットの削除は固く禁じます。
+ * 本スクリプトを改変・配布（フォーク）する場合は、必ず元の作者名（ねおん）
+ * およびこのクレジット表記を維持してください。
+ * * [EN] This script is licensed for personal and non-commercial use only.
+ * Unauthorized re-uploading, modification of authorship, or removal of
+ * author credits is strictly prohibited. If you fork this project, you MUST
+ * retain the original credits and authorship.
+ * ==============================================================================
+ */
+
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '7.7';
+    const SCRIPT_VERSION = '7.9';
     const STORE_KEY = 'gemini_voicevox_config';
-
-/*
- * -------------------------------------------------------------------------------------------------
- * 著作権情報: Copyright (c) 2025 ねおん
- * 対象: 🔊 ねおん すぴっち リンク (VOICEVOX/RVC連携UserScript)
- * 基本ライセンス: Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
- * -------------------------------------------------------------------------------------------------
- * * ■ ライセンス要点（日本の利用者向け）
- * 1. 表示 (BY): 製作者「ねおん」のクレジット表記を必ず行ってください。
- * 2. 非営利 (NC): 営利目的での利用・改変・再配布はできません。
- * 法的文書: https://creativecommons.org/licenses/by-nc/4.0/deed.ja
- * * * ■ 複製・再公開に関する特記事項（重要）
- * 本スクリプトの構造、機能、デザインを伴う
- * **無許可での再公開（ミラーサイト、他サイトへの転載）**および、
- * 製作者の署名やクレジットを削除して自作であると主張する行為は、著作権の侵害にあたります。
- * -------------------------------------------------------------------------------------------------
- */
 
     // ========= グローバルな再生・操作制御変数 =========
     let currentAudio = null;
-    let currentXhr = null;                   // 合成中のXHRを保持（中断用）
-    let currentXhrs = [];                    // 合成中のXHRを配列として定義
-    let isConversionStarting = false;        // 合成処理全体が開始したことを示すフラグ
-    let isConversionAborted = false;         // 合成の中断要求があったかを示すフラグ
-    let currentSpeakerNameXhr = null;        // スピーカー名取得用のXHR
+    let currentXhr = null;              // 合成中のXHRを保持（中断用）
+    let currentXhrs = [];               // 合成中のXHRを配列として定義
+    let isConversionStarting = false;   // 合成処理全体が開始したことを示すフラグ
+    let isConversionAborted = false;    // 合成の中断要求があったかを示すフラグ
+    let currentSpeakerNameXhr = null;   // スピーカー名取得用のXHR
     let isPlaying = false;
     let isPause = false;
-    let lastAutoPlayedText = '';             // 最後に自動再生したテキストをキャッシュ
-    const MAX_RETRY_COUNT = 3;               // 最大リトライ回数
-    let playRetryCount = 0;                  // 現在のリトライ回数
+    let lastAutoPlayedText = '';        // 最後に自動再生したテキストをキャッシュ
+    const MAX_RETRY_COUNT = 3;          // 最大リトライ回数
+    let playRetryCount = 0;             // 現在のリトライ回数
     let toastTimeoutId = null;
-    let isRvcModelLoading = false;           // RVCモデル情報のロード中フラグ（排他制御用）
-    let rvcSettingsInitialized = false;      // RVC設定 UI の初期化用
-    const DEFAULT_CHUNK_SIZE = 100;          // 初期チャンクサイズ
-    const VOICEVOX_TIMEOUT_MS = 60000;       // 60秒 VOICEVOX/RVCのXHR通信タイムアウト値（ミリ秒）
+    let isRvcModelLoading = false;      // RVCモデル情報のロード中フラグ（排他制御用）
+    let rvcSettingsInitialized = false; // RVC設定 UI の初期化用
+    const DEFAULT_CHUNK_SIZE = 100;     // 初期チャンクサイズ
+    const VOICEVOX_TIMEOUT_MS = 60000;  // 60秒 VOICEVOX/RVCのXHR通信タイムアウト値（ミリ秒）
 
     // ========= Web Audio API (ストリーミング再生) 関連 =========
     /** @type {AudioContext | null} Web Audio APIのコンテキスト。音の心臓部よ！*/
@@ -87,13 +87,31 @@
     const LAST_CACHE_DATA = 'latest_audio_cache_data'; // Base64 WAVデータを保存
 
     // クエリ検索（コンテナ・フッター）
-    const SELECTORS_RESPONSE = [
-        { container: 'response-container', footer: '.more-menu-button-container' },                     // Gemini
-        { container: 'article[data-turn="assistant"]', footer: 'button' },                              // ChatGPT
-        { container: 'div[data-container-id="main-col"]', footer: 'button' },                           // Google AIモード
-        { container: 'div[id^="response-"].items-start', footer: '.group-focus-within\\:opacity-100' }, // Grok
-        { container: 'div.r-16lk18l.r-13qz1uu', footer: 'div.r-18u37iz.r-1jnkns4' },　                  // x.com/i/grok*
-        { container: 'div:has(div > div > div > div > div > button > div > svg path[d^="M21.869 16h-3.5c-.77"])', footer: 'button:has(svg path[d^="M21.869 16h-3.5c-.77"])' },
+    const SELECTORS_RESPONSE = [{
+            // Gemini
+            container: 'response-container',
+            footer: '.more-menu-button-container'
+        }, {
+            // ChatGPT
+            container: 'article[data-turn="assistant"]',
+            footer: 'button'
+        }, {
+            // Google AIモード
+            container: 'div[data-container-id="main-col"]',
+            footer: 'button'
+        }, {
+            // Grok
+            container: 'div[id^="response-"].items-start',
+            footer: '.group-focus-within\\:opacity-100'
+        }, {
+            // x.com/i/grok*
+            container: 'div.r-16lk18l.r-13qz1uu',
+            footer: 'div.r-18u37iz.r-1jnkns4'
+        }, {
+            // x.com/i/grok* （予備）
+            container: 'div:has(div > div > div > div > div > button > div > svg path[d^="M21.869 16h-3.5c-.77"])',
+            footer: 'button:has(svg path[d^="M21.869 16h-3.5c-.77"])'
+        },
     ];
 
     // URL制御用セクレタ配列（shouldExecuteで使用）
@@ -101,7 +119,7 @@
         '/app*', '/gem*', '/u/*/app*', '/u/*/gem*', '/c', '/c/*', '/g/*', '/search?*udm=50*', '/i/grok*',
     ];
     const BLACKLIST_PATHS = [
-        '/saved-info', '/apps', '/sharing', '/gems/*','/settings',
+        '/saved-info', '/apps', '/sharing', '/gems/*', '/settings',
         '/u/*/saved-info', '/u/*/apps', '/u/*/sharing', '/u/*/gems/*', '/u/*/settings',
         '/faq', '/privacy', '/terms',
     ];
@@ -117,7 +135,6 @@
         '.legacy-sources-sidebar-button',
         '.thoughts-header',
         '.bot-name', '.sr-only',
-        '.stopped-draft-message',
         '.tool-summary',
         'pre', 'code-block', 'mat-paginator', 'immersive-entry-chip', 'inline-location',
         'model-thoughts', 'deletion-candidate-memories-response-block',
@@ -127,8 +144,8 @@
 
     // 処理中断用セクレタ配列（getGeminiAnswerTextで使用）
     const SELECTORS_TO_INTERRUPT = [
-        '.processing-state',         // 応答生成中（例：「思考中」）
-        '.stopped-draft-message',    // 応答生成が停止された場合
+        '.processing-state',      // 応答生成中（例：「思考中」）
+        '.stopped-draft-message', // 応答生成が停止された場合
     ];
 
     // テキスト内容で除去する定型文/NGワードの配列（getGeminiAnswerTextで使用）
@@ -150,6 +167,7 @@
         minTextLength: 10,
         maxTextLength: 2000,
         shortcutKey: 'Ctrl+Shift+B',
+        dlBtnEnabled: true,                  // ダウンロードボタン
         rvcEnabled: false,                   // RVC 連携スイッチ
         rvcApiUrl: 'http://localhost:7897/', // RVC API URL
         rvcModel: 'rvcModel.pth',            // RVC モデルファイル名
@@ -163,13 +181,16 @@
         pitchScale: 0.0,                     // ピッチ (-0.15～0.15)
         intonationScale: 1.0,                // 抑揚 (0.0～)
         volumeScale: 1.0,                    // 音量 (0.0～)
-        rvcNumber: 0,                        // 話者ID (0～109)
+        rvcNumber: 0,                        // 話者ID (0～112)
         rvcEnvelope: 0.25,                   // 入力ソースと出力の音量エンベロープの融合率 (0～1)
         rvcArtefact: 0.33,                   // 明確な子音と呼吸音を保護 (0～0.5)
         rvcMedianFilter: 3,                  // ミュートを減衰させるためのメディアンフィルタ (0～7)
     };
     let savedConfig = GM_getValue(STORE_KEY, DEFAULT_CONFIG);
-    let config = { ...DEFAULT_CONFIG, ...savedConfig };
+    let config = {
+        ...DEFAULT_CONFIG,
+        ...savedConfig
+    };
     GM_setValue(STORE_KEY, config);
 
     let debounceTimerId = null;
@@ -177,6 +198,7 @@
 
     let settingsMenuId = null;
     let rvcSettingsMenuId = null;
+    let DownloadMenuId = null;
 
     // スタイル定義（GM_addStyle）
     GM_addStyle(`
@@ -266,17 +288,43 @@
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.2s;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             width: auto;
             min-width: 108px;
             height: 100%;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        #downloadButton {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 4px;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin-left: 8px;
+            width: 28px;
+            height: 100%;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        #convertButton:hover, #downloadButton:not([disabled]):hover {
+            transform: scale(1.05);
+        }
+        #downloadButton[disabled] {
+            background-color: #6c757d !important; /* disabled:bg-gray-500 の代替 */
+            color: #bdbdbd !important;            /* disabled:text-gray-300 の代替 */
+            cursor: not-allowed !important;       /* disabled:cursor-not-allowed の代替 */
+            transform: scale(1.0);                /* 無効時はアニメーションしない */
         }
     `);
 
     // ========= トーストメッセージ =========
     function showToast(msg, isSuccess) {
-        const toastId = 'hgf-toast-mei';
+        const toastId = 'spitch-toast';
         console.log(`[TOAST] ${msg}`);
 
         if (toastTimeoutId) {
@@ -294,7 +342,7 @@
             const toast = document.createElement('div');
             toast.textContent = msg;
             toast.id = toastId;
-            toast.classList.add('hgf-toast-mei');
+            toast.classList.add('spitch-toast');
 
             let bgColor;
             if (isSuccess === true) {
@@ -510,7 +558,7 @@
 
         // 入力値が変わったら更新
         speakerInput.addEventListener('input', (e) => {
-             updateSpeakerNameDisplay(e.target.value);
+            updateSpeakerNameDisplay(e.target.value);
         });
 
         // サンプル再生ボタン
@@ -606,7 +654,7 @@
         const maxLengthInput = document.createElement('input');
         maxLengthInput.type = 'number';
         maxLengthInput.id = 'maxTextLength';
-        maxLengthInput.value = config.maxTextLength; // ★設定ファイルから値を取得
+        maxLengthInput.value = config.maxTextLength; // 設定ファイルから値を取得
         maxLengthInput.min = '0';
         maxLengthInput.step = '100'; // 100文字刻みで調整しやすく
         maxLengthInput.classList.add('mei-input-field');
@@ -741,7 +789,7 @@
 
         const saveBtn = document.createElement('button');
         saveBtn.textContent = '保存';
-        saveBtn.classList.add('mei-button','mei-button-primary');
+        saveBtn.classList.add('mei-button', 'mei-button-primary');
         saveBtn.style.cssText = 'flex-grow: 0; flex-shrink: 0; padding: 10px 15px; width: 100px;';
 
         const closeBtn = document.createElement('button');
@@ -902,7 +950,10 @@
             input.setAttribute('autocomplete', 'off');
 
             group.appendChild(input);
-            return { group, input };
+            return {
+                group,
+                input
+            };
         };
 
         // --- セレクトボックスを作成する共通スタイル ---
@@ -930,7 +981,10 @@
             });
 
             group.appendChild(select);
-            return { group, select };
+            return {
+                group,
+                select
+            };
         };
 
         // RVC API URL
@@ -951,9 +1005,14 @@
             try {
                 const response = await new Promise((resolve, reject) => {
                     const xhr = GM_xmlhttpRequest({
-                        method: 'POST', url: refreshUrl,
-                        data: JSON.stringify({ data: [] }),
-                        headers: { "Content-Type": "application/json" },
+                        method: 'POST',
+                        url: refreshUrl,
+                        data: JSON.stringify({
+                            data: []
+                        }),
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
                         responseType: 'json',
                         timeout: 10000,
                         onload: (res) => resolve(res),
@@ -1062,9 +1121,10 @@
         }
 
         // --- RVC MODEL NAME ---
-        const rvcModelOptions = [
-            { value: config.rvcModel, text: config.rvcModel }
-        ];
+        const rvcModelOptions = [{
+            value: config.rvcModel,
+            text: config.rvcModel
+        }];
         const rvcModel = createSettingSelect('モデルファイル名 (.pth):', 'rvcModel', config.rvcModel, rvcModelOptions);
         rvcModel.select.style.height = '36px'; // align-items: center; が効きにくい場合の保険として、selectの高さをボタン(+2px)に合わせる
 
@@ -1087,9 +1147,13 @@
         panel.appendChild(rvcModel.group);
 
         // --- RVC INDEX NAME ---
-        const rvcIndexOptions = [
-            { value: '', text: '[None] 使用しない' }, // クリアするための選択肢
-            { value: config.rvcIndex, text: config.rvcIndex }
+        const rvcIndexOptions = [{
+                value: '',
+                text: '[None] 使用しない' // クリアするための選択肢
+            }, {
+                value: config.rvcIndex,
+                text: config.rvcIndex
+            }
         ];
         const rvcIndex = createSettingSelect(
             'インデックスファイル名 (.index):',
@@ -1172,7 +1236,7 @@
         // 保存ボタン
         const saveBtn = document.createElement('button');
         saveBtn.textContent = '保存';
-        saveBtn.classList.add('mei-button','mei-button-primary');
+        saveBtn.classList.add('mei-button', 'mei-button-primary');
         saveBtn.style.cssText = 'flex-grow: 0; flex-shrink: 0; padding: 10px 15px; width: 100px;';
 
         // 閉じるボタン
@@ -1207,7 +1271,7 @@
 
             // バリデーション
             if (newRvcApiUrl === '' || newRvcModel === '' ||
-                isNaN(newRvcPitch)|| newRvcPitch < -12 || newRvcPitch > 12 ||
+                isNaN(newRvcPitch) || newRvcPitch < -12 || newRvcPitch > 12 ||
                 isNaN(newRvcRatio) || newRvcRatio < 0 || newRvcRatio > 1 ||
                 isNaN(newRvcResample) || newRvcResample < 0 || newRvcResample > 48000) {
                 showToast('全項目を正しく入力してね！', false);
@@ -1305,7 +1369,7 @@
             clearTimeout(toastTimeoutId);
             toastTimeoutId = null; // 自動非表示タイマーをキャンセル
         }
-        const toastId = 'hgf-toast-mei';
+        const toastId = 'spitch-toast';
         const existingToast = document.getElementById(toastId);
         if (existingToast) {
             existingToast.remove();
@@ -1350,7 +1414,7 @@
 
         // サンプルボタンが合成中・再生中だった場合もリセット
         const sampleButton = document.getElementById('mei-sample-play-btn');
-        if(sampleButton && sampleButton.textContent === '🔇 再生停止') {
+        if (sampleButton && sampleButton.textContent === '🔇 再生停止') {
             resetSampleButtonState(sampleButton);
         } else if (sampleButton && sampleButton.textContent === '⏰ 合成中...') {
             resetSampleButtonState(sampleButton);
@@ -1360,11 +1424,9 @@
     // 停止処理
     function stopConversion() {
         if (isPlaying || currentXhrs.length > 0) {
-            // 再生中または合成中の停止
-            resetOperation(true);
+            resetOperation(true); // 再生中または合成中の停止
         } else {
-            // 念のためリセット
-            resetOperation();
+            resetOperation(); // 念のためリセット
         }
     }
 
@@ -1372,7 +1434,7 @@
      * 最後のGeminiの回答パネルから、読み上げ用のテキストを抽出する。
      * @returns {string} - 抽出されたクリーンなテキスト。処理中断時は空文字列。
      */
-    function getGeminiAnswerText(){
+    function getGeminiAnswerText() {
         let allResponseContainers = [];
         for (const selector of SELECTORS_RESPONSE) {
             const containers = document.querySelectorAll(selector.container);
@@ -1392,6 +1454,14 @@
         // DOMを汚染しないようにクローンを作成
         const clonedContainer = textContainer.cloneNode(true);
 
+        // 応答生成中｜停止のステータスチェック
+        const isInterrupted = SELECTORS_TO_INTERRUPT.some(selector => {
+            return clonedContainer.querySelector(selector);
+        });
+        if (isInterrupted) {
+            return '';
+        }
+
         // すべての除去対象要素をループで探し、除去する（グローバル配列を使用！）
         SELECTORS_TO_REMOVE.forEach(selector => {
             const elements = clonedContainer.querySelectorAll(selector);
@@ -1399,7 +1469,7 @@
         });
 
         // 🌟 V4.4 デバッグコードの追加: 「お待ちください」検出時にDOM構造を出力
-/*
+        /*
         const rawText = clonedContainer.innerText || '';
         if (rawText.includes('お待ちください')) {
             console.warn("🔊 デバッグ情報: 「お待ちください」が検出されました。この時点のDOM構造を出力します。");
@@ -1422,7 +1492,7 @@
             }
             console.log("【親階層情報】(5階層まで): " + parentInfo.slice(0, -3));
         }
-*/
+        */
 
         let text = clonedContainer.innerText || '';
 
@@ -1437,13 +1507,6 @@
         });
         text = text.replace(/(\s{2,})/g, ' ').trim();
 
-        // 応答生成中｜停止のステータスチェック
-        const isInterrupted = SELECTORS_TO_INTERRUPT.some(selector => {
-            return clonedContainer.querySelector(selector);
-        });
-        if (isInterrupted) {
-            return '';
-        }
         // テキストコンテンツによる中断チェック
         if (text.startsWith('お待ちください')) {
             return '';
@@ -1453,7 +1516,6 @@
         }
 
         // 定型文・NGワードの除去
-        // 配列内の正規表現を一つずつ適用し、テキスト全体から除去するわ
         TEXTS_TO_REMOVE_REGEX.forEach(regexString => {
             // gフラグ（グローバル）を追加し、全文からマッチしたものを全て除去するわ
             const regex = new RegExp(regexString, 'gi');
@@ -1506,7 +1568,9 @@
         const xhr = GM_xmlhttpRequest({
             method: 'POST',
             url: synthesizeUrl,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             data: JSON.stringify(audioQuery),
             responseType: 'blob',
             onload: async function(response) {
@@ -1526,7 +1590,10 @@
                             const cacheKey = 'sample_rvc'; // サンプル再生用のシンプルなキー
 
                             // 2. RVC変換を実行
-                            const { promise: rvcConversionPromise, xhr: rvcXhr } = convertRvcChunk(arrayBuffer, currentConfig, cacheKey);
+                            const {
+                                promise: rvcConversionPromise,
+                                xhr: rvcXhr
+                            } = convertRvcChunk(arrayBuffer, currentConfig, cacheKey);
                             currentXhrs.push(rvcXhr); // RVC XHRを一時的に保存
 
                             const rvcBase64Data = await rvcConversionPromise; // 変換が完了するまで待つわ
@@ -1540,7 +1607,9 @@
                             for (let i = 0; i < binary.length; i++) {
                                 array[i] = binary.charCodeAt(i);
                             }
-                            playableBlob = new Blob([array], { type: 'audio/wav' });
+                            playableBlob = new Blob([array], {
+                                type: 'audio/wav'
+                            });
                             isRvcSuccess = true;
                             showToast('RVC変換完了！再生するわ！', true);
 
@@ -1634,7 +1703,9 @@
         const xhr = GM_xmlhttpRequest({
             method: 'POST',
             url: `${audioQueryUrl}?${queryParams.toString()}`,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             onload: function(response) {
                 currentXhrs = currentXhrs.filter(item => item !== xhr); // 完了したXHRを配列から削除
                 if (response.status === 200) {
@@ -1658,6 +1729,59 @@
         currentXhrs.push(xhr); // XHRオブジェクトを保存
     }
 
+    // ========= Download =========
+
+    /**
+     * Blobデータを指定したファイル名でダウンロードする
+     * @param {Blob} blob Blobオブジェクト
+     * @param {string} filename ダウンロードファイル名
+     */
+    function downloadBlob(blob, filename) {
+        // 1. BlobからURLを生成 (メモリ上のオブジェクトを参照する一時的なURL)
+        const url = URL.createObjectURL(blob);
+
+        // 2. 仮想的なアンカー（<a>）要素を作成
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+
+        // 3. クリックイベントを発生させてダウンロード開始
+        document.body.appendChild(a);
+        a.click();
+
+        // 4. 後処理（メモリ解放と要素削除）
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // console.log(`${filename} のダウンロードを開始しました。`);
+    }
+
+    // ダウンロード
+    async function startVoiceDownload() {
+        try {
+            let text = getGeminiAnswerText();
+            if (!text || text.trim() === '') {
+                // showToast('回答テキストが取得できなかったか、全て除去されたわ...', false);
+                return;
+            }
+
+            // キャッシュチェック
+            const currentConfig = GM_getValue(STORE_KEY, config);
+            const requestCacheKey = generateCacheKey(text, currentConfig);
+            const cachedHash = GM_getValue(LAST_CACHE_HASH, null);
+
+            if (requestCacheKey === cachedHash) {
+                const cachedData = GM_getValue(LAST_CACHE_DATA, null); // Base64 URI
+                if (cachedData) {
+                    const wavBlob = base64UriToBlob(cachedData, 'audio/wav'); // 変換
+                    downloadBlob(wavBlob, `neon_spitch_${getFormattedDateTime()}.wav`);
+                }
+            }
+        } catch (e) {
+            console.error("[Cache Download] ダウンロード処理でエラーが発生しました:", e);
+        }
+    }
+
     // ========= RVC連携用ヘルパー関数 =========
 
     /**
@@ -1674,6 +1798,43 @@
         }
         // Base64に変換して返すわ
         return btoa(binary);
+    }
+
+    /**
+     * Base64 URI (またはプレーンなBase64文字列) を Blob オブジェクトに変換する
+     * @param {string} base64WavData - Base64 URIまたはBase64文字列
+     * @param {string} defaultMimeType - Base64 URIにMIMEタイプがない場合のデフォルト (例: 'audio/wav')
+     * @returns {Blob} Blobオブジェクト
+     */
+    function base64UriToBlob(base64WavData, defaultMimeType = 'audio/wav') {
+        let base64 = base64WavData;
+        let mimeType = defaultMimeType;
+
+        // 1. Data URIヘッダーの処理 (Data URI形式: data:MIME/TYPE;base64,DATA)
+        if (base64.startsWith('data:')) {
+            const parts = base64.split(',');
+            base64 = parts[1];
+
+            // ヘッダーからMIMEタイプを抽出
+            const header = parts[0];
+            const match = header.match(/:(.*?)(;|$)/);
+            if (match && match[1]) {
+                mimeType = match[1];
+            }
+        }
+
+        // 2. Base64デコードとBlob生成
+        const binary = atob(base64);
+        const len = binary.length;
+        const array = new Uint8Array(len);
+
+        for (let i = 0; i < len; i++) {
+            array[i] = binary.charCodeAt(i);
+        }
+
+        return new Blob([array.buffer], {
+            type: mimeType
+        });
     }
 
     // ========= RVC連携 音声合成関数 =========
@@ -1701,7 +1862,7 @@
         // RVC APIのJSONボディを作成
         const rvcRequestBody = {
             data: [
-                currentConfig.rvcNumber,       // 00. 話者ID (0～109) [0]
+                currentConfig.rvcNumber,       // 00. 話者ID (0～112) [0]
                 null,                          // 01. 元音声のファイルパス（base64で送るのでなし）
                 currentConfig.rvcPitch,        // 02. ピッチシフト (-12～12) [12]
                 inputAudioBase64,              // 03. 変換元の音声データ（Base64 URI文字列を直接挿入！）
@@ -1722,7 +1883,9 @@
                     method: 'POST',
                     url: convertUrl,
                     data: JSON.stringify(rvcRequestBody),
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     responseType: 'json',
                     timeout: VOICEVOX_TIMEOUT_MS, // グローバル定数を使用
                     onload: (response) => {
@@ -1783,7 +1946,7 @@
             // エラー時にXHRリストが残っている可能性があるため、クリーンアップするわ
             currentXhrs.length = 0;
             updateButtonState();
-            console.error('[RVC Conversion Error]', error);
+            // console.error('[RVC Conversion Error]', error);
             throw error; // 呼び出し元にエラーを再スロー
         }
     }
@@ -1807,7 +1970,7 @@
         const convertUrl = `${currentConfig.rvcApiUrl.replace(/\/$/, '')}/run/infer_convert`;
         const rvcRequestBody = {
             data: [
-                currentConfig.rvcNumber,       // 00. 話者ID (0～109) [0]
+                currentConfig.rvcNumber,       // 00. 話者ID (0～112) [0]
                 null,                          // 01. 元音声のファイルパス（base64で送るのでなし）
                 currentConfig.rvcPitch,        // 02. ピッチシフト (-12～12) [12]
                 inputAudioBase64,              // 03. 変換元の音声データ（Base64 URI文字列を直接挿入！）
@@ -1873,7 +2036,10 @@
                 },
             });
         });
-        return { promise, xhr }; // PromiseとXHRオブジェクトを一緒に返すわ
+        return {
+            promise,
+            xhr
+        }; // PromiseとXHRオブジェクトを一緒に返すわ
     }
 
     /**
@@ -1919,10 +2085,6 @@
                     throw new Error('RVC Synthesis Aborted by User Request');
                 }
 
-                // 🚨【RVC修正点２】 isPlaying/isAutoPlayのチェックは不要になるけど、念のため isPlaying のみ残すか、削除するわ。
-                // 確実に isConversionAborted で抜けるようにするため、このブロックを削除し、上記のチェックに統合するわ。
-                // if (!isPlaying && !isAutoPlay) { ... break; } は削除
-
                 if (!isPlaying) showToast(`WAVデータを生成中... （${text.length}文字）[${i + 1}/${totalChunks}]`, null);
                 console.log(`[VOICEVOX|RVC] [${getFormattedDateTime()}] WAVデータを生成中... (${i + 1}/${totalChunks})`);
 
@@ -1931,15 +2093,24 @@
                 try {
                     // VOICEVOX Query
                     const audioQueryUrl = `${currentConfig.apiUrl}/audio_query`;
-                    const queryParams = new URLSearchParams({ text: chunk, speaker: currentConfig.speakerId });
+                    const queryParams = new URLSearchParams({
+                        text: chunk,
+                        speaker: currentConfig.speakerId
+                    });
                     const audioQuery = await new Promise((resolve, reject) => {
                         const xhr = GM_xmlhttpRequest({
-                            method: 'POST', url: `${audioQueryUrl}?${queryParams.toString()}`,
-                            headers: { 'Content-Type': 'application/json' },
+                            method: 'POST',
+                            url: `${audioQueryUrl}?${queryParams.toString()}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
                             timeout: VOICEVOX_TIMEOUT_MS,
                             onload: (response) => {
-                                if (response.status === 200) { resolve(JSON.parse(response.responseText)); }
-                                else { reject(`VOICEVOX Query 失敗 (Status: ${response.status})`); }
+                                if (response.status === 200) {
+                                    resolve(JSON.parse(response.responseText));
+                                } else {
+                                    reject(`VOICEVOX Query 失敗 (Status: ${response.status})`);
+                                }
                             },
                             onerror: () => reject('VOICEVOX Query 接続エラー'),
                             ontimeout: () => reject('VOICEVOX Query タイムアウト')
@@ -1949,17 +2120,25 @@
 
                     // VOICEVOX Synthesis
                     const synthesisUrl = `${currentConfig.apiUrl}/synthesis`;
-                    const synthesisParams = new URLSearchParams({ speaker: currentConfig.speakerId });
+                    const synthesisParams = new URLSearchParams({
+                        speaker: currentConfig.speakerId
+                    });
                     voicevoxArrayBuffer = await new Promise((resolve, reject) => {
                         const xhr = GM_xmlhttpRequest({
-                            method: 'POST', url: `${synthesisUrl}?${synthesisParams.toString()}`,
-                            headers: { 'Content-Type': 'application/json' },
+                            method: 'POST',
+                            url: `${synthesisUrl}?${synthesisParams.toString()}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
                             responseType: 'arraybuffer',
                             data: JSON.stringify(audioQuery),
                             timeout: VOICEVOX_TIMEOUT_MS,
                             onload: (response) => {
-                                if (response.status === 200) { resolve(response.response); }
-                                else { reject(`VOICEVOX Synthesis 失敗 (Status: ${response.status})`); }
+                                if (response.status === 200) {
+                                    resolve(response.response);
+                                } else {
+                                    reject(`VOICEVOX Synthesis 失敗 (Status: ${response.status})`);
+                                }
                             },
                             onerror: () => reject('VOICEVOX Synthesis 接続エラー'),
                             ontimeout: () => reject('VOICEVOX Synthesis タイムアウト')
@@ -1969,7 +2148,7 @@
 
                 } catch (error) {
                     // VOICEVOXのQuery/Synthesis失敗は致命的
-                    console.error('[VOICEVOX|RVC] VOICEVOX処理中にエラー発生:', error);
+                    // console.error('[VOICEVOX|RVC] VOICEVOX処理中にエラー発生:', error);
                     throw error; // 外側のtry...catchに渡す
                 }
 
@@ -1978,28 +2157,34 @@
                 updateButtonState();
 
                 // --- 2. RVC Conversion / Fallback ---
-                let audioBlobToPlay = null; // 再生用Blobを格納する変数をループ内で宣言し直す
+                let audioBlobToPlay = null;   // 再生用Blobを格納する変数をループ内で宣言し直す
                 let chunkResultBuffer = null; // 最終的に再生/キャッシュに使うArrayBuffer
 
                 if (rvcFailed) {
                     // RVCが既に失敗している場合は、VOICEVOXオリジナル音声で再生（フォールバック）
-                    console.warn('[RVC Fallback] RVC変換が失敗中のため、VOICEVOXのオリジナル音声で代替再生します。');
-                    audioBlobToPlay = new Blob([voicevoxArrayBuffer], { type: 'audio/wav' });
+                    // console.warn('[RVC Fallback] RVC変換が失敗中のため、VOICEVOXのオリジナル音声で代替再生します。');
+                    audioBlobToPlay = new Blob([voicevoxArrayBuffer], {
+                        type: 'audio/wav'
+                    });
                 } else {
                     // RVC変換を試みる
                     try {
                         // `convertRvcAudioToArrayBuffer` を呼び出し、ArrayBufferを取得するわ
                         chunkResultBuffer = await convertRvcAudioToArrayBuffer(voicevoxArrayBuffer, currentConfig);
                         // ArrayBufferをBlobに変換して再生用変数に格納
-                        audioBlobToPlay = new Blob([chunkResultBuffer], { type: 'audio/wav' });
+                        audioBlobToPlay = new Blob([chunkResultBuffer], {
+                            type: 'audio/wav'
+                        });
                     } catch (rvcError) {
                         console.error('[RVC Conversion] RVC変換エラー発生:', rvcError);
                         rvcFailed = true; // RVC失敗フラグを立てる
-                        showToast('😭 RVC変換に失敗！VOICEVOXのオリジナル音声に切り替えるわ。', false);
+                        // showToast('😭 RVC変換に失敗！VOICEVOXのオリジナル音声に切り替えるわ。', false);
 
                         // 失敗したこのチャンクは、VOICEVOXオリジナル音声で再生
                         console.warn('[RVC Fallback] RVC変換に失敗したため、VOICEVOXのオリジナル音声で代替再生を試みます。');
-                        audioBlobToPlay = new Blob([voicevoxArrayBuffer], { type: 'audio/wav' });
+                        audioBlobToPlay = new Blob([voicevoxArrayBuffer], {
+                            type: 'audio/wav'
+                        });
                     }
                 }
 
@@ -2026,7 +2211,9 @@
                     offset += buffer.byteLength;
                 }
 
-                const finalBlob = new Blob([combinedArray], { type: 'audio/wav' });
+                const finalBlob = new Blob([combinedArray], {
+                    type: 'audio/wav'
+                });
                 await saveCache(cacheKey, finalBlob, 'RVC');
             }
         } catch (error) {
@@ -2034,7 +2221,7 @@
             console.error('[VOICEVOX|RVC] 連携処理中に致命的なエラー発生:', error);
             const errorMessage = (typeof error === 'string') ? error : error.message;
             const shortErrorMessage = errorMessage.replace(/\s*\(Status:.*?\)/g, '');
-            // showToast(`😭 連携失敗: ${shortErrorMessage}`, false);
+            showToast(`😭 連携失敗: ${shortErrorMessage}`, false);
             stopPlayback(true); // エラー時は強制停止してボタンをリセットするわ
         }
         // finally ブロックは、enqueueChunkForPlayback の再生キューが空になった時に
@@ -2049,9 +2236,14 @@
             // GM_xmlhttpRequest は Promise を返さないので、手動でラップするわ
             const response = await new Promise((resolve, reject) => {
                 GM_xmlhttpRequest({
-                    method: 'POST', url: statusUrl,
-                    data: JSON.stringify({ data: [] }), // 引数は空でOKだけど、GradioのAPI形式に合わせるわ
-                    headers: { "Content-Type": "application/json" },
+                    method: 'POST',
+                    url: statusUrl,
+                    data: JSON.stringify({
+                        data: []
+                    }), // 引数は空でOKだけど、GradioのAPI形式に合わせるわ
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     responseType: 'json',
                     timeout: 5000, // 高速なAPIだからタイムアウトは短くて大丈夫よ
                     onload: (res) => resolve(res),
@@ -2072,7 +2264,7 @@
             }
         } catch (error) {
             // 接続エラーやAPIエラー時は、安全のためロードを続行する（nullを返す）
-            console.warn('[RVC Check] ⚠️ モデル状態チェックAPIにアクセスできませんでした。エラー:', error.message);
+            // console.warn('[RVC Check] ⚠️ モデル状態チェックAPIにアクセスできませんでした。エラー:', error.message);
         }
         return null;
     }
@@ -2122,16 +2314,19 @@
             const loadPromise = new Promise((resolve, reject) => {
                 const rvcRequestBody = {
                     data: [
-                        requiredModel,                     // 0. RVC モデルファイルパス
-                        currentConfig.rvcArtefact,         // 1. rvcArtefact
-                        currentConfig.rvcArtefact,         // 2. rvcArtefact
+                        requiredModel,             // 0. RVC モデルファイルパス
+                        currentConfig.rvcArtefact, // 1. rvcArtefact
+                        currentConfig.rvcArtefact, // 2. rvcArtefact
                     ]
                 };
 
                 const xhr = GM_xmlhttpRequest({
-                    method: 'POST', url: loadUrl,
+                    method: 'POST',
+                    url: loadUrl,
                     data: JSON.stringify(rvcRequestBody),
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     responseType: 'json',
                     timeout: 30000, // モデルロードなので長めに30秒
                     onload: (response) => {
@@ -2207,13 +2402,18 @@
 
                 // --- 1. audio_query (Text -> Query JSON) ---
                 const audioQuery = await new Promise((resolve, reject) => {
-                    const queryParams = new URLSearchParams({ text: chunk, speaker: speakerId });
+                    const queryParams = new URLSearchParams({
+                        text: chunk,
+                        speaker: speakerId
+                    });
                     const audioQueryUrl = `${apiUrl}/audio_query?${queryParams.toString()}`;
 
                     const xhr = GM_xmlhttpRequest({
                         method: 'POST',
                         url: audioQueryUrl,
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         timeout: VOICEVOX_TIMEOUT_MS, // タイムアウト設定
                         onload: (response) => {
                             currentXhrs = currentXhrs.filter(item => item !== xhr); // 完了したら削除！
@@ -2242,7 +2442,9 @@
                     const xhr = GM_xmlhttpRequest({ // XHRをローカル変数で受け取る
                         method: 'POST',
                         url: synthesizeUrl,
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         data: JSON.stringify(audioQuery),
                         responseType: 'blob',
                         timeout: VOICEVOX_TIMEOUT_MS, // タイムアウト設定
@@ -2312,7 +2514,7 @@
                 shortErrorMessage = `致命的エラー (500)！メモリ不足の可能性あり。長文合成のチャンクサイズを${DEFAULT_CHUNK_SIZE}文字以下に調整してみて！`;
             }
 
-            // showToast(`😭 連携失敗: ${shortErrorMessage}`, false);
+            showToast(`😭 連携失敗: ${shortErrorMessage}`, false);
 
             throw error;
         }
@@ -2439,14 +2641,7 @@
 
         try {
             // Base64 URIからBlobオブジェクトを生成する
-            const base64 = base64WavData.split(',')[1];
-            const binary = atob(base64);
-            const array = [];
-            for (let i = 0; i < binary.length; i++) {
-                array.push(binary.charCodeAt(i));
-            }
-            // Blobオブジェクトを直接生成！
-            const cachedBlob = new Blob([new Uint8Array(array)], { type: 'audio/wav' });
+            const cachedBlob = base64UriToBlob(base64WavData, 'audio/wav');
             // playAudioに渡すメッセージを設定（自動再生ブロック時はplayAudio内で別のメッセージに変わる）
             const successMessage = '🔊 キャッシュから再生するよ♪';
             // 新しい playAudio 関数を呼び出す！
@@ -2471,7 +2666,10 @@
         if (isPlaying) {
             if (isAutoPlay) {
                 // 自動再生時は再生中の音声を強制停止して、新しい合成を優先
-                if (currentAudio) { currentAudio.pause(); currentAudio = null; } // Audio Elementを停止
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                } // Audio Elementを停止
                 if (audioContext && audioContext.state !== 'closed') {
                     audioContext.close();
                     audioContext = null;
@@ -2490,7 +2688,11 @@
             if (isAutoPlay) {
                 // 新しい自動再生が来たら、前の合成処理をキャンセルして、新しい合成を優先する
                 console.log('[ABORT] 新しい自動再生が検出されたため、前の合成処理をキャンセルします。');
-                currentXhrs.forEach(xhr => { if (xhr && xhr.readyState !== 4) { xhr.abort(); } });
+                currentXhrs.forEach(xhr => {
+                    if (xhr && xhr.readyState !== 4) {
+                        xhr.abort();
+                    }
+                });
                 currentXhrs = [];
             } else {
                 // 手動合成中に別の手動合成が来た場合はブロック
@@ -2510,7 +2712,6 @@
 
         console.log(`[VOICEVOX|RVC] [${getFormattedDateTime()}] Geminiの回答を取得中...`);
         let text = getGeminiAnswerText();
-
         if (!text || text.trim() === '') {
             showToast('回答テキストが取得できなかったか、全て除去されたわ...', false);
             return;
@@ -2561,8 +2762,8 @@
             }
         } catch (error) {
             // RVC/VOICEVOXの内部処理でハンドルされなかった、予期せぬ致命的なエラーをキャッチ
-            console.error('[SYNTHESIS_FATAL_ERROR] 予期せぬ合成処理エラー:', error);
-            const shortMessage = (typeof error === 'string') ? error : (error.message || '不明なエラー');
+            // console.error('[SYNTHESIS_FATAL_ERROR] 予期せぬ合成処理エラー:', error);
+            // const shortMessage = (typeof error === 'string') ? error : (error.message || '不明なエラー');
             // showToast(`😭 致命的な合成エラー: ${shortMessage.substring(0, 30)}...`, false);
             resetOperation(true); // XHRを確実に中止して状態をリセットするわ！
         } finally {
@@ -2579,7 +2780,7 @@
         // Web Audio APIのコンテキストを作成・再利用するわ。
         if (!audioContext) {
             // NOTE: ブラウザによってWebkitを使う場合があるわ
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioContext = new(window.AudioContext || window.webkitAudioContext)();
         }
 
         // 状態をリセットするわ。
@@ -2646,7 +2847,10 @@
                     const arrayBuffer = await chunkBlob.arrayBuffer();
 
                     // ⚠️ convertRvcChunkがPromiseとXHRを返すわ
-                    const { promise: rvcConversionPromise, xhr } = convertRvcChunk(arrayBuffer, currentConfig, cacheKey + `_chunk_${chunkIndex}`);
+                    const {
+                        promise: rvcConversionPromise,
+                        xhr
+                    } = convertRvcChunk(arrayBuffer, currentConfig, cacheKey + `_chunk_${chunkIndex}`);
 
                     // RVC変換のXHRをキャンセルできるように記録
                     currentXhrs.push(xhr);
@@ -2656,13 +2860,7 @@
                     currentXhrs.pop(); // 完了したのでXHRをリストから削除するわ
 
                     // Base64から再生用のBlobを生成するわ
-                    const base64 = rvcBase64Data.split(',')[1];
-                    const binary = atob(base64);
-                    const array = new Uint8Array(binary.length);
-                    for (let i = 0; i < binary.length; i++) {
-                        array[i] = binary.charCodeAt(i);
-                    }
-                    playableBlob = new Blob([array], { type: 'audio/wav' });
+                    playableBlob = base64UriToBlob(rvcBase64Data, 'audio/wav');
                 } catch (rvcChunkError) {
                     console.error('[Streaming] ❌ RVCチャンク変換に失敗:', rvcChunkError);
                     // `synthesizeRvcAudio` の rvcFailed フラグを立てるには、そちらで `rvcFailed = true` に設定する必要があるわ
@@ -2680,7 +2878,7 @@
                 }
             } else {
                 // RVCを使わない場合は、オリジナルのBlobをそのまま使うわ。
-                console.log(`[Streaming] 🔊 RVC無効。チャンク ${chunkIndex} をキューに追加するわ。`);
+                // console.log(`[Streaming] 🔊 RVC無効。チャンク ${chunkIndex} をキューに追加するわ。`);
             }
 
             // --- 2. BlobをArrayBufferに変換するわ ---
@@ -2715,9 +2913,9 @@
 
             // 最初のチャンクが再生される直前に、状態を「再生中」にする
             if (!isPlaying && audioContext.state === 'running') {
-                const successMessage = currentConfig.rvcEnabled && chunkBlob === playableBlob
-                    ? '😭 RVC連携失敗！VOICEVOXのオリジナル音声で代替再生中よ！'
-                    : '🔊 素敵な声で再生スタートよ！';
+                const successMessage = currentConfig.rvcEnabled && chunkBlob === playableBlob ?
+                    '😭 RVC連携失敗！VOICEVOXのオリジナル音声で代替再生中よ！' :
+                    '🔊 素敵な声で再生スタートよ！';
                 showToast(successMessage, true);
                 isPlaying = true;
                 updateButtonState(); // ボタンを「停止」に切り替えるわ！
@@ -2839,7 +3037,9 @@
             finalDataOffset += dataChunk.byteLength;
         }
 
-        return new Blob([finalBuffer], { type: 'audio/wav' });
+        return new Blob([finalBuffer], {
+            type: 'audio/wav'
+        });
     }
 
     /**
@@ -3015,6 +3215,11 @@
         const icon = document.getElementById('convertButtonIcon');
         const text = document.getElementById('convertButtonText');
         if (!icon || !text) return;
+
+        // 現在の状態を保存しておき、不要な DOM 操作を避ける
+        const currentText = text.textContent.trim();
+        const currentBg = button.style.backgroundColor;
+
         button.removeEventListener('click', stopPlayback);
         button.removeEventListener('click', resumeContext);
         button.removeEventListener('click', stopConversion);
@@ -3022,36 +3227,67 @@
 
         // --- 状態ごとの設定 ---
         if (isPlaying) {
-            icon.className = 'fa-solid fa-comment-slash';
-            text.textContent = ' 停止';
-            button.style.backgroundColor = '#dc3545';
+            if (currentText !== '停止') {
+                icon.className = 'fa-solid fa-comment-slash';
+                text.textContent = ' 停止';
+                button.style.backgroundColor = '#dc3545';
+            }
             button.addEventListener('click', stopPlayback);
             // console.log(`[Debug] [${getFormattedDateTime()}] 停止`);
         } else if (isPause && audioContext) {
-            icon.className = 'fa-solid fa-paw';
-            text.textContent = ' 待機中...';
-            button.style.backgroundColor = '#e67e22';
+            if (currentText !== '待機中...') {
+                icon.className = 'fa-solid fa-paw';
+                text.textContent = ' 待機中...';
+                button.style.backgroundColor = '#e67e22';
+            }
             button.addEventListener('click', resumeContext);
-            //console.log(`[Debug] [${getFormattedDateTime()}] 待機中`);
+            // console.log(`[Debug] [${getFormattedDateTime()}] 待機中`);
         } else if (isConversionStarting || currentXhrs.length > 0) {
-            icon.className = 'fa-solid fa-sync-alt fa-arrows-spin';
-            text.textContent = ' 合成中...';
-            button.style.backgroundColor = '#6c757d';
+            if (currentText !== '合成中...') {
+                icon.className = 'fa-solid fa-sync-alt fa-arrows-spin';
+                text.textContent = ' 合成中...';
+                button.style.backgroundColor = '#6c757d';
+            }
             button.addEventListener('click', stopConversion);
-            //console.log(`[Debug] [${getFormattedDateTime()}] 合成中`);
+            // console.log(`[Debug] [${getFormattedDateTime()}] 合成中`);
         } else {
-            icon.className = 'fa-solid fa-comment-dots';
-            text.textContent = ' 再生';
-            button.style.backgroundColor = '#007bff';
+            if (currentText !== '再生') {
+                icon.className = 'fa-solid fa-comment-dots';
+                text.textContent = ' 再生';
+                button.style.backgroundColor = '#007bff';
+            }
             button.addEventListener('click', startConversion);
-            //console.log(`[Debug] [${getFormattedDateTime()}] 再生`);
+            // console.log(`[Debug] [${getFormattedDateTime()}] 再生`);
         }
-        button.disabled = false;
+        // button.disabled = false;
+
+        const dlButton = document.getElementById('downloadButton');
+        if (dlButton) {
+            const cachedData = GM_getValue(LAST_CACHE_DATA, null);
+            const shouldBeDisabled = !cachedData;
+            if (dlButton.disabled !== shouldBeDisabled) {
+                dlButton.disabled = shouldBeDisabled;
+            }
+            const dlCurrentBg = dlButton.style.backgroundColor;
+
+            if (cachedData) {
+                const targetBg = '#007bff';
+                if (dlCurrentBg !== targetBg) {
+                    dlButton.style.backgroundColor = targetBg;
+                }
+            } else {
+                // 無効にする場合（GM_addStyleのdisabledセレクタに任せるため、style属性を空にする）
+                if (dlCurrentBg !== '') {
+                    dlButton.style.backgroundColor = '';
+                }
+            }
+        }
     }
 
     // ボタンを追加するDOM操作の初期化処理
     function addConvertButton() {
         const buttonId = 'convertButton';
+        const dlButtonId = 'downloadButton';
         const wrapperId = 'convertButtonWrapper';
         let button = document.getElementById(buttonId);
         let wrapper = document.getElementById(wrapperId);
@@ -3071,26 +3307,84 @@
         }
 
         let lastButton = null;
-        const allButtons = lastAnswerPanel.querySelectorAll(footerSelector+':not(#' + buttonId + ')');
+        const allButtons = lastAnswerPanel.querySelectorAll(footerSelector + ':not(#' + buttonId + '):not(#' + dlButtonId + ')');
         lastButton = allButtons[allButtons.length - 1];
         if (!lastButton) {
+            return;
+        }
+
+        // 最適化ロジック（不要な場合に再配置と再作成をスキップ）
+        if (button && wrapper && lastButton.nextElementSibling === wrapper) {
+            // ラッパーが正しい位置にあるため、DOM操作をスキップして状態更新へ
+            let iconSpan = document.getElementById('convertButtonIcon');
+            let textSpan = document.getElementById('convertButtonText');
+
+            if (!iconSpan || !textSpan) {
+                // アイコン/テキストがない場合、再作成（このパスに入る可能性は低いが安全策）
+                button.textContent = '';
+                iconSpan = document.createElement('span');
+                iconSpan.id = 'convertButtonIcon';
+                textSpan = document.createElement('span');
+                textSpan.id = 'convertButtonText';
+                button.appendChild(iconSpan);
+                button.appendChild(textSpan);
+                resetOperation();
+            } else {
+                updateButtonState();
+            }
             return;
         }
 
         if (lastButton) {
             if (wrapper && lastButton.nextElementSibling !== wrapper) {
                 wrapper.remove();
+                wrapper = null;
             }
             if (!wrapper) {
                 // ラッパーを作成（Flex Itemとして機能させるため）
                 wrapper = document.createElement('div');
                 wrapper.id = wrapperId;
 
+                // 再生ボタンの作成
                 button = document.createElement('button');
                 button.id = buttonId;
                 // v3.5のカスタムCSSを適用
-                button.style.cssText = 'padding: 2px 4px; background-color: #007bff; color: white; border: none; cursor: pointer; margin-left: 4px;';
+                button.style.cssText = 'padding: 2px 4px; background-color: #007bff; color: white; border: none; cursor: pointer; margin-left: 4px; border-radius: 16px; hover:scale-105';
                 wrapper.appendChild(button);
+
+                // ダウンロードボタンの作成
+                const currentConfig = GM_getValue(STORE_KEY, DEFAULT_CONFIG);
+                if (currentConfig.dlBtnEnabled) {
+                    let dlButton = document.createElement('button');
+                    dlButton.id = dlButtonId;
+                    dlButton.disabled = true;
+
+                    // ダウンロードボタンのスタイル設定
+                    dlButton.style.cssText = `
+                        padding: 2px 4px;
+                        background-color: #007bff;
+                        color: white;
+                        border: none;
+                        cursor: pointer;
+                        margin-left: 8px;
+                        width: 28px; /* 丸くするために固定サイズ */
+                        height: 28px;
+                        border-radius: 50%; /* 丸くする */
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    `;
+
+                    // アイコンを追加
+                    const dlIconSpan = document.createElement('span');
+                    dlIconSpan.className = 'fa-solid fa-download';
+                    dlIconSpan.id = 'downloadButtonIcon';
+                    dlButton.appendChild(dlIconSpan);
+
+                    // イベントリスナーを追加
+                    dlButton.addEventListener('click', startVoiceDownload);
+                    wrapper.appendChild(dlButton);
+                }
             } else {
                 button = document.getElementById(buttonId);
                 if (!button) return;
@@ -3175,7 +3469,7 @@
         let allResponseContainers = null;
         let footerSelector = '';
         const observer = new MutationObserver(function(mutations, observer) {
-           // URLチェック: チャットページでない場合は、debouncerを起動せず即座に終了するわ
+            // URLチェック: チャットページでない場合は、debouncerを起動せず即座に終了するわ
             if (!isChatPage(window.location.href)) {
                 return; // DOM変更を無視して、何もしないで return するわ
             }
@@ -3228,7 +3522,10 @@
             }, DEBOUNCE_DELAY);
         });
 
-        const observerConfig = { childList: true, subtree: true };
+        const observerConfig = {
+            childList: true,
+            subtree: true
+        };
         observer.observe(TARGET_NODE, observerConfig);
 
         // 初回レンダリング現象対策
@@ -3269,15 +3566,20 @@
                 }
                 document.removeEventListener('click', clickHandler);
             };
-            document.addEventListener('click', clickHandler, { once: true, capture: true });
+            document.addEventListener('click', clickHandler, {
+                once: true,
+                capture: true
+            });
         }
     }
 
     // メニュー登録
     if (settingsMenuId) GM_unregisterMenuCommand(settingsMenuId);
     if (rvcSettingsMenuId) GM_unregisterMenuCommand(rvcSettingsMenuId);
+    if (DownloadMenuId) GM_unregisterMenuCommand(DownloadMenuId);
     settingsMenuId = GM_registerMenuCommand('🔊 VOICEVOX連携 設定', openSettings);
     rvcSettingsMenuId = GM_registerMenuCommand('🔊 RVC連携 設定', openRvcSettings);
+    DownloadMenuId = GM_registerMenuCommand('💾 ダウンロード', startVoiceDownload);
 
     const initialConfig = GM_getValue(STORE_KEY, config);
     if (!initialConfig.autoPlay) {

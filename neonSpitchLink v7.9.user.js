@@ -53,8 +53,7 @@
 
     // ========= グローバルな再生・操作制御変数 =========
     let currentAudio = null;
-    let currentXhr = null;              // 合成中のXHRを保持（中断用）
-    let currentXhrs = [];               // 合成中のXHRを配列として定義
+    let currentXhrs = [];               // 合成中のXHRを配列として定義（中断用）
     let isConversionStarting = false;   // 合成処理全体が開始したことを示すフラグ
     let isConversionAborted = false;    // 合成の中断要求があったかを示すフラグ
     let currentSpeakerNameXhr = null;   // スピーカー名取得用のXHR
@@ -62,10 +61,8 @@
     let isPause = false;
     let lastAutoPlayedText = '';        // 最後に自動再生したテキストをキャッシュ
     const MAX_RETRY_COUNT = 3;          // 最大リトライ回数
-    let playRetryCount = 0;             // 現在のリトライ回数
     let toastTimeoutId = null;
     let isRvcModelLoading = false;      // RVCモデル情報のロード中フラグ（排他制御用）
-    let rvcSettingsInitialized = false; // RVC設定 UI の初期化用
     const DEFAULT_CHUNK_SIZE = 100;     // 初期チャンクサイズ
     const VOICEVOX_TIMEOUT_MS = 60000;  // 60秒 VOICEVOX/RVCのXHR通信タイムアウト値（ミリ秒）
 
@@ -3122,9 +3119,6 @@
         const audioUrl = URL.createObjectURL(blob);
         currentAudio = new Audio(audioUrl);
 
-        // 現在の試行回数をグローバルに保持（stopPlaybackでのリセットのため）
-        playRetryCount = retryCount;
-
         // 再生終了時の処理（Promiseでラップして await で待機するわ）
         const audioEndedPromise = new Promise(resolve => {
             const audioEndedListener = () => {
@@ -3181,7 +3175,6 @@
 
             // 状態をリセット
             isPlaying = false;
-            playRetryCount = 0;
             updateButtonState();
             currentAudio = null;
         }

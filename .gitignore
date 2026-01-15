@@ -4,5 +4,4 @@ rvc-*/
 *m4a/
 *wav/
 *.wav
-*.code-workspace
 eslint*

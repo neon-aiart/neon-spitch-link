@@ -1,7 +1,7 @@
 archive/
-rvc-*
-!rvc-2.2.231006-fix/
+rvc-*/
+!rvc-*-fix/
 *m4a/
 *wav/
 *.wav
-*.code-workspace
+eslint*

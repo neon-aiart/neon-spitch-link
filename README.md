@@ -279,7 +279,12 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ## 📝 更新履歴 (Changelog)
 
 ### v7.9 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/blob/v7.9-dev/neonSpitchLink%20v7.9.user.js)]
+* ☑️ ライセンス変更
 * ✅ ダウンロードボタンを追加
+* ☑️ ボタンの再描画を最適化
+* ☑️ 中断したお返事も読み上げしない（SELECTORS_TO_REMOVEから '.stopped-draft-message', を削除）
+* ☑️ エラー時にトーストがでていない箇所の修正
+* ☑️ 重複 console error を整理
 
 ### v7.7 (Unreleased)
 * ☑️ AIモード/X(Grok)で監視ループが止まる現象を解消 > DEBOUNCE_DELAY = 200
@@ -322,9 +327,15 @@ This constitutes an **illegal act**, including infringement of copyright and por
 このユーザースクリプトのソースコードは、ねおんが著作権を保有しています。  
 The source code for this application is copyrighted by Neon.
 
-* **ライセンス**: **[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.ja)** です。（LICENSEファイルをご参照ください。）
-* **商用利用不可**: 個人での利用や改変、非営利の範囲内での再配布はOKです。**商用目的での利用はご遠慮ください**。  
-  **No Commercial Use**: Personal use, modification, and non-profit redistribution are permitted. **Please refrain from commercial use.**  
+* **ライセンス / License**: **[PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/)** です。（LICENSEファイルをご参照ください。）  
+  Licensed under PolyForm Noncommercial 1.0.0. (Please refer to the LICENSE file for details.)
+* **個人利用・非営利目的限定 / For Personal and Non-commercial Use Only**:
+  * 営利目的での利用、無断転載、クレジットの削除は固く禁じます。  
+    Commercial use, unauthorized re-uploading, and removal of author credits are strictly prohibited.
+* **再配布について / About Redistribution**:
+  * 本スクリプトを改変・配布（フォーク）する場合は、必ず元の作者名（ねおん）およびクレジット表記を維持してください。  
+    If you modify or redistribute (fork) this script, you MUST retain the original author's name (Neon) and all credit notations.  
+
 ※ ご利用は自己責任でお願いします。（悪用できるようなものではないですが、念のため！）
 
 ---
@@ -366,14 +377,15 @@ The source code for this application is copyrighted by Neon.
 
 ### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）
 
-* ✅ AIモード/X(Grok)でワンクリックしないと監視ループが止まってるいる（修正方法：DEBOUNCE_DELAYを200にする）
-* ✅ 中断したお返事も読み上げされてしまう（修正方法：SELECTORS_TO_REMOVEから '.stopped-draft-message', を削除）
-  
 * RVC連携のストリーミング再生キャッシュ保存後のキャッシュ再生で１つめしか再生されない(VOICEVOX側は正常)
-
 * 中断した後に勝手に再生が再開される
 * VOICEVOX接続エラー時にトーストがでていない
 * VOICEVOXへのフォールバック再生時にフォールバック再生のトーストがでてない
+
+（未確認）
+- チャンクがすべて終了した時点でまだ再生中なのにボタンが戻る
+- RVCで２回変換されている
+- サンプル再生：合成中で停止ボタンになる
 
 ---
 

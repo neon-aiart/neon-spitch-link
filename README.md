@@ -386,6 +386,7 @@ The source code for this application is copyrighted by Neon.
 - チャンクがすべて終了した時点でまだ再生中なのにボタンが戻る
 - RVCで２回変換されている
 - サンプル再生：合成中で停止ボタンになる
+
 ---
 
 ## 開発者 (Author)

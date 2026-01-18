@@ -2,8 +2,8 @@
 
 <img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="Meshi Art Sample" />
 
-**"AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。"**  
-**"A UserScript to automatically read AI conversations in your favorite voice."**
+**AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。**  
+**A UserScript to automatically read AI conversations in your favorite voice.**
 
 ➡️ [**いますぐインストール！**](#-インストール方法-installation-guide) (Skip to Installation)  
 💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)
@@ -272,12 +272,20 @@ This constitutes an **illegal act**, including infringement of copyright and por
   * If automatic playback or button placement is unstable in X (Grok) or Google AI Mode, please **manually change** `const DEBOUNCE_DELAY = 1000;` (found around line 174 of the script) to **200**.  
     **Note**: This change is currently in the testing phase. If successful, it will be officially applied in the next version.
 
+* fixed in v7.9
+
 ---
 
 ## 📝 更新履歴 (Changelog)
 
+### v7.9 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/blob/v7.9-dev/neonSpitchLink%20v7.9.user.js)]
+* ✅ ダウンロードボタンを追加
+
+### v7.7 (Unreleased)
+* ☑️ AIモード/X(Grok)で監視ループが止まる現象を解消 > DEBOUNCE_DELAY = 200
+
 ### v7.6 (Current Release)
-* ✅ **「ねおん すぴっち リンク」として正式公開。**
+* ✨ **「ねおん すぴっち リンク」として正式公開。**
 * ✅ Grokに対応 ( /grok.com )
 * ✅ XのGrokに対応 ( /x.com/i/grok* ) (サイドパネルは非対応)
 

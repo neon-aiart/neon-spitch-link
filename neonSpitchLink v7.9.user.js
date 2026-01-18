@@ -1542,11 +1542,6 @@
         text = text.replace(/```[a-z]*[\s\S]*?```|^\s*[#*]+\s/gim, ' ');
         // 2. その他のマークダウン記号の除去
         text = text.replace(/(\*{1,2}|_{1,2}|~{1,2}|#|\$|>|-|\[.*?\]\(.*?\)|`|\(|\)|\[|\]|<|>|\\|:|\?|!|;|=|\+|\|)/gim, ' ');
-        // 3. 連続する句読点や空白の調整
-        text = text.replace(/([\.\!\?、。？！]{2,})/g, function(match, p1) {
-            return p1.substring(0, 1);
-        });
-        text = text.replace(/(\s{2,})/g, ' ').trim();
 
         // テキストコンテンツによる中断チェック
         if (text.startsWith('お待ちください')) {
@@ -1565,7 +1560,7 @@
         });
 
         // 最終クリーンアップ: 連続する句読点や空白の調整
-        text = text.replace(/([\.\!\?、。？！]{2,})/g, function(match, p1) {
+        text = text.replace(/([.!?、。？！]{2,})/g, function(match, p1) {
             return p1.substring(0, 1);
         });
         // 連続する空白を1つにまとめ、前後の空白を除去（NGワード除去でできた連続空白を処理するわ）
@@ -2197,7 +2192,7 @@
 
                 } catch (error) {
                     // VOICEVOXのQuery/Synthesis失敗は致命的
-                    // console.error('[VOICEVOX|RVC] VOICEVOX処理中にエラー発生:', error);
+                    console.error('[VOICEVOX|RVC] VOICEVOX処理中にエラー発生:', error);
                     throw error; // 外側のtry...catchに渡す
                 }
 

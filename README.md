@@ -272,7 +272,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
   * If automatic playback or button placement is unstable in X (Grok) or Google AI Mode, please **manually change** `const DEBOUNCE_DELAY = 1000;` (found around line 174 of the script) to **200**.  
     **Note**: This change is currently in the testing phase. If successful, it will be officially applied in the next version.
 
-* fixed in v7.7 ～
+* fixed in v7.7 ～ (ChatGPTではv7.6のままのほうがよさそう)
 
 ---
 

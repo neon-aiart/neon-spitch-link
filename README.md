@@ -44,7 +44,9 @@ The **world's only**(As of the release date) UserScript that automatically reads
 <img src="neon-spitch-link info EN.png" alt="Infographic EN" width="100%">
 </details>  
 
-### 💎 機能と核心技術 (Features and Core Technology)  
+---
+
+## 💎 機能と核心技術 (Features and Core Technology)  
 
 このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**（公開時点）の UserScript です。
 

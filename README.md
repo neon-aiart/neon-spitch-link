@@ -1,28 +1,52 @@
-# 💬 ねおん すぴっち リンク (Neon Spitch Link) v7.6
+# 💬 ねおん すぴっち リンク (Neon Spitch Link) v7.6  
 
-<img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="Meshi Art Sample" />
+<img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="Meshi Art Sample" />  
 
 **AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。**  
-**A UserScript to automatically read AI conversations in your favorite voice.**
+**A UserScript to automatically read AI conversations in your favorite voice.**  
 
 ➡️ [**いますぐインストール！**](#-インストール方法-installation-guide) (Skip to Installation)  
-💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)
+💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)  
 
-⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)
+⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)  
 
-<br clear="right">
-
----
-
-## 🚀 概要 (Overview)
-
-GeminiやChatGPTなどの応答を、**Gemini / Open AI APIやPythonサーバーを一切使用せず**、VOICEVOXやRVCを使って**無制限かつ無料**で自動読み上げする**世界唯一**（公開時点）のUserScriptです。
-
-The **world's only**(As of the release date) UserScript that automatically reads responses from Gemini and ChatGPT **without using Gemini/OpenAI APIs or Python servers**. It utilizes VOICEVOX and RVC for **unlimited and free** voice conversion.
+<br clear="right">  
 
 ---
 
-## 💎 機能と核心技術 (Features and Core Technology)
+## 🚀 概要 (Overview)  
+
+GeminiやChatGPTなどの応答を、**Gemini / Open AI APIやPythonサーバーを一切使用せず**、VOICEVOXやRVCを使って**無制限かつ無料**で自動読み上げする**世界唯一**（公開時点）のUserScriptです。  
+
+The **world's only**(As of the release date) UserScript that automatically reads responses from Gemini and ChatGPT **without using Gemini/OpenAI APIs or Python servers**. It utilizes VOICEVOX and RVC for **unlimited and free** voice conversion.  
+
+### 📺 紹介動画 (Overview Video)  
+
+<a href="https://youtu.be/qfQjXGMedZs">
+  <p align="center">
+    <img src="https://img.youtube.com/vi/qfQjXGMedZs/maxresdefault.jpg" alt="Neon Spitch Link Overview" style="width:100%; max-width:600px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    <br />
+    ▶️ クリックしてYouTubeで再生 (Click to play on YouTube)
+  </p>
+</a>  
+
+---
+
+## 🎨 インフォグラフィック (Infographic)  
+
+<details>
+<summary><b>🇯🇵 日本語版を表示 (View Japanese Version)</b></summary>
+<img src="neon-spitch-link info JP.png" alt="Infographic JP" width="100%">
+</details>  
+
+<details>
+<summary><b>🇺🇸 English Version (View English Version)</b></summary>
+<img src="neon-spitch-link info EN.png" alt="Infographic EN" width="100%">
+</details>  
+
+---
+
+## 💎 機能と核心技術 (Features and Core Technology)  
 
 このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**（公開時点）の UserScript です。
 
@@ -272,7 +296,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
   * If automatic playback or button placement is unstable in X (Grok) or Google AI Mode, please **manually change** `const DEBOUNCE_DELAY = 1000;` (found around line 174 of the script) to **200**.  
     **Note**: This change is currently in the testing phase. If successful, it will be officially applied in the next version.
 
-* fixed in v7.7 ～
+* fixed in v7.7 ～ (ChatGPTでは未解決のためv7.6推奨)
 
 ---
 

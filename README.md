@@ -1,6 +1,6 @@
 # 💬 ねおん すぴっち リンク (Neon Spitch Link) v7.6  
 
-<img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="Meshi Art Sample" />  
+<img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="thumbnail" />  
 
 **AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。**  
 **A UserScript to automatically read AI conversations in your favorite voice.**  
@@ -8,9 +8,7 @@
 ➡️ [**いますぐインストール！**](#-インストール方法-installation-guide) (Skip to Installation)  
 💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)  
 
-⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)  
-
-<br clear="right">  
+⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)<br clear="right">  
 
 ---
 
@@ -405,6 +403,7 @@ The source code for this application is copyrighted by Neon.
 * 中断した後に勝手に再生が再開される
 * VOICEVOX接続エラー時にトーストがでていない
 * VOICEVOXへのフォールバック再生時にフォールバック再生のトーストがでてない
+* 一律のDELAYだと一部で意図していない挙動になるのでセクレタ配列にDELAYを追加して各プラットフォームごとに設定する
 
 （未確認）
 - チャンクがすべて終了した時点でまだ再生中なのにボタンが戻る
@@ -413,14 +412,16 @@ The source code for this application is copyrighted by Neon.
 
 ---
 
-## 開発者 (Author)
+## 開発者 (Author)  
 
-**ねおん (Neon)**
+**ねおん (Neon)**  
 <pre>
 <img src="https://www.google.com/s2/favicons?domain=bsky.app&size=16" alt="Bluesky icon"> Bluesky       :<a href="https://bsky.app/profile/neon-ai.art/">https://bsky.app/profile/neon-ai.art/</a>
 <img src="https://www.google.com/s2/favicons?domain=github.com&size=16" alt="GitHub icon"> GitHub        :<a href="https://github.com/neon-aiart/">https://github.com/neon-aiart/</a>
 <img src="https://neon-aiart.github.io/favicon.ico" alt="neon-aiart icon" width="16" height="16"> GitHub Pages  :<a href="https://neon-aiart.github.io/">https://neon-aiart.github.io/</a>
 <img src="https://www.google.com/s2/favicons?domain=greasyfork.org&size=16" alt="Greasy Fork icon"> Greasy Fork   :<a href="https://greasyfork.org/ja/users/1494762/">https://greasyfork.org/ja/users/1494762/</a>
+<img src="https://www.google.com/s2/favicons?domain=sizu.me&size=16" alt="Sizu icon"> Sizu Diary    :<a href="https://sizu.me/neon_aiart/">https://sizu.me/neon_aiart/</a>
+<img src="https://www.google.com/s2/favicons?domain=ofuse.me&size=16" alt="Ofuse icon"> Ofuse         :<a href="https://ofuse.me/neon/">https://ofuse.me/neon/</a>
 <img src="https://www.google.com/s2/favicons?domain=www.chichi-pui.com&size=16" alt="chichi-pui icon"> chichi-pui    :<a href="https://www.chichi-pui.com/users/neon/">https://www.chichi-pui.com/users/neon/</a>
 <img src="https://www.google.com/s2/favicons?domain=iromirai.jp&size=16" alt="iromirai icon"> iromirai      :<a href="https://iromirai.jp/creators/neon/">https://iromirai.jp/creators/neon/</a>
 <img src="https://www.google.com/s2/favicons?domain=www.days-ai.com&size=16" alt="DaysAI icon"> DaysAI        :<a href="https://www.days-ai.com/users/lxeJbaVeYBCUx11QXOee/">https://www.days-ai.com/users/lxeJbaVeYBCUx11QXOee/</a>

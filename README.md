@@ -412,9 +412,9 @@ The source code for this application is copyrighted by Neon.
 
 ---
 
-## 開発者 (Author)
+## 開発者 (Author)  
 
-**ねおん (Neon)**
+**ねおん (Neon)**  
 <pre>
 <img src="https://www.google.com/s2/favicons?domain=bsky.app&size=16" alt="Bluesky icon"> Bluesky       :<a href="https://bsky.app/profile/neon-ai.art/">https://bsky.app/profile/neon-ai.art/</a>
 <img src="https://www.google.com/s2/favicons?domain=github.com&size=16" alt="GitHub icon"> GitHub        :<a href="https://github.com/neon-aiart/">https://github.com/neon-aiart/</a>

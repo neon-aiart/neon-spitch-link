@@ -1,0 +1,12 @@
+remote_theme: jekyll/minima
+google_site_verification: "C-lY-Xpcx8_KgeKX9rJ3u_rIjnI-aUyY0GZd9S8Btw4"
+title: ""
+description: "neon-aiart.github.io: Profile and Projects Showcase"
+header_pages: []
+
+commonmarker:
+  options: [RAW_HTML]
+kramdown:
+  parse_block_html: true
+  syntax_highlighter_opts:
+    disable: true # タグがコードブロック扱いされるのを防ぐ

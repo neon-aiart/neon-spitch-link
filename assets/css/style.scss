@@ -1,0 +1,66 @@
+---
+---
+
+@import
+    "minima/skins/{{ site.minima.skin | default: 'classic' }}",
+    "minima/initialize";
+
+/* ヘッダー・フッター・自動タイトルを物理的に抹殺 */
+header.site-header,
+footer.site-footer,
+.site-header,
+.site-footer,
+.page-heading {
+    display: none !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    visibility: hidden !important;
+}
+
+/* --- ライトモードの設定 --- */
+@media (prefers-color-scheme: light) {
+    html, body, .site-container, .page-content, .wrapper {
+        background-color: #fff0f5 !important; /* 薄いピンク */
+        color: #24292f !important;            /* GitHub標準の文字色 */
+    }
+    strong, h1, h2, h3, p { color: #24292f !important; }
+    a { color: #0969da !important; }        /* リンクの色も調整 */
+    table, tr, td, th {
+        background-color: #fff0f5 !important;
+        border-color: #24292f !important;
+    }
+    code, pre {
+        background-color: #ffe1eb !important;
+        color: #24292f !important;
+    }
+    code-block {
+        background-color: #ffd2e1 !important;
+        color: #24292f !important;
+    }
+}
+
+/* --- ダークモードの設定 --- */
+@media (prefers-color-scheme: dark) {
+    html, body, .site-container, .page-content, .wrapper {
+        background-color: #212830 !important; /* GitHubダークモードの背景色 */
+        color: #c9d1d9 !important;            /* GitHubダークモードの文字色 */
+    }
+    strong, h1, h2, h3, p { color: #c9d1d9 !important; }
+    a { color: #96D0ff !important; }        /* 青リンクを見やすく */
+    table, tr, td, th {
+        background-color: #212830 !important;
+        border-color: #c9d1d9 !important;
+    }
+    code, pre {
+        background-color: #21323f !important;
+        color: #c9d1d9 !important;
+    }
+    code-block {
+        background-color: #213c4e !important;
+        color: #c9d1d9 !important;
+    }
+}
+
+/* 余計な枠線や影も消す */
+.site-header { border: none !important; }

@@ -108,24 +108,25 @@ No configuration switching required! The UserScript automatically identifies the
 
 ---
 
-## ✨ インストール方法 (Installation Guide)
+## ✨ インストール方法 (Installation Guide)  
 
 1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**  
-   * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。
-   * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).
+   * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。  
+   * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).  
 
 2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**  
    RVC連携を使用する場合 (If Using RVC Integration)  
-   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。
-   * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.
+   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。  
+   * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.  
 
-3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**
-   * **Tampermonkey**: [https://www.tampermonkey.net/](https://www.tampermonkey.net/)
-   * **ScriptCat**: [https://scriptcat.org/](https://scriptcat.org/)
+3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**  
+   * **Tampermonkey**: [https://www.tampermonkey.net/](https://www.tampermonkey.net/)  
+     💡 はじめて実行するときに許可が必要です (First-time execution requires permission): [FAQ #209](https://www.tampermonkey.net/faq.php#Q209)
+   * **ScriptCat**: [https://scriptcat.org/](https://scriptcat.org/)  
 
-4. **スクリプトをインストールします (Install the script):**
+4. **スクリプトをインストールします (Install the script):**  
    * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。  
-     Access and click the "Install" button.
+     Access and click the "Install" button.  
 
 ### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)
 

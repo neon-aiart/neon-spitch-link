@@ -5,7 +5,7 @@
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>
-// @version        7.9
+// @version        8.0
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -48,7 +48,7 @@
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '7.9';
+    const SCRIPT_VERSION = '8.0';
     const STORE_KEY = 'gemini_voicevox_config';
 
     // ========= グローバルな再生・操作制御変数 =========
@@ -1535,13 +1535,22 @@
         }
         */
 
+        // innerTextを取る「前」に「間」を仕込むわ
+        // p: 段落, th/td: テーブル, li: リスト項目
+        const blocks = clonedContainer.querySelectorAll('p, th, td, li');
+        blocks.forEach(block => {
+            // 中身がある場合、かつ末尾が句読点で終わっていない場合だけ「。」を足す
+            const content = block.textContent.trim();
+            if (content && !/[。？！…!?.]$/.test(content)) {
+                block.textContent += '。';
+            }
+        });
+
         let text = clonedContainer.innerText || '';
 
         // 1. コードブロック、コメント、タイトル記号の除去
         // g: グローバル検索, i: 大文字小文字を区別しない, m: 複数行モード
         text = text.replace(/```[a-z]*[\s\S]*?```|^\s*[#*]+\s/gim, ' ');
-        // 2. その他のマークダウン記号の除去
-        text = text.replace(/(\*{1,2}|_{1,2}|~{1,2}|#|\$|>|-|\[.*?\]\(.*?\)|`|\(|\)|\[|\]|<|>|\\|:|\?|!|;|=|\+|\|)/gim, ' ');
 
         // テキストコンテンツによる中断チェック
         if (text.startsWith('お待ちください')) {
@@ -1551,7 +1560,13 @@
             return '';
         }
 
-        // 定型文・NGワードの除去
+        // 2. 改行（\n）を「。」に置換して、物理的な「間」を確保するわ！
+        text = text.replace(/[\n|]+/g, '。');
+
+        // 3. その他のマークダウン記号の除去
+        text = text.replace(/(\*{1,2}|_{1,2}|~{1,2}|#|\$|>|-|\[.*?\]\(.*?\)|`|\(|\)|\[|\]|<|>|\\|:|\?|!|;|=|\+|\|)/gim, ' ');
+
+        // 4. 定型文・NGワードの除去
         TEXTS_TO_REMOVE_REGEX.forEach(regexString => {
             // gフラグ（グローバル）を追加し、全文からマッチしたものを全て除去するわ
             const regex = new RegExp(regexString, 'gi');
@@ -1559,15 +1574,20 @@
             text = text.replace(regex, ' ');
         });
 
-        // 最終クリーンアップ: 連続する句読点や空白の調整
+        // 5. 連続する空白（全角・タブ含む）を1つにまとめる
+        text = text.replace(/[ \u3000\t]{2,}/g, ' ');
+
+        // 6. 連続する句読点（。。 や ！。 など）を1つにまとめる
         text = text.replace(/([.!?、。？！]{2,})/g, function(match, p1) {
             return p1.substring(0, 1);
         });
-        // 連続する空白を1つにまとめ、前後の空白を除去（NGワード除去でできた連続空白を処理するわ）
-        text = text.replace(/(\s{2,})/g, ' ').trim();
 
-        return text;
+        // console.log(`[Debug] return text.trim();\n${text.trim()}`);
+
+        // 最後に、前後の余計なスペースをトリミングして完成！
+        return text.trim();
     }
+
 
     // サンプル再生関連
     function resetSampleButtonState(button) {
@@ -2112,7 +2132,7 @@
 
         // RVC失敗時のフォールバックを管理するフラグ
         let rvcFailed = false;
-        const successfulRvcBuffers = []; // 成功したRVC変換後のArrayBufferを一時的に格納する配列
+        const successfulRvcBlobs = []; // 成功したRVC変換を一時的に格納する配列
 
         try {
             initStreamingPlayback(isAutoPlay); // ストリーミング再生を初期化
@@ -2234,7 +2254,7 @@
 
                 // RVC変換が成功した場合のみ、キャッシュ用にArrayBufferを保持する
                 if (chunkResultBuffer) {
-                    successfulRvcBuffers.push(chunkResultBuffer);
+                    successfulRvcBlobs.push(audioBlobToPlay);
                 }
 
                 // --- 3. Enqueue Playback ---
@@ -2244,20 +2264,9 @@
                 }
             }
 
-            // --- 4. キャッシュ保存 (RVC変換が最後まで成功した場合のみ！) ---
-            if (!rvcFailed && successfulRvcBuffers.length > 0 && cacheKey) {
-                // 全てのArrayBufferを結合してBlobにし、キャッシュ保存する処理
-                const totalLength = successfulRvcBuffers.reduce((acc, buf) => acc + buf.byteLength, 0);
-                const combinedArray = new Uint8Array(totalLength);
-                let offset = 0;
-                for (const buffer of successfulRvcBuffers) {
-                    combinedArray.set(new Uint8Array(buffer), offset);
-                    offset += buffer.byteLength;
-                }
-
-                const finalBlob = new Blob([combinedArray,], {
-                    type: 'audio/wav',
-                });
+            // --- 4. キャッシュ保存 ---
+            if (!rvcFailed && successfulRvcBlobs.length > 0 && cacheKey) {
+                const finalBlob = await connectWavBlobs(successfulRvcBlobs);
                 await saveCache(cacheKey, finalBlob, 'RVC');
             }
         } catch (error) {
@@ -2575,11 +2584,10 @@
      * @returns {string[]} - 分割されたテキストの配列
      */
     function splitTextForSynthesis(text, maxChunkLength) {
-        // 1. まず、改行と「。」「？」「！」で分割するわ。
+        // 1. 分割文字 [\n。？！、,.?!；;：:]  <- 日本語の句読点 ＋ 英語の句読点 ＋ セミコロン・コロン
         // \s*: 空白文字が0回以上続くことを許可（行頭の空白などに対応）
-        // (?:\n|。|？|！) : 改行、句点、疑問符、感嘆符のいずれかにマッチ
         // 正規表現で分割すると、区切り文字が消えるから、区切り文字も一緒にキャプチャするわ！
-        const segments = text.split(/(\s*[\n。？！])/);
+        const segments = text.split(/(\s*[\n。？！、,.?!；;：:])/);
 
         let chunks = [];
         let currentChunk = "";

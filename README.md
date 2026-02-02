@@ -306,7 +306,12 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 ## 📝 更新履歴 (Changelog)
 
-### v7.9 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/blob/v7.9-dev/neonSpitchLink%20v7.9.user.js)]
+### v8.0 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v8.0-dev/neonSpitchLink%20v8.0.user.js)]
+* ✅ RVC: ２チャンク以降もキャッシュ保存するように修正
+* ✅ 改行など必要な間が削られていたのを修正
+
+### v7.9 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v7.9-dev/neonSpitchLink%20v7.9.user.js)]
+
 * ☑️ ライセンス変更
 * ✅ ダウンロードボタンを追加
 * ☑️ ボタンの再描画を最適化

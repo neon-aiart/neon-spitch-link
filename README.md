@@ -307,52 +307,59 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 ## 📝 更新履歴 (Changelog)
 
-### v8.0 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v8.0-dev/neonSpitchLink%20v8.0.user.js)]
-* ✅ RVC: ２チャンク以降もキャッシュ保存するように修正
-* ✅ 改行など必要な間が削られていたのを修正
+### v8.2 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v8.2-dev/neonSpitchLink%20v8.2.user.js)]
+✅ 新しい回答がきても再生を中断しない問題を修正
 
-### v7.9 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v7.9-dev/neonSpitchLink%20v7.9.user.js)]
+### v8.1 (Unreleased)  
+✅ RVCで２回変換されていたのを修正  
+☑️ サンプル再生ボタンの切り替えタイミングを修正  
+☑️ VOICEVOXにピッチやボリュームなどを追加（設定UI未実装）  
 
-* ☑️ ライセンス変更
-* ✅ ダウンロードボタンを追加
-* ☑️ ボタンの再描画を最適化
-* ☑️ 中断したお返事も読み上げしない（SELECTORS_TO_REMOVEから '.stopped-draft-message', を削除）
-* ☑️ エラー時にトーストがでていない箇所の修正
-* ☑️ 重複 console error を整理
+### v8.0 (Unreleased)  
+✅ RVC: ２チャンク以降もキャッシュ保存するように修正  
+✅ 改行など必要な間が削られていたのを修正  
 
-### v7.7 (Unreleased)
-* ☑️ AIモード/X(Grok)で監視ループが止まる現象を解消 > DEBOUNCE_DELAY = 200
+### v7.9 (Unreleased)  
+☑️ ライセンス変更  
+✅ ダウンロードボタンを追加  
+☑️ ボタンの再描画を最適化  
+☑️ 中断したお返事も読み上げしない（SELECTORS_TO_REMOVEから '.stopped-draft-message', を削除）  
+☑️ エラー時にトーストがでていない箇所の修正  
+☑️ 重複 console error を整理  
 
-### v7.6 (Current Release)
-* ✨ **「ねおん すぴっち リンク」として正式公開。**
-* ✅ Grokに対応 ( /grok.com )
-* ✅ XのGrokに対応 ( /x.com/i/grok* ) (サイドパネルは非対応)
+### v7.7 (Unreleased)  
+☑️ AIモード/X(Grok)で監視ループが止まる現象を解消 > DEBOUNCE_DELAY = 200  
 
-### v7.5
-* ✅ **UX向上:** 自動再生ブロック解除のための「疑似onstart」ロジックを実装。
-* ✅ RVC本体に新規APIを追加。ロード中のモデルファイルをチェックする (/infer_loaded_voice)
+### v7.6 (Current Release)  
+✨ **「ねおん すぴっち リンク」として正式公開。**  
+✅ Grokに対応 ( /grok.com )  
+✅ XのGrokに対応 ( /x.com/i/grok* ) (サイドパネルは非対応)  
 
-### v7.4
-* ✅ **RVC連携** ストリーミング再生を実装し、長文の遅延ストレスを解消。
+### v7.5  
+✅ **UX向上:** 自動再生ブロック解除のための「疑似onstart」ロジックを実装。  
+✅ RVC本体に新規APIを追加。ロード中のモデルファイルをチェックする (/infer_loaded_voice)  
 
-### v7.3
-* ✅ Google検索AIモードに対応。
+### v7.4  
+✅ **RVC連携** ストリーミング再生を実装し、長文の遅延ストレスを解消。  
 
-### v7.2
-* ✅ **VOICEVOX連携** ストリーミング再生を実装。
+### v7.3  
+✅ Google検索AIモードに対応。  
 
-### v6.9
-* ✅ chatGPTに対応。
+### v7.2  
+✅ **VOICEVOX連携** ストリーミング再生を実装。  
 
-### v6.7
-* ✅ キャッシュ再生を実装。
-* ✅ RVC連携失敗時のVOICEVOXが生成した音声で再生。（フォールバックを実装）
+### v6.9  
+✅ chatGPTに対応。  
 
-### v6.1
-* ✅ RVC連携機能を追加。RVC本体の修正によりファイルレス変換を実現。（世界初）
+### v6.7  
+✅ キャッシュ再生を実装。  
+✅ RVC連携失敗時のVOICEVOXが生成した音声で再生。（フォールバックを実装）  
 
-### v4.5 (Pre-release)
-* ✅ VOICEVOX連携版先行公開。
+### v6.1  
+✅ RVC連携機能を追加。RVC本体の修正によりファイルレス変換を実現。（世界初）  
+
+### v4.5 (Pre-release)  
+✅ VOICEVOX連携版先行公開。  
 
 ---
 

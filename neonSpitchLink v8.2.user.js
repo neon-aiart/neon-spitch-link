@@ -5,7 +5,7 @@
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>
-// @version        8.1
+// @version        8.2
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -48,7 +48,7 @@
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '8.1';
+    const SCRIPT_VERSION = '8.2';
     const STORE_KEY = 'gemini_voicevox_config';
 
     // ========= グローバルな再生・操作制御変数 =========
@@ -1584,7 +1584,7 @@
             return p1.substring(0, 1);
         });
 
-        console.log(`--------- [Debug] return text.trim() ---------\n${text.trim()}\n------------------`);
+        // console.log(`--------- [Debug] return text.trim() ---------\n${text.trim()}\n------------------`);
 
         // 最後に、前後の余計なスペースをトリミングして完成！
         return text.trim();
@@ -2594,41 +2594,26 @@
         const button = document.getElementById('convertButton');
         const currentConfig = GM_getValue(STORE_KEY, config);
 
-        // 1. 再生中チェック
-        if (isPlaying) {
-            if (isAutoPlay) {
-                // 自動再生時は再生中の音声を強制停止して、新しい合成を優先
-                if (currentAudio) {
-                    currentAudio.pause();
-                    currentAudio = null;
-                } // Audio Elementを停止
-                if (audioContext && audioContext.state !== 'closed') {
-                    audioContext.close();
-                    audioContext = null;
-                }
-                isPlaying = false;
-                updateButtonState();
-            } else {
-                // 手動再生中に別の手動操作が来た場合はブロック
-                showToast('今は再生中よ。停止ボタンで止めてから次の操作をしてね。', false);
-                return;
-            }
-        }
+        // 物理的な「実態」をチェックするわよ
+        const isAuto = (isAutoPlay === true);
+        if (isAuto) {
+            console.log('[SYSTEM] 自動再生の割り込み。強制的に全停止して更地にするわよ。');
 
-        // 2. 合成中チェック（自動再生時は中断して優先、手動時はブロック）
-        if (currentXhrs.length > 0) {
-            if (isAutoPlay) {
-                // 新しい自動再生が来たら、前の合成処理をキャンセルして、新しい合成を優先する
-                console.log('[ABORT] 新しい自動再生が検出されたため、前の合成処理をキャンセルします。');
-                currentXhrs.forEach(xhr => {
-                    if (xhr && xhr.readyState !== 4) {
-                        xhr.abort();
-                    }
-                });
-                currentXhrs = [];
-            } else {
-                // 手動合成中に別の手動合成が来た場合はブロック
-                showToast('今は合成中よ。停止ボタンで止めてから次の操作をしてね。', false);
+            // ループ中断フラグを即座に立てる（重要：awaitの前に立てる！）
+            isConversionAborted = true;
+
+            // 前の再生や合成を完全に殺す（awaitで完了を待つ）
+            await stopPlayback(true);
+
+            // 完全に掃除が終わってから、自分用のフラグにリセット
+            isConversionAborted = false;
+            isPlaying = false;
+            isConversionStarting = false;
+        } else {
+            // 手動クリック時のガード（ここはフラグを信じるしかない）
+            const isBusy = isConversionStarting || isPlaying || (audioContext && audioContext.state === 'running');
+            if (isBusy) {
+                showToast('今は再生中よ。停止ボタンで止めてから次の操作をしてね。', false);
                 return;
             }
         }
@@ -3388,9 +3373,9 @@
                     // フッターがあり＆最小文字数を超えている＆キャッシュと比較して別のものの場合に自動再生
                     if (currentText && currentText !== lastAutoPlayedText && currentText.length > 0) {
                         if (currentText.length <= minLength) {
-                            lastAutoPlayedText = currentText;
                             console.log(`読み上げテキストが最小文字数(${minLength}文字)以下です（${currentText.length}文字）: ${currentText.substring(0, 40)}...`);
                         } else if (hasFooter) {
+                            lastAutoPlayedText = currentText;
                             startConversion(true); // trueで自動再生として実行
                         }
                     }
@@ -3428,7 +3413,7 @@
                     clearInterval(initialRetryInterval);
                 } else if (initialRetryCount >= initialRetryLimit) {
                     // console.log("[Fix] 初回リトライ上限…でも次からはdebounceで大丈夫！");
-                    clearInterval(initialRetryInterval);  // initialRetryLimit で諦める (20回で約10秒)
+                    clearInterval(initialRetryInterval); // initialRetryLimit で諦める (20回で約10秒)
                 }
             }, 500);
 

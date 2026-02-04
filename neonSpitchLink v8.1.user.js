@@ -5,7 +5,7 @@
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>
-// @version        8.0
+// @version        8.1
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -48,7 +48,7 @@
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '8.0';
+    const SCRIPT_VERSION = '8.1';
     const STORE_KEY = 'gemini_voicevox_config';
 
     // ========= グローバルな再生・操作制御変数 =========
@@ -133,7 +133,7 @@
         '.thoughts-header',
         '.bot-name', '.sr-only',
         '.tool-summary',
-        'pre', 'code-block', 'mat-paginator', 'immersive-entry-chip', 'inline-location',
+        'pre', 'code-block', 'mat-paginator', 'immersive-entry-chip', 'inline-location', 'user-notice',
         'model-thoughts', 'deletion-candidate-memories-response-block',
         'div[style*="display: none"]', 'div[role="status"]',
         'div[role="link"]', 'button', '.action-buttons', '.text-secondary',
@@ -575,7 +575,7 @@
         sampleBtn.id = 'mei-sample-play-btn';
         sampleBtn.textContent = '🔊 サンプル再生';
         sampleBtn.style.cssText = 'display: flex; justify-content: center; align-items: center; height: 32px; width: 128px; line-height: 1; color: white; background: #5cb85c; font-weight: bold; border: none; border-radius: 16px; cursor: pointer;';
-        sampleBtn.addEventListener('click', startSampleConversion);
+        sampleBtn.onclick = () => startSampleConversion();
         sampleGroup.appendChild(sampleBtn);
         panel.appendChild(sampleGroup);
 
@@ -1536,13 +1536,15 @@
         */
 
         // innerTextを取る「前」に「間」を仕込むわ
-        // p: 段落, th/td: テーブル, li: リスト項目
-        const blocks = clonedContainer.querySelectorAll('p, th, td, li');
+        const blocks = clonedContainer.querySelectorAll('p, th, td, li, h1, h2, h3, h4, h5, h6');
         blocks.forEach(block => {
-            // 中身がある場合、かつ末尾が句読点で終わっていない場合だけ「。」を足す
+            // block.textContent だと子要素（bタグなど）のテキストも全部拾えるわ
             const content = block.textContent.trim();
+
+            // 中身があって、かつ末尾が句読点で終わっていない場合だけ「、」を足す
             if (content && !/[。？！…!?.]$/.test(content)) {
-                block.textContent += '。';
+                // block.append('、') を使うと、既存のHTML構造を壊さずに末尾にテキストを追加できるわよ
+                block.insertAdjacentText('beforeend', '、');
             }
         });
 
@@ -1560,8 +1562,8 @@
             return '';
         }
 
-        // 2. 改行（\n）を「。」に置換して、物理的な「間」を確保するわ！
-        text = text.replace(/[\n|]+/g, '。');
+        // 2. 改行（\n）を「、」に置換して、物理的な「間」を確保するわ！
+        text = text.replace(/[\n|]+/g, '、');
 
         // 3. その他のマークダウン記号の除去
         text = text.replace(/(\*{1,2}|_{1,2}|~{1,2}|#|\$|>|-|\[.*?\]\(.*?\)|`|\(|\)|\[|\]|<|>|\\|:|\?|!|;|=|\+|\|)/gim, ' ');
@@ -1582,7 +1584,7 @@
             return p1.substring(0, 1);
         });
 
-        // console.log(`[Debug] return text.trim();\n${text.trim()}`);
+        console.log(`--------- [Debug] return text.trim() ---------\n${text.trim()}\n------------------`);
 
         // 最後に、前後の余計なスペースをトリミングして完成！
         return text.trim();
@@ -1594,9 +1596,7 @@
         if (button) {
             button.textContent = '🔊 サンプル再生';
             button.style.backgroundColor = '#5cb85c'; // Green
-            button.removeEventListener('click', stopConversion);
-            button.addEventListener('click', startSampleConversion);
-            button.disabled = false;
+            button.onclick = () => startSampleConversion();
         }
     }
 
@@ -1612,14 +1612,6 @@
 
         const currentConfig = GM_getValue(STORE_KEY, config);
         const synthesizeUrl = `${currentConfig.apiUrl}/synthesis?speaker=${speakerId}`;
-
-        // 再生停止ボタンに切り替え
-        if (button) {
-            button.textContent = '🔇 再生停止';
-            button.style.backgroundColor = '#dc3545'; // Red
-            button.removeEventListener('click', startSampleConversion);
-            button.addEventListener('click', stopConversion); // グローバル停止関数を呼ぶ
-        }
 
         const xhr = GM_xmlhttpRequest({
             method: 'POST',
@@ -1638,52 +1630,42 @@
 
                     // --- RVC変換ロジック ---
                     if (currentConfig.rvcEnabled) {
-                        let rvcXhr = null;
                         try {
                             showToast('RVC変換中...', null);
 
                             // 1. BlobをArrayBufferに変換
                             const arrayBuffer = await playableBlob.arrayBuffer();
-                            const cacheKey = 'sample_rvc'; // サンプル再生用のシンプルなキー
 
                             // 2. RVC変換を実行
-                            const rvcResult = convertRvcChunk(arrayBuffer, currentConfig, cacheKey);
-                            const rvcConversionPromise = rvcResult.promise;
-                            rvcXhr = rvcResult.xhr;
-                            currentXhrs.push(rvcXhr); // RVC XHRを一時的に保存
+                            const rvcBuffer = await requestRvcConversion(arrayBuffer, currentConfig);
 
-                            const rvcBase64Data = await rvcConversionPromise; // 変換が完了するまで待つわ
-                            // 変換成功！RVC XHRをリストから削除
-                            currentXhrs = currentXhrs.filter(item => item !== rvcXhr);
+                            // 3. Blobに戻す
+                            playableBlob = new Blob([rvcBuffer,], { type: 'audio/wav', });
 
-                            // 3. Base64から再生用のBlobを生成するわ
-                            const base64 = rvcBase64Data.split(',')[1];
-                            const binary = atob(base64);
-                            const array = new Uint8Array(binary.length);
-                            for (let i = 0; i < binary.length; i++) {
-                                array[i] = binary.charCodeAt(i);
-                            }
-                            playableBlob = new Blob([array,], {
-                                type: 'audio/wav',
-                            });
                             isRvcSuccess = true;
                             showToast('RVC変換完了！再生するわ！', true);
 
                         } catch (rvcError) {
                             // 【フォールバック】RVC変換失敗時の処理
-                            if (rvcXhr) {
-                                currentXhrs = currentXhrs.filter(item => item !== rvcXhr); // RVC XHRを削除
-                            }
                             console.error('[Sample Playback] ❌ RVC変換失敗（フォールバック）:', rvcError);
                             showToast('😭 RVC連携失敗！VOICEVOXオリジナル音声で代替再生するわ。', false);
                             // playableBlob は VOICEVOX original Blob のまま（フォールバック）
                         }
                     }
+
                     // --- 再生処理 (playableBlobがRVC変換済みかオリジナル音声になる) ---
                     const audioUrl = URL.createObjectURL(playableBlob);
                     const audio = new Audio(audioUrl);
                     currentAudio = audio;
                     isPlaying = true;
+
+                    audio.onplay = () => {
+                        if (button) {
+                            button.textContent = '🔇 再生停止';
+                            button.style.backgroundColor = '#dc3545'; // Red
+                        }
+                    };
+
                     // AudioContextを使わないので、Autoplayブロックは発生しにくいけど、一応エラーハンドリングは任せるわ
                     audio.play().catch(e => {
                         console.error('オーディオ再生エラー:', e);
@@ -1750,8 +1732,7 @@
         if (button) {
             button.textContent = '⏰ 合成中...';
             button.style.backgroundColor = '#6c757d';
-            button.removeEventListener('click', startSampleConversion);
-            button.addEventListener('click', stopConversion); // グローバル停止関数を呼ぶ
+            button.onclick = () => stopConversion(); // グローバル停止関数を呼ぶ
         }
 
         const audioQueryUrl = `${currentConfig.apiUrl}/audio_query`;
@@ -1906,7 +1887,7 @@
      * @param {Object} currentConfig - 現在の設定オブジェクト
      * @returns {Promise<ArrayBuffer>} - RVC変換後のWAVデータ (ArrayBuffer)
      */
-    async function convertRvcAudioToArrayBuffer(voicevoxArrayBuffer, currentConfig) {
+    async function requestRvcConversion(voicevoxArrayBuffer, currentConfig) {
         // ArrayBufferをBase64 URIに変換するわ
         const base64Audio = arrayBufferToBase64(voicevoxArrayBuffer);
         const inputAudioDataUri = 'data:audio/wav;base64,' + base64Audio;
@@ -1916,6 +1897,7 @@
             name: "voicevox_source.wav",
             data: inputAudioDataUri,
         };
+
         // URLの末尾のスラッシュを削除し、エンドポイントを結合
         const convertUrl = `${currentConfig.rvcApiUrl.replace(/\/$/, '')}/run/infer_convert`;
 
@@ -1937,15 +1919,15 @@
             ],
         };
 
+        let xhr;
+
         try {
-            const base64WavDataUri = await new Promise((resolve, reject) => {
-                const xhr = GM_xmlhttpRequest({
+            const base64Response = await new Promise((resolve, reject) => {
+                xhr = GM_xmlhttpRequest({
                     method: 'POST',
                     url: convertUrl,
                     data: JSON.stringify(rvcRequestBody),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json", },
                     responseType: 'json',
                     timeout: VOICEVOX_TIMEOUT_MS, // グローバル定数を使用
                     onload: (response) => {
@@ -1953,153 +1935,46 @@
                         console.log('[RVC Conversion] RVCサーバーからの応答:', response);
 
                         // 応答の3番目の要素 (インデックス[2]) から data プロパティを抽出
-                        if (response.status === 200 && response.response && response.response.data &&
-                            response.response.data.length > 2 && response.response.data[2] && response.response.data[2].data) {
-
-                            // XHRが成功したらリストから削除するわ
-                            currentXhrs = currentXhrs.filter(item => item !== xhr);
-                            updateButtonState();
-
+                        if (response.status === 200 && response.response?.data?.[2]?.data) {
                             resolve(response.response.data[2].data); // Base64 URI文字列を返す
                         } else {
-                            // 失敗ステータス
-                            const errorInfo = response.response ? JSON.stringify(response.response.detail || response.response) : '応答なし';
-                            reject(`RVC infer_convert 失敗 (Status: ${response.status} / Response: ${errorInfo})`);
+                            // 失敗ステータス: 応答がJSONじゃない場合も考慮して安全にパース
+                            const detail = response.response?.detail || response.statusText || 'Unknown Error';
+                            reject(`RVC失敗: ${detail}`);
                         }
                     },
-                    onerror: () => {
-                        currentXhrs = currentXhrs.filter(item => item !== xhr); // エラーでも削除！
-                        updateButtonState();
-                        reject('RVC infer_convert 接続エラー (RVCサーバーが起動しているか確認してね)');
-                    },
-                    ontimeout: () => {
-                        currentXhrs = currentXhrs.filter(item => item !== xhr); // タイムアウトでも削除！
-                        updateButtonState();
-                        reject('RVC infer_convert タイムアウト (変換に時間がかかりすぎたわ)');
-                    },
+                    onerror: () => reject(new Error('RVC接続エラー')),
+                    ontimeout: () => reject(new Error('RVCタイムアウト')),
+                    onabort: () => reject(new Error('RVC中断')),
                 });
                 currentXhrs.push(xhr); // XHRリストに追加
                 updateButtonState();
             });
 
             // Base64 URIが正しいかチェック
-            if (!base64WavDataUri || typeof base64WavDataUri !== 'string' || !base64WavDataUri.startsWith('data:audio/wav;base64,')) {
-                console.error('[RVC Conversion] 無効なBase64データが返ってきたわ。サーバーログを確認してね:', base64WavDataUri);
-                throw new Error('RVCサーバーから有効なWAVデータURIが返されなかったわ。');
+            if (!base64Response?.startsWith('data:audio/wav;base64,')) {
+                throw new Error('不正な音声データ形式よ');
             }
 
             // --- Base64 URIからArrayBufferへの変換 ---
-            const base64 = base64WavDataUri.split(',')[1];
+            const base64 = base64Response.split(',')[1];
             const binary = atob(base64);
-            const arrayBuffer = new ArrayBuffer(binary.length);
-            const uint8Array = new Uint8Array(arrayBuffer);
+            const buffer = new Uint8Array(binary.length);
 
             // バイナリデータをArrayBufferに書き込む
             for (let i = 0; i < binary.length; i++) {
-                uint8Array[i] = binary.charCodeAt(i);
+                buffer[i] = binary.charCodeAt(i);
             }
 
-            // 【戻り値】ArrayBufferを返すわ！
-            return arrayBuffer;
+            return buffer.buffer;
 
-        } catch (error) {
-            // エラー時にXHRリストが残っている可能性があるため、クリーンアップするわ
-            currentXhrs.length = 0;
-            updateButtonState();
-            // console.error('[RVC Conversion Error]', error);
-            throw error; // 呼び出し元にエラーを再スロー
+        } finally {
+            // 成功しても失敗してもリストから削除
+            if (xhr) {
+                currentXhrs = currentXhrs.filter(item => item !== xhr);
+                updateButtonState();
+            }
         }
-    }
-
-    /**
-     * RVCサーバーに単一の音声チャンクを送信し、変換されたBase64データを取得するわ。
-     * @param {ArrayBuffer} arrayBuffer - VOICEVOXから生成された単一チャンクのWAV ArrayBuffer
-     * @param {Object} currentConfig - 現在の設定オブジェクト
-     * @param {string} chunkCacheKey - チャンクごとのキャッシュキー（現在は未使用）
-     * @returns {Object} - { promise: Promise<string>, xhr: GM_xmlhttpRequest }
-     */
-    function convertRvcChunk(arrayBuffer, currentConfig, chunkCacheKey) {
-        // 1. ArrayBuffer -> Base64エンコード (Promiseの外で準備)
-        // ここでエラーが出ないことは確認済みよ！
-        const base64Audio = arrayBufferToBase64(arrayBuffer);
-        const inputAudioDataUri = 'data:audio/wav;base64,' + base64Audio;
-        const inputAudioBase64 = {
-            name: "voicevox_source.wav",
-            data: inputAudioDataUri,
-        };
-        const convertUrl = `${currentConfig.rvcApiUrl.replace(/\/$/, '')}/run/infer_convert`;
-        const rvcRequestBody = {
-            data: [
-                currentConfig.rvcNumber,       // 00. 話者ID (0～112) [0]
-                null,                          // 01. 元音声のファイルパス（base64で送るのでなし）
-                currentConfig.rvcPitch,        // 02. ピッチシフト (-12～12) [12]
-                inputAudioBase64,              // 03. 変換元の音声データ（Base64 URI文字列を直接挿入！）
-                currentConfig.rvcAlgorithm,    // 04. ピッチ抽出アルゴリズム (pm|harvest|crepe|rmvpe) [rmvpe]
-                '',                            // 05. 特徴検索ライブラリへのパス（[6]で指定しているのでなし）（nullはダメ）
-                currentConfig.rvcIndex || '',  // 06. インデックスパス [logs\rvcIndex.index]
-                currentConfig.rvcRatio,        // 07. 検索特徴率 (0～1) [0.75]
-                currentConfig.rvcMedianFilter, // 08. メディアンフィルタ (0～7) [3]
-                currentConfig.rvcResample,     // 09. リサンプリング (0～48000) [0]
-                currentConfig.rvcEnvelope,     // 10. エンベロープの融合率 (0～1) [0.25]
-                currentConfig.rvcArtefact,     // 11. 明確な子音と呼吸音を保護 (0～0.5) [0.33]
-            ],
-        };
-
-        let xhr;
-
-        // 2. Promiseを生成するわ
-        const promise = new Promise((resolve, reject) => {
-            // RVCの設定が空ならエラー
-            if (!currentConfig.rvcModel) {
-                return reject(new Error('RVC モデルファイル名が設定されてないわ。'));
-            }
-
-            // 3. GM_xmlhttpRequestでRVC APIを呼び出すわ！
-            GM_xmlhttpRequest({
-                method: 'POST',
-                url: convertUrl,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data: JSON.stringify(rvcRequestBody),
-                timeout: VOICEVOX_TIMEOUT_MS, // タイムアウト設定
-                onload: function(response) {
-                    if (response.status !== 200) {
-                        return reject(new Error(`RVCサーバーエラー: ステータス ${response.status} ${response.statusText}`));
-                    }
-
-                    try {
-                        const responseData = JSON.parse(response.responseText);
-                        const base64WavData = (responseData.data && responseData.data.length > 2 && responseData.data[2].data)
-                            ? responseData.data[2].data
-                            : null; // データがなければ null にするわ
-
-                        if (!base64WavData || typeof base64WavData !== 'string' || !base64WavData.startsWith('data:audio/wav;base64,')) {
-                            throw new Error('RVCサーバーから有効なWAVデータURIが返されなかったわ。');
-                        }
-
-                        // 成功！変換後のBase64データURIを返すわ
-                        resolve(base64WavData);
-
-                    } catch (e) {
-                        reject(new Error(`RVC応答の解析に失敗: ${e.message}`));
-                    }
-                },
-                onerror: function(response) {
-                    reject(new Error(`RVC接続エラー: ${response.statusText || 'ネットワークまたはCORSの問題'} (${response.status})`));
-                },
-                ontimeout: function() {
-                    reject(new Error('RVC変換がタイムアウトしたわ。'));
-                },
-                onabort: function() {
-                    reject(new Error('RVC変換リクエストが手動で中断されたわ。'));
-                },
-            });
-        });
-        return {
-            promise,
-            xhr,
-        }; // PromiseとXHRオブジェクトを一緒に返すわ
     }
 
     /**
@@ -2224,32 +2099,27 @@
                 let audioBlobToPlay = null;   // 再生用Blobを格納する変数をループ内で宣言し直す
                 let chunkResultBuffer = null; // 最終的に再生/キャッシュに使うArrayBuffer
 
-                if (rvcFailed) {
-                    // RVCが既に失敗している場合は、VOICEVOXオリジナル音声で再生（フォールバック）
-                    // console.warn('[RVC Fallback] RVC変換が失敗中のため、VOICEVOXのオリジナル音声で代替再生します。');
-                    audioBlobToPlay = new Blob([voicevoxArrayBuffer,], {
-                        type: 'audio/wav',
-                    });
-                } else {
+                if (currentConfig.rvcEnabled && !rvcFailed) {
                     // RVC変換を試みる
                     try {
                         // `convertRvcAudioToArrayBuffer` を呼び出し、ArrayBufferを取得するわ
-                        chunkResultBuffer = await convertRvcAudioToArrayBuffer(voicevoxArrayBuffer, currentConfig);
+                        chunkResultBuffer = await requestRvcConversion(voicevoxArrayBuffer, currentConfig);
                         // ArrayBufferをBlobに変換して再生用変数に格納
-                        audioBlobToPlay = new Blob([chunkResultBuffer,], {
-                            type: 'audio/wav',
-                        });
-                    } catch (rvcError) {
-                        console.error('[RVC Conversion] RVC変換エラー発生:', rvcError);
-                        rvcFailed = true; // RVC失敗フラグを立てる
+                        audioBlobToPlay = new Blob([chunkResultBuffer,], { type: 'audio/wav', });
+                    } catch (e) {
+                        console.error('[RVC Conversion] RVC変換エラー発生:', e);
+                        rvcFailed = true; // RVC失敗フラグ: 以降のチャンクはVOICEVOXのままにする
                         // showToast('😭 RVC変換に失敗！VOICEVOXのオリジナル音声に切り替えるわ。', false);
 
                         // 失敗したこのチャンクは、VOICEVOXオリジナル音声で再生
                         console.warn('[RVC Fallback] RVC変換に失敗したため、VOICEVOXのオリジナル音声で代替再生を試みます。');
-                        audioBlobToPlay = new Blob([voicevoxArrayBuffer,], {
-                            type: 'audio/wav',
-                        });
+                        audioBlobToPlay = new Blob([voicevoxArrayBuffer,], { type: 'audio/wav', });
                     }
+                }
+
+                // RVCがオフ、または失敗した場合はオリジナルを使用
+                if (!audioBlobToPlay) {
+                    audioBlobToPlay = new Blob([voicevoxArrayBuffer,], { type: 'audio/wav', });
                 }
 
                 // RVC変換が成功した場合のみ、キャッシュ用にArrayBufferを保持する
@@ -2258,10 +2128,8 @@
                 }
 
                 // --- 3. Enqueue Playback ---
-                if (audioBlobToPlay) {
-                    // 再生キューに追加し、再生されるまで待つ
-                    await enqueueChunkForPlayback(audioBlobToPlay, i + 1, totalChunks, currentConfig, cacheKey, isAutoPlay);
-                }
+                // 再生キューに追加し、再生されるまで待つ
+                await enqueueChunkForPlayback(audioBlobToPlay, i + 1, totalChunks, currentConfig, cacheKey, isAutoPlay);
             }
 
             // --- 4. キャッシュ保存 ---
@@ -2492,6 +2360,11 @@
                     currentXhrs.push(xhr);
                 });
 
+                audioQuery.speedScale      = currentConfig.speedScale      ?? 1.0;
+                audioQuery.pitchScale      = currentConfig.pitchScale      ?? 0.0;
+                audioQuery.intonationScale = currentConfig.intonationScale ?? 1.0;
+                audioQuery.volumeScale     = currentConfig.volumeScale     ?? 1.0;
+
                 // --- 2. synthesis (Query JSON -> WAV Blob) ---
                 const chunkBlob = await new Promise((resolve, reject) => {
                     const synthesizeUrl = `${apiUrl}/synthesis?speaker=${speakerId}`;
@@ -2527,12 +2400,13 @@
                 });
 
                 // 実行が完了したQuery XHRをここでまとめて削除するわ（Synthesis開始前に削除するのが理想だけど、安全性重視で）
-                currentXhrs = currentXhrs.filter(item => item !== audioQuery);
+                currentXhrs.length = 0;
+                updateButtonState();
 
                 // 【二重処理！】Blobを両方のロジックで使うわ！
                 audioBlobs.push(chunkBlob); // 1. フォールバック/キャッシュ用に保持
 
-                // ストリーミング再生のキューに送るわ！（RVC変換もここで実行されるわ！）
+                // ストリーミング再生のキューに送るわ！
                 await enqueueChunkForPlayback(chunkBlob, i + 1, totalChunks, currentConfig, cacheKey, isAutoPlay);
             }
 
@@ -2871,9 +2745,9 @@
      * @param {string} cacheKey - キャッシュキーのベース
      * @param {boolean} isAutoPlay - 自動再生フラグ
      */
-    async function enqueueChunkForPlayback(chunkBlob, chunkIndex, totalChunks, currentConfig, cacheKey, isAutoPlay) {
+    async function enqueueChunkForPlayback(playableBlob, chunkIndex, totalChunks, currentConfig, cacheKey, isAutoPlay) {
         // AudioContextが使えないなら何もしないわ（フォールバックに任せるわよ！）
-        if (!audioContext || audioContext.state === 'closed') {
+        if (!audioContext || audioContext.state === 'closed' || isConversionAborted) {
             return;
         }
 
@@ -2891,90 +2765,26 @@
         totalStreamingChunks = totalChunks;
 
         try {
-            if (isConversionAborted) {
-                console.log('[ABORT] 🚨 enqueueChunkForPlayback: 中断フラグ検出（処理開始前）。');
-                return;
-            }
-            // --- 1. RVC変換が必要なら実行するわ！ ---
-            let playableBlob = chunkBlob; // デフォルトはVOICEVOXのオリジナルBlobよ
-
-            if (currentConfig.rvcEnabled) {
-                try {
-                    // チャンク単位のRVC変換処理（非同期で待機するわ！）
-                    // chunkBlob (VOICEVOX WAV Blob) を ArrayBuffer に変換して渡すわ
-                    const arrayBuffer = await chunkBlob.arrayBuffer();
-
-                    // ⚠️ convertRvcChunkがPromiseとXHRを返すわ
-                    const {
-                        promise: rvcConversionPromise,
-                        xhr,
-                    } = convertRvcChunk(arrayBuffer, currentConfig, cacheKey + `_chunk_${chunkIndex}`);
-
-                    // RVC変換のXHRをキャンセルできるように記録
-                    currentXhrs.push(xhr);
-                    updateButtonState();
-
-                    const rvcBase64Data = await rvcConversionPromise; // 変換が完了するまで待つわ
-                    currentXhrs.pop(); // 完了したのでXHRをリストから削除するわ
-
-                    // Base64から再生用のBlobを生成するわ
-                    playableBlob = base64UriToBlob(rvcBase64Data, 'audio/wav');
-                } catch (rvcChunkError) {
-                    console.error('[Streaming] ❌ RVCチャンク変換に失敗:', rvcChunkError);
-                    // `synthesizeRvcAudio` の rvcFailed フラグを立てるには、そちらで `rvcFailed = true` に設定する必要があるわ
-                    // ここでは、単に変換失敗として、後の処理はVOICEVOXオリジナル音声（playableBlob = chunkBlob）が使われるようにするわ
-
-                    // ここで rvcConversionPromise の XHR が残っていたら、それを currentXhrs から削除する必要があるわ
-                    currentXhrs.pop(); // 失敗しても、最後に積んだXHR（rvcConversionPromiseのもの）を削除
-                    updateButtonState();
-
-                    // 失敗した場合は、playableBlobは初期値 (chunkBlob) のままよ
-                    playableBlob = chunkBlob; // ⚡️ オリジナル音声にフォールバック
-
-                    // エラーを上位に伝えるために再スローするかどうかは、全体のフォールバック設計によるわ。
-                    // ストリーミング再生を続けるために、ここでは再スローせずに続行するわね。
-                }
-            } else {
-                // RVCを使わない場合は、オリジナルのBlobをそのまま使うわ。
-                // console.log(`[Streaming] 🔊 RVC無効。チャンク ${chunkIndex} をキューに追加するわ。`);
-            }
-
-            // --- 2. BlobをArrayBufferに変換するわ ---
-            if (isConversionAborted) {
-                console.log('[ABORT] 🚨 enqueueChunkForPlayback: 中断フラグ検出（ArrayBuffer変換前）。');
-                return;
-            }
+            // BlobをArrayBufferに変換するわ
             const arrayBuffer = await playableBlob.arrayBuffer();
 
-            // --- 3. ArrayBufferをAudioBufferにデコードするわ（非同期処理） ---
-            if (isConversionAborted) {
-                console.log('[ABORT] 🚨 enqueueChunkForPlayback: 中断フラグ検出（デコード前）。');
-                return;
-            }
+            // ArrayBufferをAudioBufferにデコードするわ（非同期処理）
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-            // --- 4. 再生ノードを作成し、キューに追加するわ ---
+            // 再生ノードを作成し、キューに追加するわ
             const source = audioContext.createBufferSource();
             source.buffer = audioBuffer;
             source.connect(audioContext.destination);
 
-            // --- 5. 再生開始時刻を計算し、キューに追加するわ ---
+            // 再生開始時刻を計算し、キューに追加するわ
             // nextStartTimeが初期値(0)か、AudioContextの現在時刻より過去なら、現在の時刻から再生を開始するわ！
             if (chunkIndex === 1 || nextStartTime < audioContext.currentTime) {
                 nextStartTime = audioContext.currentTime;
             }
 
-            if (isConversionAborted) {
-                console.log('[ABORT] 🚨 enqueueChunkForPlayback: 中断フラグ検出（再生直前）。');
-                return;
-            }
-
             // 最初のチャンクが再生される直前に、状態を「再生中」にする
             if (!isPlaying && audioContext.state === 'running') {
-                const successMessage = currentConfig.rvcEnabled && chunkBlob === playableBlob ?
-                    '😭 RVC連携失敗！VOICEVOXのオリジナル音声で代替再生中よ！' :
-                    '🔊 素敵な声で再生スタートよ！';
-                showToast(successMessage, true);
+                showToast('🔊 素敵な声で再生スタートよ！', true);
                 isPlaying = true;
                 updateButtonState(); // ボタンを「停止」に切り替えるわ！
             } else if (audioContext.state !== 'running') {

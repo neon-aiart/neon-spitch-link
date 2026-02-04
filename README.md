@@ -32,6 +32,7 @@ The **world's only**(As of the release date) UserScript that automatically reads
 * [お前を消す方法 (CV:小夜/SAYO)](https://youtu.be/i8ZkpUy8kTU)  
 * [すぴっちリンクを紹介するのだ (CV:ずんだもん)](https://youtu.be/SFSfAoHYki0)  
 * [どの政党がおすすめなの？ (CV:猫使ビィ)](https://youtu.be/rn7giPLs49o)  
+* [Gemini3の無料枠を女医が解説するわ！ (CV:四国めたん)](https://youtu.be/cRDvMVAzTJI)  
 
 ---
 

@@ -5,7 +5,7 @@
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>
-// @version        8.2
+// @version        8.3
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -48,7 +48,7 @@
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '8.2';
+    const SCRIPT_VERSION = '8.3';
     const STORE_KEY = 'gemini_voicevox_config';
 
     // ========= グローバルな再生・操作制御変数 =========
@@ -135,8 +135,9 @@
         '.tool-summary',
         'pre', 'code-block', 'mat-paginator', 'immersive-entry-chip', 'inline-location', 'user-notice',
         'model-thoughts', 'deletion-candidate-memories-response-block',
-        'div[style*="display: none"]', 'div[role="status"]',
+        'div[style*="display: none"]', 'div[role="status"]', 'span.cgpt-timestamp',
         'div[role="link"]', 'button', '.action-buttons', '.text-secondary',
+        'div[jscontroller="a5f0he"]', // Google検索AIモードのボタン群 '役になった/役に立たない'
     ];
 
     // 処理中断用セクレタ配列（getGeminiAnswerTextで使用）
@@ -153,7 +154,23 @@
         "なお、各種アプリのすべての機能を使用するには、Gemini アプリ アクティビティを有効にする必要があります[。\\.]?\\s*",
         // 英語版（Apps Activity notification）
         "Note:\\s?To use all features of the apps?,\\s?you need to enable the Gemini Apps Activity[\\s\\.\\:]?",
-        // 💡 NGワード機能として使う例: "今日は", // 「おはよう、今日は晴れです」 -> 「おはよう、晴れです」
+
+        "^[\\s\\S]*?(?=小説)|(?<=永遠に。)(?![\\s\\S]*永遠に。)[\\s\\S]*$",
+
+        /* 💡 NGワード機能として使う例: "今日は", // 「おはよう、今日は晴れです」 -> 「おはよう、晴れです」
+         *** 正規表現 ***
+         ** 1. 最初の「それでは」より前、ワードを対象に含めない, 対象に含める
+         *   > "^[\\s\\S]*?(?=それでは)", "^[\\s\\S]*?それでは",
+         ** 2. 最後の「ここまで」より前、ワードを対象に含めない, 対象に含める
+         *   > "^[\\s\\S]*(?=ここまで)", "^[\\s\\S]*ここまで",
+         ** 3. 最初の「おつかれ」から最後まで、ワードを対象に含めない, 対象に含める
+         *   > "(?<=おつかれ)[\\s\\S]*$", "おつかれ[\\s\\S]*$",
+         ** 4. 最後の「つづくよ」から最後まで、ワードを対象に含めない, 対象に含める
+         *   > "(?<=つづくよ)(?![\\s\\S]*つづくよ)[\\s\\S]*$", "つづくよ(?![\\s\\S]*つづくよ)[\\s\\S]*$",
+         ** 5. 最初の「ここから」より前と最後の「そこまで」から最後まで、ワードを対象に含めない, 対象に含める
+         *   > "^[\\s\\S]*?(?=ここから)|(?<=そこまで)(?![\\s\\S]*そこまで)[\\s\\S]*$",
+         *   > "^[\\s\\S]*?ここから|そこまで(?![\\s\\S]*そこまで)[\\s\\S]*$",
+         ***/
     ];
 
     // ========= 永続化された設定値の読み込み =========
@@ -162,7 +179,7 @@
         apiUrl: 'http://localhost:50021',
         autoPlay: true,
         minTextLength: 10,
-        maxTextLength: 2000,
+        maxTextLength: 10000,
         shortcutKey: 'Ctrl+Shift+B',
         dlBtnEnabled: true,                  // ダウンロードボタン
         rvcEnabled: false,                   // RVC 連携スイッチ
@@ -191,7 +208,9 @@
     GM_setValue(STORE_KEY, config);
 
     let debounceTimerId = null;
-    const DEBOUNCE_DELAY = 200;
+    const DEBOUNCE_DELAY = 200;    // Gemini/ChatGPTは1000で安定 (ミリ秒)
+    const DEBUG = true;            // デバッグログ出力フラグ (開発用)
+    const DEBUG_DETECTION = false; // DOM検出デバッグログ出力フラグ (開発用)
 
     let settingsMenuId = null;
     let rvcSettingsMenuId = null;
@@ -647,7 +666,7 @@
         maxLengthGroup.style.cssText = 'display: flex; align-items: center; margin-bottom: 5px;';
 
         const maxLengthLabel = document.createElement('label');
-        maxLengthLabel.textContent = '最大読み上げ文字数 (10～20000) [2000]:';
+        maxLengthLabel.textContent = '最大読み上げ文字数 (10～20000) [10000]:';
         maxLengthLabel.setAttribute('for', 'maxTextLength');
         maxLengthLabel.style.cssText = 'font-weight: bold; color: #9aa0a6; margin-right: 15px; flex-shrink: 0;';
         maxLengthGroup.appendChild(maxLengthLabel);
@@ -1486,6 +1505,32 @@
             return '';
         }
 
+        /* * * デバッグコード: detection 検出時にDOM構造を出力 * * */
+        if (DEBUG_DETECTION) {
+            const detection = 'お待ちください';
+            const detect_length = 100;
+            const rawText = clonedContainer.innerText || '';
+            if (rawText.includes(detection)) {
+                // 検出された回答パネル（クローン）のouterHTMLを出力。
+                console.log(`[Debug] [${getFormattedDateTime()}] 【検出された回答パネルのHTML】(innerText): \n${rawText.substring(0, detect_length).replace(/\n/g, ' ')}...`);
+                console.log(clonedContainer.outerHTML);
+
+                // 5階層上の要素のタグとクラス名だけを表示
+                let targetElement = clonedContainer;
+                let parentInfo = '';
+                for (let i = 0; i < 5; i++) {
+                    if (targetElement.parentElement) {
+                        targetElement = targetElement.parentElement;
+                        parentInfo += targetElement.tagName + (targetElement.className ? '.' + targetElement.className.split(' ').join('.') : '') + ' > ';
+                    } else {
+                        break;
+                    }
+                }
+                console.log("【親階層情報】(5階層まで): " + parentInfo.slice(0, -3));
+            }
+        }
+        /* * * デバッグコードここまで * * */
+
         // 最後の回答パネルを取得
         const textContainer = allResponseContainers[allResponseContainers.length - 1];
         if (!textContainer) {
@@ -1508,32 +1553,6 @@
             const elements = clonedContainer.querySelectorAll(selector);
             elements.forEach(element => element.remove());
         });
-
-        // 🌟 V4.4 デバッグコードの追加: 「お待ちください」検出時にDOM構造を出力
-        /*
-        const rawText = clonedContainer.innerText || '';
-        if (rawText.includes('お待ちください')) {
-            console.warn("🔊 デバッグ情報: 「お待ちください」が検出されました。この時点のDOM構造を出力します。");
-
-            // 検出された回答パネル（クローン）のouterHTMLを出力。
-            // これで「お待ちください」を囲んでいる要素のクラス名や構造がわかるわ！
-            console.log("【検出された回答パネルのHTML】(innerText: '" + rawText.substring(0, 50).replace(/\n/g, ' ') + "...')");
-            console.log(clonedContainer.outerHTML);
-
-            // 5階層上の要素のタグとクラス名だけを表示
-            let targetElement = clonedContainer;
-            let parentInfo = '';
-            for (let i = 0; i < 5; i++) {
-                if (targetElement.parentElement) {
-                    targetElement = targetElement.parentElement;
-                    parentInfo += targetElement.tagName + (targetElement.className ? '.' + targetElement.className.split(' ').join('.') : '') + ' > ';
-                } else {
-                    break;
-                }
-            }
-            console.log("【親階層情報】(5階層まで): " + parentInfo.slice(0, -3));
-        }
-        */
 
         // innerTextを取る「前」に「間」を仕込むわ
         const blocks = clonedContainer.querySelectorAll('p, th, td, li, h1, h2, h3, h4, h5, h6');
@@ -1584,7 +1603,9 @@
             return p1.substring(0, 1);
         });
 
-        // console.log(`--------- [Debug] return text.trim() ---------\n${text.trim()}\n------------------`);
+        if (DEBUG) {
+            console.log(`--------- [Debug] [${getFormattedDateTime()}] return text.trim() ---------\n${text.trim()}\n------------------`);
+        }
 
         // 最後に、前後の余計なスペースをトリミングして完成！
         return text.trim();
@@ -2594,10 +2615,16 @@
         const button = document.getElementById('convertButton');
         const currentConfig = GM_getValue(STORE_KEY, config);
 
+        if (DEBUG) {
+            console.log(`[Debug] [${getFormattedDateTime()}] Auto:${isAutoPlay}, Synth:${isConversionStarting}, Play:${isPlaying}, Abort:${isConversionAborted}, Length:${currentXhrs?.length || 0}, Audio:${audioContext?.state || 'undefined'}`);
+        }
+
         // 物理的な「実態」をチェックするわよ
         const isAuto = (isAutoPlay === true);
         if (isAuto) {
-            console.log('[SYSTEM] 自動再生の割り込み。強制的に全停止して更地にするわよ。');
+            if (isPlaying) {
+                console.log('[SYSTEM] 自動再生の割り込み。強制的に全停止して更地にするわよ。');
+            }
 
             // ループ中断フラグを即座に立てる（重要：awaitの前に立てる！）
             isConversionAborted = true;
@@ -2611,7 +2638,7 @@
             isConversionStarting = false;
         } else {
             // 手動クリック時のガード（ここはフラグを信じるしかない）
-            const isBusy = isConversionStarting || isPlaying || (audioContext && audioContext.state === 'running');
+            const isBusy = isConversionStarting || isPlaying || audioContext?.state === 'running';
             if (isBusy) {
                 showToast('今は再生中よ。停止ボタンで止めてから次の操作をしてね。', false);
                 return;
@@ -3090,7 +3117,9 @@
                 button.style.backgroundColor = '#dc3545';
             }
             button.addEventListener('click', stopPlayback);
-            // console.log(`[Debug] [${getFormattedDateTime()}] 停止`);
+            if (DEBUG) {
+                console.log(`[Debug] [${getFormattedDateTime()}] 停止`);
+            }
         } else if (isPause && audioContext) {
             if (currentText !== '待機中...') {
                 icon.className = 'fa-solid fa-paw';
@@ -3098,7 +3127,9 @@
                 button.style.backgroundColor = '#e67e22';
             }
             button.addEventListener('click', resumeContext);
-            // console.log(`[Debug] [${getFormattedDateTime()}] 待機中`);
+            if (DEBUG) {
+                console.log(`[Debug] [${getFormattedDateTime()}] 待機中`);
+            }
         } else if (isConversionStarting || currentXhrs.length > 0) {
             if (currentText !== '合成中...') {
                 icon.className = 'fa-solid fa-sync-alt fa-arrows-spin';
@@ -3106,7 +3137,9 @@
                 button.style.backgroundColor = '#6c757d';
             }
             button.addEventListener('click', stopConversion);
-            // console.log(`[Debug] [${getFormattedDateTime()}] 合成中`);
+            if (DEBUG) {
+                console.log(`[Debug] [${getFormattedDateTime()}] 合成中`);
+            }
         } else {
             if (currentText !== '再生') {
                 icon.className = 'fa-solid fa-comment-dots';
@@ -3114,9 +3147,10 @@
                 button.style.backgroundColor = '#007bff';
             }
             button.addEventListener('click', startConversion);
-            // console.log(`[Debug] [${getFormattedDateTime()}] 再生`);
+            if (DEBUG) {
+                console.log(`[Debug] [${getFormattedDateTime()}] 再生`);
+            }
         }
-        // button.disabled = false;
 
         const dlButton = document.getElementById('downloadButton');
         if (dlButton) {
@@ -3372,6 +3406,9 @@
 
                     // フッターがあり＆最小文字数を超えている＆キャッシュと比較して別のものの場合に自動再生
                     if (currentText && currentText !== lastAutoPlayedText && currentText.length > 0) {
+                        if (DEBUG) {
+                            console.log(`[Debug] [${getFormattedDateTime()}] ${currentText}`);
+                        }
                         if (currentText.length <= minLength) {
                             console.log(`読み上げテキストが最小文字数(${minLength}文字)以下です（${currentText.length}文字）: ${currentText.substring(0, 40)}...`);
                         } else if (hasFooter) {

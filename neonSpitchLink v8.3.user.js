@@ -155,7 +155,7 @@
         // 英語版（Apps Activity notification）
         "Note:\\s?To use all features of the apps?,\\s?you need to enable the Gemini Apps Activity[\\s\\.\\:]?",
 
-        "^[\\s\\S]*?(?=小説)|(?<=永遠に。)(?![\\s\\S]*永遠に。)[\\s\\S]*$",
+        "^[\\s\\S]*?(?=ここから、)|(?<=ここまで。)(?![\\s\\S]*ここまで。)[\\s\\S]*$",
 
         /* 💡 NGワード機能として使う例: "今日は", // 「おはよう、今日は晴れです」 -> 「おはよう、晴れです」
          *** 正規表現 ***
@@ -211,6 +211,7 @@
     const DEBOUNCE_DELAY = 200;    // Gemini/ChatGPTは1000で安定 (ミリ秒)
     const DEBUG = true;            // デバッグログ出力フラグ (開発用)
     const DEBUG_DETECTION = false; // DOM検出デバッグログ出力フラグ (開発用)
+    const DEBUG_REMOVE = false;    // NGワード除去前デバッグログ出力フラグ (開発用)
 
     let settingsMenuId = null;
     let rvcSettingsMenuId = null;
@@ -1587,7 +1588,19 @@
         // 3. その他のマークダウン記号の除去
         text = text.replace(/(\*{1,2}|_{1,2}|~{1,2}|#|\$|>|-|\[.*?\]\(.*?\)|`|\(|\)|\[|\]|<|>|\\|:|\?|!|;|=|\+|\|)/gim, ' ');
 
-        // 4. 定型文・NGワードの除去
+        // 4. 連続する空白（全角・タブ含む）を1つにまとめる
+        text = text.replace(/[ \u3000\t]{2,}/g, ' ');
+
+        // 5. 連続する句読点（。。 や ！。 など）を1つにまとめる
+        text = text.replace(/([.!?、。？！]{2,})/g, function(match, p1) {
+            return p1.substring(0, 1);
+        });
+
+        if (DEBUG_REMOVE) {
+            console.log(`=== [Debug] [${getFormattedDateTime()}] Before Remove Regex ===\n${text.trim()}\n============`);
+        }
+
+        // 6. 定型文・NGワードの除去
         TEXTS_TO_REMOVE_REGEX.forEach(regexString => {
             // gフラグ（グローバル）を追加し、全文からマッチしたものを全て除去するわ
             const regex = new RegExp(regexString, 'gi');
@@ -1595,16 +1608,8 @@
             text = text.replace(regex, ' ');
         });
 
-        // 5. 連続する空白（全角・タブ含む）を1つにまとめる
-        text = text.replace(/[ \u3000\t]{2,}/g, ' ');
-
-        // 6. 連続する句読点（。。 や ！。 など）を1つにまとめる
-        text = text.replace(/([.!?、。？！]{2,})/g, function(match, p1) {
-            return p1.substring(0, 1);
-        });
-
         if (DEBUG) {
-            console.log(`--------- [Debug] [${getFormattedDateTime()}] return text.trim() ---------\n${text.trim()}\n------------------`);
+            console.log(`------ [Debug] [${getFormattedDateTime()}] return text.trim() ------\n${text.trim()}\n------------------`);
         }
 
         // 最後に、前後の余計なスペースをトリミングして完成！
@@ -3017,68 +3022,35 @@
      * 再生中の全てのアクションを停止するわ。（合成の中止を含む）
      * @param {boolean} [silent=false] - trueの場合、停止トーストを表示しないわ。
      */
-    function stopPlayback(silent = false) {
-        const isCurrentlyConverting = isConversionStarting || currentXhrs.length > 0;
-        // ここはボタンの手動クリックで呼ばれたケース！
+    async function stopPlayback(silent = false) {
+        // 1. 引数の正規化（イベントオブジェクト対策）
         if (typeof silent === 'object' && silent !== null) {
-            // イベントオブジェクトを引数として受け取ってしまったので、falseに戻すわ。
             silent = false;
         }
 
-        // --- 1. 合成中（ストリーミング開始前または途中） ---
-        if (isCurrentlyConverting) {
-            isConversionAborted = true; // 合成中断要求フラグを設定するわ！
-            // XHR中断・トーストクリア・HTML Audio停止などは resetOperation に任せるわ
-            resetOperation(!silent);
+        // 現在の状態を判定
+        const isCurrentlyConverting = isConversionStarting || (currentXhrs.length > 0);
 
-            // 合成中断の場合のみ AudioContext をクローズするわ！
-            if (audioContext && audioContext.state !== 'closed') {
-                audioContext.close().then(() => {
-                    // コンソールログをトーストに置き換えるわ！
-                    // silentではない (つまり手動停止) 場合、resetOperationで既に出たトーストの上に重ねて出さないようにするわ
-                    if (silent) {
-                        // silent=true で呼ばれるのは playAudio(true) など。ただし、今回は合成中なのでここは通常呼ばれない。
-                        // 安全のため、ここもコンソールログに留めておくわ
-                        console.log('[Streaming] AudioContext をクローズしたわ。（silentモード）');
-                    } else {
-                        // 手動停止の場合、resetOperationで「中断したわ」のトーストが既に出ているはず
-                        // ここは処理完了のデバッグログに留めるのがベストよ。
-                        console.log('[Streaming] AudioContext をクローズしたわ。');
-                    }
-                    audioContext = null;
-                }).catch(e => {
-                    console.error('[Streaming] AudioContext クローズ失敗:', e);
-                });
-                // AudioContext関連のストリーミング変数のリセット
-                currentSourceNode = null;
-                nextStartTime = 0;
-                finishedStreamingChunks = 0;
-                totalStreamingChunks = 0;
-                currentStreamingCacheKey = null;
-            }
-            return;
+        // 2. 合成中の場合のみ必要なフラグ立て
+        if (isCurrentlyConverting) {
+            isConversionAborted = true;
         }
 
-        // --- 2. 再生中（HTML Audio Element または ストリーミング完了後の Web Audio API） ---
-        // HTML Audio Element または AudioContext が残っている場合
-        if (isPlaying || (audioContext && audioContext.state !== 'closed')) {
-            // HTML Audio Element の停止とボタンリセットは resetOperation に任せるわ！
-            resetOperation(!silent);
+        // 3. 共通のリセット処理（XHR中断やHTML Audio停止、ボタン状態リセットなど）
+        // resetOperationの中で isPlaying のリセットなども行われる前提
+        resetOperation(!silent);
 
-            // Web Audio APIによる再生停止（ストリーミング完了後の AudioContext 再生）
-            if (audioContext && audioContext.state !== 'closed') {
-                audioContext.close().then(() => {
-                    // ここがストリーミング失敗時や再生停止時よ！
-                    // silentではない場合 (手動停止)、トーストを出してもいいけど、resetOperationのトーストと重複するから注意！
-                    // 安全策として、トーストの重複を避けるために、ストリーミング失敗時にトーストを出す処理は
-                    // 別途 enqueueChunkForPlayback のフォールバック処理内で集中管理する方が確実よ。
-                    console.log('[Streaming] AudioContext をクローズしたわ。');
-                    audioContext = null;
-                }).catch(e => {
-                    console.error('[Streaming] AudioContext クローズ失敗:', e);
-                });
-
-                // AudioContext関連のリセット
+        // 4. AudioContext のクローズ処理（共通化してスッキリ！）
+        if (audioContext && audioContext.state !== 'closed') {
+            try {
+                // ここで await して確実にクローズを待つ
+                await audioContext.close();
+                console.log(`[Streaming] AudioContext を正常にクローズしたわ。${silent ? '（silent）' : ''}`);
+            } catch (e) {
+                console.error('[Streaming] AudioContext クローズ失敗:', e);
+            } finally {
+                // 成功しても失敗しても、変数は必ず掃除するわ！
+                audioContext = null;
                 currentSourceNode = null;
                 nextStartTime = 0;
                 finishedStreamingChunks = 0;

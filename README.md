@@ -33,6 +33,9 @@ The **world's only**(As of the release date) UserScript that automatically reads
 * [すぴっちリンクを紹介するのだ (CV:ずんだもん)](https://youtu.be/SFSfAoHYki0)  
 * [どの政党がおすすめなの？ (CV:猫使ビィ)](https://youtu.be/rn7giPLs49o)  
 * [Gemini3の無料枠を女医が解説するわ！ (CV:四国めたん)](https://youtu.be/cRDvMVAzTJI)  
+* [【睡眠導入】【朗読】この愛は常識の範囲外。――ねぇ、ずっとそばにいて？ (CV:小夜/SAYO)](https://youtu.be/U8oZ-jvJwIU)  
+* [総選挙の情報をまとめるのだ (CV:ずんだもん)](https://youtu.be/E8yEw_zO_vs)  
+* [【今週のニュース】 2/1～2/7のニュースTOP10 (CV:もち子さん)](https://youtu.be/ccyo3uEvO5Q)  
 
 ---
 

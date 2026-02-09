@@ -155,7 +155,7 @@
         // 英語版（Apps Activity notification）
         "Note:\\s?To use all features of the apps?,\\s?you need to enable the Gemini Apps Activity[\\s\\.\\:]?",
 
-        "^[\\s\\S]*?(?=ここから、)|(?<=ここまで。)(?![\\s\\S]*ここまで。)[\\s\\S]*$",
+        "^[\\s\\S]*?(?=今週の すぴっちリンク ニュース)|(?<=お送りしました。)(?![\\s\\S]*お送りしました。)[\\s\\S]*$",
 
         /* 💡 NGワード機能として使う例: "今日は", // 「おはよう、今日は晴れです」 -> 「おはよう、晴れです」
          *** 正規表現 ***
@@ -210,8 +210,9 @@
     let debounceTimerId = null;
     const DEBOUNCE_DELAY = 200;    // Gemini/ChatGPTは1000で安定 (ミリ秒)
     const DEBUG = true;            // デバッグログ出力フラグ (開発用)
-    const DEBUG_DETECTION = false; // DOM検出デバッグログ出力フラグ (開発用)
-    const DEBUG_REMOVE = false;    // NGワード除去前デバッグログ出力フラグ (開発用)
+    const DEBUG_BUTTON = false;    // ボタン更新のデバッグログ出力フラグ (開発用)
+    const DEBUG_TEXT = false;      // NGワード除去前後のデバッグログ出力フラグ (開発用)
+    const DEBUG_DETECTION = false; // DOM検出のデバッグログ出力フラグ (開発用)
 
     let settingsMenuId = null;
     let rvcSettingsMenuId = null;
@@ -1596,7 +1597,7 @@
             return p1.substring(0, 1);
         });
 
-        if (DEBUG_REMOVE) {
+        if (DEBUG_TEXT) {
             console.log(`=== [Debug] [${getFormattedDateTime()}] Before Remove Regex ===\n${text.trim()}\n============`);
         }
 
@@ -1608,7 +1609,7 @@
             text = text.replace(regex, ' ');
         });
 
-        if (DEBUG) {
+        if (DEBUG_TEXT) {
             console.log(`------ [Debug] [${getFormattedDateTime()}] return text.trim() ------\n${text.trim()}\n------------------`);
         }
 
@@ -2453,27 +2454,21 @@
                 await playAudio(finalAudioBlob, 0, successMessage);
             }
         } catch (error) {
-            // ユーザー中断によるエラーの特殊処理（最優先）
-            // forループ内で throw new Error('Synthesis Aborted by User Request') が発生した場合を捕まえるわ！
-            if (error.message && error.message.includes('Synthesis Aborted by User Request')) {
-                isConversionAborted = false; // 次の合成のためにフラグをリセット！
-                return;
+            if (error.message?.includes('Aborted')) {
+                console.log('[SYNTH] ユーザーによる中断を正常に処理したわ。');
+
+                const errorMessage = (typeof error === 'string') ? error : error.message;
+                const isInternalError = errorMessage.includes('Status: 500');
+                let shortErrorMessage = errorMessage.replace(/\s*\(Status:.*?\)/g, '');
+                if (isInternalError) {
+                    shortErrorMessage = `致命的エラー (500)！メモリ不足の可能性あり。長文合成のチャンクサイズを${DEFAULT_CHUNK_SIZE}文字以下に調整してみて！`;
+                }
+                showToast(`😭 連携失敗: ${shortErrorMessage}`, false);
+
+                await stopPlayback(true);
+            } else {
+                throw error; // startConversion の catch に渡す
             }
-
-            // エラー処理（500エラーの特別な表示を含む）
-            console.error('[VOICEVOX] 連携処理中にエラー発生:', error);
-            const errorMessage = (typeof error === 'string') ? error : error.message;
-
-            const isInternalError = errorMessage.includes('Status: 500');
-            let shortErrorMessage = errorMessage.replace(/\s*\(Status:.*?\)/g, '');
-
-            if (isInternalError) {
-                shortErrorMessage = `致命的エラー (500)！メモリ不足の可能性あり。長文合成のチャンクサイズを${DEFAULT_CHUNK_SIZE}文字以下に調整してみて！`;
-            }
-
-            showToast(`😭 連携失敗: ${shortErrorMessage}`, false);
-
-            throw error;
         }
     }
 
@@ -2617,43 +2612,44 @@
 
     // メインの再生のトリガー
     async function startConversion(isAutoPlay = false) {
-        const button = document.getElementById('convertButton');
         const currentConfig = GM_getValue(STORE_KEY, config);
-
-        if (DEBUG) {
-            console.log(`[Debug] [${getFormattedDateTime()}] Auto:${isAutoPlay}, Synth:${isConversionStarting}, Play:${isPlaying}, Abort:${isConversionAborted}, Length:${currentXhrs?.length || 0}, Audio:${audioContext?.state || 'undefined'}`);
-        }
 
         // 物理的な「実態」をチェックするわよ
         const isAuto = (isAutoPlay === true);
+
+        if (DEBUG) {
+            console.log(`[Debug] Mode:${isAuto ? 'AUTO' : 'MANUAL'}, Synth:${isConversionStarting}, Play:${isPlaying}, Audio:${audioContext?.state}`);
+        }
+
         if (isAuto) {
-            if (isPlaying) {
-                console.log('[SYSTEM] 自動再生の割り込み。強制的に全停止して更地にするわよ。');
+            if (DEBUG) {
+                console.log('[Debug] 自動再生の割り込み。強制的に全停止して更地にするわよ。');
             }
 
             // ループ中断フラグを即座に立てる（重要：awaitの前に立てる！）
             isConversionAborted = true;
-
-            // 前の再生や合成を完全に殺す（awaitで完了を待つ）
+            // 前の再生や合成を完全に止める（awaitで完了を待つ）
             await stopPlayback(true);
 
-            // 完全に掃除が終わってから、自分用のフラグにリセット
+            // 完全に掃除が終わってからフラグリセット
             isConversionAborted = false;
-            isPlaying = false;
-            isConversionStarting = false;
         } else {
-            // 手動クリック時のガード（ここはフラグを信じるしかない）
-            const isBusy = isConversionStarting || isPlaying || audioContext?.state === 'running';
-            if (isBusy) {
+            // 手動時：Synth か Play が本当のビジー状態
+            if (isConversionStarting || isPlaying) {
                 showToast('今は再生中よ。停止ボタンで止めてから次の操作をしてね。', false);
                 return;
+            }
+            // AudioContext が残っているだけなら、ここで掃除を試みる
+            if (audioContext && audioContext.state !== 'closed') {
+                console.log('[Debug] 古い AudioContext を掃除して開始するわ。');
+                await stopPlayback(true);
             }
         }
 
         // 一時停止
         if (isPause) {
             isPause = false;
-            if (audioContext.state === 'suspended') {
+            if (audioContext && audioContext.state === 'suspended') {
                 audioContext.resume();
             }
             return;
@@ -2672,12 +2668,19 @@
 
         const maxLength = currentConfig.maxTextLength || 2000;
         if (text.length > maxLength) {
-            // テキストをクールにカットし、カットしたことを示すメッセージを追加
+            // 1. テキストをカット
             text = text.substring(0, maxLength);
-            // 最後に読点、句点、三点リーダーなどがあれば、そのまま残す
+
+            // 2. 末尾の処理（句読点チェック）
             const lastChar = text.slice(-1);
             const trimEnd = /[、。？！…]$/.test(lastChar) ? '' : '...';
             text += trimEnd;
+
+            // 3. 声でのアナウンスを追加
+            // ちょっと間を置くために「。」を最初に入れるのがコツよ！
+            text += "。……。指定の文字数を超えたため、読み上げを終了したわ。";
+
+            // 4. トースト表示
             showToast(`読み上げテキストが最大文字数(${maxLength}文字)を超えたわ！超過分をカットしたわよ。`, false);
         }
         console.log(`[SYNTH] 読み上げテキスト（${text.length}文字）: ${text.substring(0, 50)}...`);
@@ -2700,11 +2703,8 @@
         isConversionStarting = true; // 「合成中」開始フラグ
         updateButtonState();
 
-        // 合成処理: VOICEVOX / RVC
-        const useRvc = currentConfig.rvcEnabled; // RVC設定のチェックを簡略化
-
         try {
-            if (useRvc) {
+            if (currentConfig.rvcEnabled) {
                 await synthesizeRvcAudio(text, currentConfig, isAutoPlay, requestCacheKey);
             } else {
                 await synthesizeVoicevoxAudio(text, currentConfig, isAutoPlay, requestCacheKey);
@@ -2714,9 +2714,10 @@
             // console.error('[SYNTHESIS_FATAL_ERROR] 予期せぬ合成処理エラー:', error);
             // const shortMessage = (typeof error === 'string') ? error : (error.message || '不明なエラー');
             // showToast(`😭 致命的な合成エラー: ${shortMessage.substring(0, 30)}...`, false);
-            resetOperation(true); // XHRを確実に中止して状態をリセットするわ！
+            await stopPlayback(true); // XHRを確実に中止して状態をリセットするわ！
         } finally {
             isConversionStarting = false; // 処理終了時（成功・失敗問わず）にフラグをリセット
+            isConversionAborted = false;
             updateButtonState();
         }
     }
@@ -3089,7 +3090,7 @@
                 button.style.backgroundColor = '#dc3545';
             }
             button.addEventListener('click', stopPlayback);
-            if (DEBUG) {
+            if (DEBUG_BUTTON) {
                 console.log(`[Debug] [${getFormattedDateTime()}] 停止`);
             }
         } else if (isPause && audioContext) {
@@ -3099,7 +3100,7 @@
                 button.style.backgroundColor = '#e67e22';
             }
             button.addEventListener('click', resumeContext);
-            if (DEBUG) {
+            if (DEBUG_BUTTON) {
                 console.log(`[Debug] [${getFormattedDateTime()}] 待機中`);
             }
         } else if (isConversionStarting || currentXhrs.length > 0) {
@@ -3109,7 +3110,7 @@
                 button.style.backgroundColor = '#6c757d';
             }
             button.addEventListener('click', stopConversion);
-            if (DEBUG) {
+            if (DEBUG_BUTTON) {
                 console.log(`[Debug] [${getFormattedDateTime()}] 合成中`);
             }
         } else {
@@ -3119,7 +3120,7 @@
                 button.style.backgroundColor = '#007bff';
             }
             button.addEventListener('click', startConversion);
-            if (DEBUG) {
+            if (DEBUG_BUTTON) {
                 console.log(`[Debug] [${getFormattedDateTime()}] 再生`);
             }
         }
@@ -3378,8 +3379,8 @@
 
                     // フッターがあり＆最小文字数を超えている＆キャッシュと比較して別のものの場合に自動再生
                     if (currentText && currentText !== lastAutoPlayedText && currentText.length > 0) {
-                        if (DEBUG) {
-                            console.log(`[Debug] [${getFormattedDateTime()}] ${currentText}`);
+                        if (DEBUG_TEXT) {
+                            console.log(`--- [Debug] [${getFormattedDateTime()}] mutation: ---\n${currentText}\n------------`);
                         }
                         if (currentText.length <= minLength) {
                             console.log(`読み上げテキストが最小文字数(${minLength}文字)以下です（${currentText.length}文字）: ${currentText.substring(0, 40)}...`);
@@ -3465,5 +3466,16 @@
 
     // グローバルキーイベントリスナー
     document.addEventListener('keydown', handleGlobalKeyDown);
+
+    // 画面のどこをクリックしても、待機中なら再開させる
+    document.addEventListener('click', () => {
+        // isPause が true で、かつ AudioContext がサスペンド状態なら再開！
+        if (isPause && audioContext && audioContext.state === 'suspended') {
+            if (DEBUG) {
+                console.log('[Autoplay] 画面クリックを検知。再生を再開するわ！');
+            }
+            resumeContext();
+        }
+    }, { capture: true, }); // 他の要素のクリックイベントより先に捕まえるために capture を使うのがおすすめ
 
 })();

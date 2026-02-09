@@ -1,5 +1,6 @@
 .history
 archive/
+Youtube/
 eslint*
 rvc-*/
 !rvc-*-fix/

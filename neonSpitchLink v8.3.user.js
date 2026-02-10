@@ -263,6 +263,11 @@
             border-color: #8ab4f8;
             outline: none;
         }
+        /* Chrome, Safari, Edge 用 */
+        .mei-input-field::-webkit-outer-spin-button,
+        .mei-input-field::-webkit-inner-spin-button {
+            margin-left: 4px; /* ここで数字との距離を調整できるわよ！ */
+        }
         .mei-button-primary {
             padding: 8px 15px;
             border: none;
@@ -472,7 +477,7 @@
         speakerInput.value = config.speakerId;
         speakerInput.min = '0';
         speakerInput.step = '1';
-        speakerInput.style.cssText = 'width: 80px; flex-grow: 0;';
+        speakerInput.style.cssText = 'width: 80px; flex-grow: 0; text-align: right;';
         speakerInput.classList.add('mei-input-field');
         speakerGroup.appendChild(speakerInput);
 
@@ -656,7 +661,7 @@
         minLengthInput.max = '10000';
         minLengthInput.step = '1';
         minLengthInput.classList.add('mei-input-field');
-        minLengthInput.style.cssText = 'width: 80px; flex-grow: 0;'; // 幅を固定
+        minLengthInput.style.cssText = 'width: 80px; flex-grow: 0; text-align: right;'; // 幅を固定
         minLengthGroup.appendChild(minLengthInput);
         panel.appendChild(minLengthGroup);
 
@@ -683,12 +688,12 @@
         maxChunksInput.max = '1000';
         maxChunksInput.step = '1';
         maxChunksInput.classList.add('mei-input-field');
-        maxChunksInput.style.cssText = 'width: 80px; flex-grow: 0;';
+        maxChunksInput.style.cssText = 'width: 80px; flex-grow: 0; text-align: right;';
         maxChunksGroup.appendChild(maxChunksInput);
         panel.appendChild(maxChunksGroup);
 
         const maxChunksHelp = document.createElement('p');
-        maxChunksHelp.textContent = `*この分割数を超えた部分はカットされるわ！１分割は${DEFAULT_CHUNK_SIZE}文字`;
+        maxChunksHelp.textContent = `*この分割数を超えた部分はカットされるわ！（１分割は${DEFAULT_CHUNK_SIZE}文字）`;
         maxChunksHelp.style.cssText = 'margin-top: 5px; margin-bottom: 20px; font-size: 0.8em; color: #9aa0a6;';
         panel.appendChild(maxChunksHelp);
 
@@ -996,6 +1001,9 @@
             }
             if (placeholder) {
                 input.setAttribute('placeholder', placeholder);
+            }
+            if (type === 'number') {
+                input.style.textAlign = 'right';
             }
             input.setAttribute('autocomplete', 'off');
 

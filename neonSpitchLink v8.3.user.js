@@ -670,7 +670,7 @@
         maxChunksGroup.style.cssText = 'display: flex; align-items: center; margin-bottom: 5px;';
 
         const maxChunksLabel = document.createElement('label');
-        maxChunksLabel.textContent = '最大チャンク数 (10～1,000) [100]:';
+        maxChunksLabel.textContent = '最大分割数 (10～1,000) [100]:';
         maxChunksLabel.setAttribute('for', 'maxChunks');
         maxChunksLabel.style.cssText = 'font-weight: bold; color: #9aa0a6; margin-right: 15px; flex-shrink: 0;';
         maxChunksGroup.appendChild(maxChunksLabel);
@@ -688,7 +688,7 @@
         panel.appendChild(maxChunksGroup);
 
         const maxChunksHelp = document.createElement('p');
-        maxChunksHelp.textContent = '*この分割数を超えた部分はカットされるわ！';
+        maxChunksHelp.textContent = `*この分割数を超えた部分はカットされるわ！１分割は${DEFAULT_CHUNK_SIZE}文字`;
         maxChunksHelp.style.cssText = 'margin-top: 5px; margin-bottom: 20px; font-size: 0.8em; color: #9aa0a6;';
         panel.appendChild(maxChunksHelp);
 

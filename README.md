@@ -308,7 +308,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 ## 📝 更新履歴 (Changelog)
 
-### v8.3 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v8.2-dev/neonSpitchLink%20v8.2.user.js)]
+### v8.3 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v8.3-dev/neonSpitchLink%20v8.3.user.js)]
 ✅ 新しい回答がきても再生を中断しない問題を修正  
 ☑️ 最大文字数を最大分割数に変更  
 

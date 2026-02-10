@@ -123,10 +123,11 @@
 
     // DOM除去用セクレタ配列（getGeminiAnswerTextで使用）
     const SELECTORS_TO_REMOVE = [
+        '#convertButtonWrapper',
         '.extension-processing-state',
         '.attachment-container',
         '.hide-from-message-actions',
-        '#convertButtonWrapper',
+        '.cdk-visually-hidden',
         '.gpi-static-text-loader',
         '.avatar-gutter',
         '.legacy-sources-sidebar-button',
@@ -178,8 +179,8 @@
         speakerId: 4,
         apiUrl: 'http://localhost:50021',
         autoPlay: true,
-        minTextLength: 10,
-        maxTextLength: 10000,
+        minTextLength: 10,                   // 最小テキスト長 (0～10,000) [10]
+        maxChunks: 100,                      // 最大チャンク数 (1～1,000) [100]
         shortcutKey: 'Ctrl+Shift+B',
         dlBtnEnabled: true,                  // ダウンロードボタン
         rvcEnabled: false,                   // RVC 連携スイッチ
@@ -642,7 +643,7 @@
         minLengthGroup.style.cssText = 'display: flex; align-items: center; margin-bottom: 5px;';
 
         const minLengthLabel = document.createElement('label');
-        minLengthLabel.textContent = '最小読み上げ文字数 (文字):';
+        minLengthLabel.textContent = '最小読み上げ文字数 (1～10,000) [10]:';
         minLengthLabel.setAttribute('for', 'minTextLength');
         minLengthLabel.style.cssText = 'font-weight: bold; color: #9aa0a6; margin-right: 15px; flex-shrink: 0;';
         minLengthGroup.appendChild(minLengthLabel);
@@ -651,7 +652,8 @@
         minLengthInput.type = 'number';
         minLengthInput.id = 'minTextLength';
         minLengthInput.value = config.minTextLength; // 設定ファイルから値を取得
-        minLengthInput.min = '0';
+        minLengthInput.min = '1';
+        minLengthInput.max = '10000';
         minLengthInput.step = '1';
         minLengthInput.classList.add('mei-input-field');
         minLengthInput.style.cssText = 'width: 80px; flex-grow: 0;'; // 幅を固定
@@ -664,30 +666,31 @@
         panel.appendChild(minLengthHelp);
 
         // 最大読み上げ文字数 GROUP（maxTextLength）
-        const maxLengthGroup = document.createElement('div');
-        maxLengthGroup.style.cssText = 'display: flex; align-items: center; margin-bottom: 5px;';
+        const maxChunksGroup = document.createElement('div');
+        maxChunksGroup.style.cssText = 'display: flex; align-items: center; margin-bottom: 5px;';
 
-        const maxLengthLabel = document.createElement('label');
-        maxLengthLabel.textContent = '最大読み上げ文字数 (10～20000) [10000]:';
-        maxLengthLabel.setAttribute('for', 'maxTextLength');
-        maxLengthLabel.style.cssText = 'font-weight: bold; color: #9aa0a6; margin-right: 15px; flex-shrink: 0;';
-        maxLengthGroup.appendChild(maxLengthLabel);
+        const maxChunksLabel = document.createElement('label');
+        maxChunksLabel.textContent = '最大チャンク数 (10～1,000) [100]:';
+        maxChunksLabel.setAttribute('for', 'maxChunks');
+        maxChunksLabel.style.cssText = 'font-weight: bold; color: #9aa0a6; margin-right: 15px; flex-shrink: 0;';
+        maxChunksGroup.appendChild(maxChunksLabel);
 
-        const maxLengthInput = document.createElement('input');
-        maxLengthInput.type = 'number';
-        maxLengthInput.id = 'maxTextLength';
-        maxLengthInput.value = config.maxTextLength; // 設定ファイルから値を取得
-        maxLengthInput.min = '0';
-        maxLengthInput.step = '100'; // 100文字刻みで調整しやすく
-        maxLengthInput.classList.add('mei-input-field');
-        maxLengthInput.style.cssText = 'width: 80px; flex-grow: 0;';
-        maxLengthGroup.appendChild(maxLengthInput);
-        panel.appendChild(maxLengthGroup);
+        const maxChunksInput = document.createElement('input');
+        maxChunksInput.type = 'number';
+        maxChunksInput.id = 'maxChunks';
+        maxChunksInput.value = config.maxChunks; // 設定ファイルから値を取得
+        maxChunksInput.min = '10';
+        maxChunksInput.max = '1000';
+        maxChunksInput.step = '1';
+        maxChunksInput.classList.add('mei-input-field');
+        maxChunksInput.style.cssText = 'width: 80px; flex-grow: 0;';
+        maxChunksGroup.appendChild(maxChunksInput);
+        panel.appendChild(maxChunksGroup);
 
-        const maxLengthHelp = document.createElement('p');
-        maxLengthHelp.textContent = '*この文字数を超えた部分はカットされるわ！RVCの一時ファイル対策よ。';
-        maxLengthHelp.style.cssText = 'margin-top: 5px; margin-bottom: 20px; font-size: 0.8em; color: #9aa0a6;';
-        panel.appendChild(maxLengthHelp);
+        const maxChunksHelp = document.createElement('p');
+        maxChunksHelp.textContent = '*この分割数を超えた部分はカットされるわ！';
+        maxChunksHelp.style.cssText = 'margin-top: 5px; margin-bottom: 20px; font-size: 0.8em; color: #9aa0a6;';
+        panel.appendChild(maxChunksHelp);
 
         // キー設定グループ
         const keyGroup = document.createElement('div');
@@ -858,8 +861,8 @@
             const newShortcutKey = keyInput.value.trim();
             const minTextLengthInput = document.getElementById('minTextLength');
             const newMinTextLength = parseInt(minTextLengthInput.value, 10);
-            const maxTextLengthInput = document.getElementById('maxTextLength');
-            const newMaxTextLength = parseInt(maxTextLengthInput.value, 10);
+            const maxChunksInput = document.getElementById('maxChunks');
+            const newMaxChunks = parseInt(maxChunksInput.value, 10);
 
             if (isNaN(newSpeakerId) || newSpeakerId < 0) {
                 showToast('スピーカーIDは半角数字で、0以上の値を入力してね！', false);
@@ -869,12 +872,17 @@
                 showToast('ショートカットキーを正しく設定してね！', false);
                 return;
             }
-            if (isNaN(newMinTextLength) || newMinTextLength < 0) {
-                showToast('最小読み上げ文字数は半角数字で、0以上の値を入力してね！', false);
+            if (isNaN(newMinTextLength) || newMinTextLength < 1 || newMinTextLength > 10000) {
+                showToast('最小読み上げ文字数は半角数字で、1～10,000の範囲を入力してね！', false);
                 return;
             }
-            if (isNaN(newMaxTextLength) || newMaxTextLength < 10 || newMaxTextLength > 20000) {
-                showToast(`最大読み上げ文字数は半角数字で、10文字以上20,000文字以下を入力してね！`, false);
+            if (isNaN(newMaxChunks) || newMaxChunks < 10 || newMaxChunks > 1000) {
+                showToast(`最大分割数は半角数字で、10～1,000の範囲を入力してね！`, false);
+                return;
+            }
+            // 最小文字数が「最大チャンク数 × DEFAULT_CHUNK_SIZE(目安)」を明らかに超えている場合の警告
+            if (newMinTextLength > (newMaxChunks * DEFAULT_CHUNK_SIZE)) {
+                showToast('最小文字数が大きすぎて、設定された最大分割数では一生再生されないわよ！', false);
                 return;
             }
 
@@ -884,7 +892,7 @@
                 apiUrl: newApiUrl,
                 autoPlay: newAutoPlay,
                 minTextLength: newMinTextLength,
-                maxTextLength: newMaxTextLength,
+                maxChunks: newMaxChunks,
                 shortcutKey: newShortcutKey,
             };
 
@@ -2016,9 +2024,20 @@
             return;
         } // RVC無効なら即終了（ガード句）
 
+        // 1. 分割
         const MAX_CHUNK_LENGTH = currentConfig.chunkSize || DEFAULT_CHUNK_SIZE;
-        const chunks = splitTextForSynthesis(text, MAX_CHUNK_LENGTH);
+        let chunks = splitTextForSynthesis(text, MAX_CHUNK_LENGTH);
+
+        // 2. 最大チャンク数制限
+        if (chunks.length > currentConfig.maxChunks) {
+            chunks = chunks.slice(0, currentConfig.maxChunks);
+            chunks.push("。……。指定の分割数を超えたため、読み上げを終了したわ。");
+            showToast(`最大チャンク数(${currentConfig.maxChunks})を超えたため、制限をかけたわよ。`, false);
+        }
+
+        // 3. トータル
         const totalChunks = chunks.length;
+
         isConversionAborted = false;
 
         console.log('[RVC] 音声データを合成準備中... (ストリーミング版)');
@@ -2315,9 +2334,20 @@
      * @param {string} cacheKey - 生成されたキャッシュキー
      */
     async function synthesizeVoicevoxAudio(text, currentConfig, isAutoPlay, cacheKey) {
+        // 1. 分割
         const MAX_CHUNK_LENGTH = currentConfig.chunkSize || DEFAULT_CHUNK_SIZE;
-        const chunks = splitTextForSynthesis(text, MAX_CHUNK_LENGTH);
+        let chunks = splitTextForSynthesis(text, MAX_CHUNK_LENGTH);
+
+        // 2. 最大チャンク数制限
+        if (chunks.length > currentConfig.maxChunks) {
+            chunks = chunks.slice(0, currentConfig.maxChunks);
+            chunks.push("。……。指定の分割数を超えたため、読み上げを終了したわ。");
+            showToast(`最大チャンク数(${currentConfig.maxChunks})を超えたため、制限をかけたわよ。`, false);
+        }
+
+        // 3. トータル
         const totalChunks = chunks.length;
+
         isConversionAborted = false;
 
         if (totalChunks === 0) {
@@ -2666,23 +2696,6 @@
             lastAutoPlayedText = text; // 自動再生の場合、次回以降の自動再生を抑止
         }
 
-        const maxLength = currentConfig.maxTextLength || 2000;
-        if (text.length > maxLength) {
-            // 1. テキストをカット
-            text = text.substring(0, maxLength);
-
-            // 2. 末尾の処理（句読点チェック）
-            const lastChar = text.slice(-1);
-            const trimEnd = /[、。？！…]$/.test(lastChar) ? '' : '...';
-            text += trimEnd;
-
-            // 3. 声でのアナウンスを追加
-            // ちょっと間を置くために「。」を最初に入れるのがコツよ！
-            text += "。……。指定の文字数を超えたため、読み上げを終了したわ。";
-
-            // 4. トースト表示
-            showToast(`読み上げテキストが最大文字数(${maxLength}文字)を超えたわ！超過分をカットしたわよ。`, false);
-        }
         console.log(`[SYNTH] 読み上げテキスト（${text.length}文字）: ${text.substring(0, 50)}...`);
 
         // キャッシュチェック

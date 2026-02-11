@@ -123,8 +123,10 @@ No configuration switching required! The UserScript automatically identifies the
 
 2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**  
    RVC連携を使用する場合 (If Using RVC Integration)  
-   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。  
-   * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.  
+   * [公式サイト](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI)から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。  
+     公式リポジトリの [2.2.231006](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/releases/tag/2.2.231006) で動作確認を行っ ています。  
+   * Download and launch the **"Complete package" corresponding to your GPU**.  
+     Operation has been confirmed with 2.2.231006 of the official repository.  
 
 3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**  
    * **Tampermonkey**: [https://www.tampermonkey.net/](https://www.tampermonkey.net/)  
@@ -135,11 +137,16 @@ No configuration switching required! The UserScript automatically identifies the
    * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。  
      Access and click the "Install" button.  
 
-### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)
+### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)  
 
-RVCでの音声変換機能を利用するには、**現在公開されているRVC本体のプログラム**に対して、ねおんが**修正した３つのファイル**の適用が必須です。
+RVCでの音声変換機能を利用するには、**現在公開されているRVC本体 (2.2.231006)** に対して、ねおんが**修正した３つのファイル**の適用が必須です。  
+To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix files** created by Neon to **RVC 2.2.231006**.  
 
-To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix files** created by Neon to the **currently available RVC program**.
+* **【重要】対応バージョンについて (Note on Compatible Versions)**:  
+  本修正ファイルは RVC v2.2.231006 (Standalone版) 専用です。  
+  GitHubリポジトリ上の最新の開発コード（Main branch）は構造が異なるため、本修正は適用できません。  
+  These fix files are for RVC v2.2.231006 (Standalone) ONLY.  
+  They are not compatible with the latest development code in the GitHub repository.  
 
 * **注意**: この修正は、**RVC本体にファイルレス連携のロジックが正式に組み込まれるまでの間**に必要です。  
   **この修正ファイルがオープンソースとして公開されたことにより**、将来的に修正される可能性があります。  

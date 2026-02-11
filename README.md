@@ -1,4 +1,4 @@
-# 💬 ねおん すぴっち リンク (Neon Spitch Link) v7.6  
+# 💬 ねおん すぴっち リンク (Neon Spitch Link) v8.3  
 
 <img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="thumbnail" />  
 

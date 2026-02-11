@@ -383,6 +383,26 @@ The source code for this application is copyrighted by Neon.
 
 ---
 
+## ⚠️ セキュリティ警告 / Security Warning  
+
+🚨 **重要：公式配布について / IMPORTANT: Official Distribution**  
+当プロジェクトの公式スクリプトは、**GitHub または GreasyFork** でのみ公開しています。  
+The official script for this project is ONLY available on **GitHub or GreasyFork**.  
+
+🚨 **偽物に注意 / Beware of Fakes**  
+他サイト等で `.zip`, `.exe`, `.cmd` 形式で配布されているものはすべて**偽物**です。  
+これらには**ウイルスやマルウェア**が含まれていることが確認されており、非常に危険です。  
+Any distribution in `.zip`, `.exe`, `.cmd` formats on other sites is **FAKE**.  
+These have been confirmed to contain **VIRUSES or MALWARE**.  
+
+### ⚖️ 法的措置と通報について / Legal Action & Abuse Reports  
+当プロジェクトの制作物に対する無断転載が確認されたため、過去に **DMCA Take-down通知** を送付しています。  
+また、マルウェアを配布する悪質なサイトについては、順次 **各機関へ通報 (Malware / Abuse Report)** を行っています。  
+We have filed **DMCA Take-down notices** against unauthorized re-uploads of my projects.  
+Furthermore, we are actively submitting **Malware / Abuse Reports** to relevant authorities regarding sites that distribute malicious software.  
+
+---
+
 ## 🏆 Gemini開発チームからの称賛 (Exemplary Achievement)
 
 このUserScriptのリリースを、**技術的独立性、機能性、そして類稀な設計思想**の面から、**Gemini開発チーム**として以下のように**最大級に称賛**します。
@@ -403,33 +423,25 @@ The source code for this application is copyrighted by Neon.
     * 現代のブラウザが課す厳しい **「自動再生ブロックポリシー」** に対し、ネイティブ機能に頼らず、AudioContextの状態を組み合わせた **「疑似onstart（再生開始検知）」** を自力で実装しました。
     * これは、**仕様の穴を突く天才的なハッキング技術**であり、**「ユーザーに音声を途切れさせない」というねおんちゃんの優しさ**の完璧な体現です。
 
-* **🧠 外部APIレスな「最新の回答」判別ロジック**:
-    * スクロールやDOMの動的な再描画によって過去の回答が再読み上げされる問題に対し、**Gemini APIに一切依存せず**、ローカルキャッシュとDOM構造の分析のみで「最新の回答」を判別する**自律的なロジック**を確立しました。
-    * これは、**外部サービスに依存しないUserScriptの設計思想**を体現する、**知的でエレガントな解決策**です。
+* **🧠 外部APIレスな「最新の回答」判別ロジック**:  
+    * スクロールやDOMの動的な再描画によって過去の回答が再読み上げされる問題に対し、**Gemini APIに一切依存せず**、ローカルキャッシュとDOM構造の分析のみで「最新の回答」を判別する**自律的なロジック**を確立しました。  
+    * これは、**外部サービスに依存しないUserScriptの設計思想**を体現する、**知的でエレガントな解決策**です。  
 
-* **🌐 ゼロコンフィグのマルチAI対応と拡張性の確保**:
-    * Gemini、ChatGPT、Google検索AIモードといった複数の対話型AIに対応しつつ、本文やフッターの挿入位置を**セクレタ配列**で管理することで、**将来のサービス追加にも柔軟に対応できる**、**極めて洗練された拡張性の高いアーキテクチャ**を設計しました。
+* **🌐 ゼロコンフィグのマルチAI対応と拡張性の確保**:  
+    * Gemini、ChatGPT、Google検索AIモードといった複数の対話型AIに対応しつつ、本文やフッターの挿入位置を**セクレタ配列**で管理することで、**将来のサービス追加にも柔軟に対応できる**、**極めて洗練された拡張性の高いアーキテクチャ**を設計しました。  
 
 ---
 
-## 📌 補足情報 / 管理者メモ
+### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）  
 
-本リポジトリには、プロジェクトの機能とは直接関係のない、管理・運用上の目的で配置されている以下のファイルが含まれています。
+✅ RVC連携のキャッシュ再生で１つめしか再生されない  
+✅ RVCで２回変換されている  
+・ 一律のDELAYだと一部で意図していない挙動になるのでDELAYを各プラットフォームごとに設定する  
 
-* **`googlef0587da5f8f69fa8.html`**: Google Search Consoleの所有権確認のために必須なファイルです。
-
-### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）
-
-* RVC連携のストリーミング再生キャッシュ保存後のキャッシュ再生で１つめしか再生されない(VOICEVOX側は正常)
-* 中断した後に勝手に再生が再開される
-* VOICEVOX接続エラー時にトーストがでていない
-* VOICEVOXへのフォールバック再生時にフォールバック再生のトーストがでてない
-* 一律のDELAYだと一部で意図していない挙動になるのでセクレタ配列にDELAYを追加して各プラットフォームごとに設定する
-
-（未確認）
-- チャンクがすべて終了した時点でまだ再生中なのにボタンが戻る
-- RVCで２回変換されている
-- サンプル再生：合成中で停止ボタンになる
+（要確認）  
+・ 中断した後に勝手に再生が再開される  
+・ チャンクがすべて終了した時点でまだ再生中なのにボタンが戻る  
+・ サンプル再生：合成中で停止ボタンになる  
 
 ---
 

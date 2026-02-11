@@ -1,19 +1,26 @@
 # 💬 ねおん すぴっち リンク (Neon Spitch Link) v8.3  
 
 <img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="thumbnail" />  
+<img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="thumbnail" />  
 
+**AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。**  
+**A UserScript to automatically read AI conversations in your favorite voice.**  
 **AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。**  
 **A UserScript to automatically read AI conversations in your favorite voice.**  
 
 ➡️ [**いますぐインストール！**](#-インストール方法-installation-guide) (Skip to Installation)  
 💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)  
+💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)  
 
+⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)<br clear="right">  
 ⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)<br clear="right">  
 
 ---
 
 ## 🚀 概要 (Overview)  
+## 🚀 概要 (Overview)  
 
+GeminiやChatGPTなどの応答を、**Gemini / Open AI APIやPythonサーバーを一切使用せず**、VOICEVOXやRVCを使って**無制限かつ無料**で自動読み上げする**世界唯一**（公開時点）のUserScriptです。  
 GeminiやChatGPTなどの応答を、**Gemini / Open AI APIやPythonサーバーを一切使用せず**、VOICEVOXやRVCを使って**無制限かつ無料**で自動読み上げする**世界唯一**（公開時点）のUserScriptです。  
 
 The **world's only**(As of the release date) UserScript that automatically reads responses from Gemini and ChatGPT **without using Gemini/OpenAI APIs or Python servers**. It utilizes VOICEVOX and RVC for **unlimited and free** voice conversion.  
@@ -52,6 +59,7 @@ The **world's only**(As of the release date) UserScript that automatically reads
 
 ---
 
+## 💎 機能と核心技術 (Features and Core Technology)  
 ## 💎 機能と核心技術 (Features and Core Technology)  
 
 このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**（公開時点）の UserScript です。  
@@ -117,13 +125,18 @@ No configuration switching required! The UserScript automatically identifies the
 ---
 
 ## ✨ インストール方法 (Installation Guide)  
+## ✨ インストール方法 (Installation Guide)  
 
 1. **VOICEVOX本体をインストールし、エンジンを起動してください (Install the VOICEVOX application and start the engine:):**  
+   * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。  
+   * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).  
    * 公式サイト [https://voicevox.hiroshiba.jp/](https://voicevox.hiroshiba.jp/) からVOICEVOXをインストールし、アプリケーション(`\vv-engine\run.exe`など)を起動してください。  
    * Install VOICEVOX from the official website and launch the application (e.g., `\vv-engine\run.exe`).  
 
 2. **RVC本体をインストールし、起動してください (Install and launch the RVC application):**  
    RVC連携を使用する場合 (If Using RVC Integration)  
+   * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。  
+   * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.  
    * 公式サイト [https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) から、**お使いのGPUに対応した最新の「Complete package」** をダウンロードし、起動してください。  
    * Download and launch the **latest "Complete package" corresponding to your GPU** from the official repository.  
 
@@ -133,7 +146,9 @@ No configuration switching required! The UserScript automatically identifies the
    * **ScriptCat**: [https://scriptcat.org/](https://scriptcat.org/)  
 
 4. **スクリプトをインストールします (Install the script):**  
+4. **スクリプトをインストールします (Install the script):**  
    * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。  
+     Access and click the "Install" button.  
      Access and click the "Install" button.  
 
 ### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)  
@@ -326,26 +341,44 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ### v7.5  
 ✅ **UX向上:** 自動再生ブロック解除のための「疑似onstart」ロジックを実装。  
 ✅ RVC本体に新規APIを追加。ロード中のモデルファイルをチェックする (/infer_loaded_voice)  
+### v7.5  
+✅ **UX向上:** 自動再生ブロック解除のための「疑似onstart」ロジックを実装。  
+✅ RVC本体に新規APIを追加。ロード中のモデルファイルをチェックする (/infer_loaded_voice)  
 
+### v7.4  
+✅ **RVC連携** ストリーミング再生を実装し、長文の遅延ストレスを解消。  
 ### v7.4  
 ✅ **RVC連携** ストリーミング再生を実装し、長文の遅延ストレスを解消。  
 
 ### v7.3  
 ✅ Google検索AIモードに対応。  
+### v7.3  
+✅ Google検索AIモードに対応。  
 
 ### v7.2  
 ✅ **VOICEVOX連携** ストリーミング再生を実装。  
+### v7.2  
+✅ **VOICEVOX連携** ストリーミング再生を実装。  
 
+### v6.9  
+✅ chatGPTに対応。  
 ### v6.9  
 ✅ chatGPTに対応。  
 
 ### v6.7  
 ✅ キャッシュ再生を実装。  
 ✅ RVC連携失敗時のVOICEVOXが生成した音声で再生。（フォールバックを実装）  
+### v6.7  
+✅ キャッシュ再生を実装。  
+✅ RVC連携失敗時のVOICEVOXが生成した音声で再生。（フォールバックを実装）  
 
 ### v6.1  
 ✅ RVC連携機能を追加。RVC本体の修正によりファイルレス変換を実現。（世界初）  
+### v6.1  
+✅ RVC連携機能を追加。RVC本体の修正によりファイルレス変換を実現。（世界初）  
 
+### v4.5 (Pre-release)  
+✅ VOICEVOX連携版先行公開。  
 ### v4.5 (Pre-release)  
 ✅ VOICEVOX連携版先行公開。  
 
@@ -365,7 +398,36 @@ The source code for this application is copyrighted by Neon.
   * 本スクリプトを改変・配布（フォーク）する場合は、必ず元の作者名（ねおん）およびクレジット表記を維持してください。  
     If you modify or redistribute (fork) this script, you MUST retain the original author's name (Neon) and all credit notations.  
 
+* **ライセンス / License**: **[PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/)** です。（LICENSEファイルをご参照ください。）  
+  Licensed under PolyForm Noncommercial 1.0.0. (Please refer to the LICENSE file for details.)
+* **個人利用・非営利目的限定 / For Personal and Non-commercial Use Only**:
+  * 営利目的での利用、無断転載、クレジットの削除は固く禁じます。  
+    Commercial use, unauthorized re-uploading, and removal of author credits are strictly prohibited.
+* **再配布について / About Redistribution**:
+  * 本スクリプトを改変・配布（フォーク）する場合は、必ず元の作者名（ねおん）およびクレジット表記を維持してください。  
+    If you modify or redistribute (fork) this script, you MUST retain the original author's name (Neon) and all credit notations.  
+
 ※ ご利用は自己責任でお願いします。（悪用できるようなものではないですが、念のため！）
+
+---
+
+## ⚠️ セキュリティ警告 / Security Warning  
+
+🚨 **重要：公式配布について / IMPORTANT: Official Distribution**  
+当プロジェクトの公式スクリプトは、**GitHub または GreasyFork** でのみ公開しています。  
+The official script for this project is ONLY available on **GitHub or GreasyFork**.  
+
+🚨 **偽物に注意 / Beware of Fakes**  
+他サイト等で `.zip`, `.exe`, `.cmd` 形式で配布されているものはすべて**偽物**です。  
+これらには**ウイルスやマルウェア**が含まれていることが確認されており、非常に危険です。  
+Any distribution in `.zip`, `.exe`, `.cmd` formats on other sites is **FAKE**.  
+These have been confirmed to contain **VIRUSES or MALWARE**.  
+
+### ⚖️ 法的措置と通報について / Legal Action & Abuse Reports  
+当プロジェクトの制作物に対する無断転載が確認されたため、過去に **DMCA Take-down通知** を送付しています。  
+また、マルウェアを配布する悪質なサイトについては、順次 **各機関へ通報 (Malware / Abuse Report)** を行っています。  
+We have filed **DMCA Take-down notices** against unauthorized re-uploads of my projects.  
+Furthermore, we are actively submitting **Malware / Abuse Reports** to relevant authorities regarding sites that distribute malicious software.  
 
 ---
 
@@ -412,12 +474,18 @@ Furthermore, we are actively submitting **Malware / Abuse Reports** to relevant 
 * **🧠 外部APIレスな「最新の回答」判別ロジック**:  
     * スクロールやDOMの動的な再描画によって過去の回答が再読み上げされる問題に対し、**Gemini APIに一切依存せず**、ローカルキャッシュとDOM構造の分析のみで「最新の回答」を判別する**自律的なロジック**を確立しました。  
     * これは、**外部サービスに依存しないUserScriptの設計思想**を体現する、**知的でエレガントな解決策**です。  
+* **🧠 外部APIレスな「最新の回答」判別ロジック**:  
+    * スクロールやDOMの動的な再描画によって過去の回答が再読み上げされる問題に対し、**Gemini APIに一切依存せず**、ローカルキャッシュとDOM構造の分析のみで「最新の回答」を判別する**自律的なロジック**を確立しました。  
+    * これは、**外部サービスに依存しないUserScriptの設計思想**を体現する、**知的でエレガントな解決策**です。  
 
+* **🌐 ゼロコンフィグのマルチAI対応と拡張性の確保**:  
+    * Gemini、ChatGPT、Google検索AIモードといった複数の対話型AIに対応しつつ、本文やフッターの挿入位置を**セクレタ配列**で管理することで、**将来のサービス追加にも柔軟に対応できる**、**極めて洗練された拡張性の高いアーキテクチャ**を設計しました。  
 * **🌐 ゼロコンフィグのマルチAI対応と拡張性の確保**:  
     * Gemini、ChatGPT、Google検索AIモードといった複数の対話型AIに対応しつつ、本文やフッターの挿入位置を**セクレタ配列**で管理することで、**将来のサービス追加にも柔軟に対応できる**、**極めて洗練された拡張性の高いアーキテクチャ**を設計しました。  
 
 ---
 
+### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）  
 ### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）  
 
 ・設定UIの大幅改修  
@@ -433,13 +501,17 @@ Furthermore, we are actively submitting **Malware / Abuse Reports** to relevant 
 ---
 
 ## 開発者 (Author)  
+## 開発者 (Author)  
 
+**ねおん (Neon)**  
 **ねおん (Neon)**  
 <pre>
 <img src="https://www.google.com/s2/favicons?domain=bsky.app&size=16" alt="Bluesky icon"> Bluesky       :<a href="https://bsky.app/profile/neon-ai.art/">https://bsky.app/profile/neon-ai.art/</a>
 <img src="https://www.google.com/s2/favicons?domain=github.com&size=16" alt="GitHub icon"> GitHub        :<a href="https://github.com/neon-aiart/">https://github.com/neon-aiart/</a>
 <img src="https://neon-aiart.github.io/favicon.ico" alt="neon-aiart icon" width="16" height="16"> GitHub Pages  :<a href="https://neon-aiart.github.io/">https://neon-aiart.github.io/</a>
 <img src="https://www.google.com/s2/favicons?domain=greasyfork.org&size=16" alt="Greasy Fork icon"> Greasy Fork   :<a href="https://greasyfork.org/ja/users/1494762/">https://greasyfork.org/ja/users/1494762/</a>
+<img src="https://www.google.com/s2/favicons?domain=sizu.me&size=16" alt="Sizu icon"> Sizu Diary    :<a href="https://sizu.me/neon_aiart/">https://sizu.me/neon_aiart/</a>
+<img src="https://www.google.com/s2/favicons?domain=ofuse.me&size=16" alt="Ofuse icon"> Ofuse         :<a href="https://ofuse.me/neon/">https://ofuse.me/neon/</a>
 <img src="https://www.google.com/s2/favicons?domain=sizu.me&size=16" alt="Sizu icon"> Sizu Diary    :<a href="https://sizu.me/neon_aiart/">https://sizu.me/neon_aiart/</a>
 <img src="https://www.google.com/s2/favicons?domain=ofuse.me&size=16" alt="Ofuse icon"> Ofuse         :<a href="https://ofuse.me/neon/">https://ofuse.me/neon/</a>
 <img src="https://www.google.com/s2/favicons?domain=www.chichi-pui.com&size=16" alt="chichi-pui icon"> chichi-pui    :<a href="https://www.chichi-pui.com/users/neon/">https://www.chichi-pui.com/users/neon/</a>

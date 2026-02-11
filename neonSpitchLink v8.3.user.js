@@ -1633,7 +1633,6 @@
         return text.trim();
     }
 
-
     // サンプル再生関連
     function resetSampleButtonState(button) {
         if (button) {
@@ -3149,22 +3148,24 @@
         const dlButton = document.getElementById('downloadButton');
         if (dlButton) {
             const cachedData = GM_getValue(LAST_CACHE_DATA, null);
-            const shouldBeDisabled = !cachedData;
+
+            // --- 追加：現在の画面上のテキストを取得 ---
+            const currentGeminiText = getGeminiAnswerText();
+
+            // キャッシュが存在＆Geminiの回答と一致
+            const isMatch = cachedData && (currentGeminiText === cachedData.text);
+
+            const shouldBeDisabled = !isMatch; // 一致しないなら無効（グレー）
+
             if (dlButton.disabled !== shouldBeDisabled) {
                 dlButton.disabled = shouldBeDisabled;
             }
-            const dlCurrentBg = dlButton.style.backgroundColor;
 
-            if (cachedData) {
-                const targetBg = '#007bff';
-                if (dlCurrentBg !== targetBg) {
-                    dlButton.style.backgroundColor = targetBg;
-                }
+            if (isMatch) {
+                dlButton.style.backgroundColor = '#007bff'; // 有効な色
             } else {
-                // 無効にする場合（GM_addStyleのdisabledセレクタに任せるため、style属性を空にする）
-                if (dlCurrentBg !== '') {
-                    dlButton.style.backgroundColor = '';
-                }
+                // 無効にする場合（GM_addStyleのdisabledセレクタに任せる
+                dlButton.style.backgroundColor = '';
             }
         }
     }

@@ -1,9 +1,9 @@
 .history
 archive/
 Youtube/
-eslint*
 rvc-*/
 !rvc-*-fix/
 *m4a/
 *wav/
 *.wav
+eslint*

@@ -463,131 +463,27 @@
 
         // SPEAKER ID GROUP
         const speakerGroup = document.createElement('div');
-        speakerGroup.style.cssText = 'display: flex; align-items: center; margin-bottom: 5px;';
+        speakerGroup.style.marginBottom = '20px';
+
+        const speakerSelectorContainer = document.createElement('div');
+        speakerSelectorContainer.style.cssText = 'display: flex; align-items: center; justify-content: space-between;'; // インナーコンテナ： space-between で両端に振り分けるわ
 
         const speakerLabel = document.createElement('label');
-        speakerLabel.textContent = 'VOICEVOX スピーカーID:';
-        speakerLabel.setAttribute('for', 'speakerId');
-        speakerLabel.style.cssText = 'font-weight: bold; color: #9aa0a6; margin-right: 15px; flex-shrink: 0;';
-        speakerGroup.appendChild(speakerLabel);
+        speakerLabel.textContent = 'VOICEVOX 読み上げ話者:';
+        speakerLabel.style.cssText = 'font-weight: bold; color: #9aa0a6; white-space: nowrap; margin-right: 20px;'; // 右側に少し余白（最小値）を持たせておくわ
+        speakerSelectorContainer.appendChild(speakerLabel);
 
-        const speakerInput = document.createElement('input');
-        speakerInput.type = 'number';
-        speakerInput.id = 'speakerId';
-        speakerInput.value = config.speakerId;
-        speakerInput.min = '0';
-        speakerInput.step = '1';
-        speakerInput.style.cssText = 'width: 80px; flex-grow: 0; text-align: right;';
-        speakerInput.classList.add('mei-input-field');
-        speakerGroup.appendChild(speakerInput);
+        setupSpeakerSelector(speakerSelectorContainer, config.speakerId, config.apiUrl); // セレクトボックスを設置
 
-        // 話者名表示エリアを追加
-        const speakerNameDisplay = document.createElement('span');
-        speakerNameDisplay.id = 'speakerNameDisplay';
-        speakerNameDisplay.textContent = '（確認中...）';
-        speakerNameDisplay.style.cssText = 'margin-left: 10px; font-weight: bold; color: #4CAF50;'; // Green for cool success
-        speakerGroup.appendChild(speakerNameDisplay);
-        panel.appendChild(speakerGroup);
+        speakerGroup.appendChild(speakerSelectorContainer);
 
-        // ヘルプテキストを追加のdivで分離し、1行表示を維持
-        const speakerHelpGroup = document.createElement('div');
-        speakerHelpGroup.style.marginBottom = '15px';
+        // ヘルプテキスト
         const speakerHelp = document.createElement('p');
-        speakerHelp.textContent = '*使用する声のIDを半角数字で入力してね。';
-        speakerHelp.style.cssText = 'margin-top: 5px; font-size: 0.8em; color: #9aa0a6;';
-        speakerHelpGroup.appendChild(speakerHelp);
-        panel.appendChild(speakerHelpGroup);
+        speakerHelp.textContent = '* VOICEVOXが起動していないとリストは更新されないわよ！';
+        speakerHelp.style.cssText = 'margin-top: 8px; font-size: 0.8em; color: #9aa0a6; text-align: left;';
+        speakerGroup.appendChild(speakerHelp);
 
-        function updateSpeakerNameDisplay(id) {
-            const apiUrl = config.apiUrl;
-            const display = document.getElementById('speakerNameDisplay');
-            if (!display) {
-                return;
-            }
-
-            display.textContent = '（確認中...）';
-            display.style.color = '#5bc0de'; // Info Blue
-
-            // 進行中のリクエストがあればキャンセル
-            if (currentSpeakerNameXhr) {
-                currentSpeakerNameXhr.abort();
-                currentSpeakerNameXhr = null;
-            }
-
-            // APIリクエスト
-            currentSpeakerNameXhr = GM_xmlhttpRequest({
-                method: 'GET',
-                url: `${apiUrl}/speakers`,
-                onload: function(response) {
-                    currentSpeakerNameXhr = null;
-                    console.log(`[VOICEVOX_NAME] /speakers 応答 Status: ${response.status}`);
-
-                    if (response.status === 200) {
-                        try {
-                            const speakers = JSON.parse(response.responseText);
-
-                            // 話者リスト全体をログにダンプ
-                            console.groupCollapsed(`[VOICEVOX_NAME] 検出された話者リスト（全 ${speakers.length} 件）`);
-                            console.log(speakers); // 全話者の詳細を表示
-                            console.groupEnd();
-
-                            const targetId = parseInt(id, 10);
-                            console.log(`[VOICEVOX_NAME] 検索中のID: ${targetId}`); // 検索対象IDを表示
-
-                            let speakerName = '不明なID';
-                            let styleName = '';
-
-                            // IDから話者とスタイルを探索
-                            for (const speaker of speakers) {
-                                for (const style of speaker.styles) {
-                                    // スタイルIDが一致するかチェック
-                                    if (style.id === targetId) { // targetId（数値）と比較
-                                        speakerName = speaker.name;
-                                        styleName = style.name;
-                                        break;
-                                    }
-                                }
-                                if (styleName) {
-                                    break;
-                                }
-                            }
-
-                            if (styleName) {
-                                display.textContent = `${speakerName}（${styleName}）`;
-                                display.style.color = '#4CAF50';
-                                console.log(`[VOICEVOX_NAME] ID ${targetId} は ${speakerName}（${styleName}）よ！`);
-                            } else {
-                                // 200だがIDが見つからない
-                                display.textContent = '（IDが見つからないわ...）';
-                                display.style.color = '#d9534f';
-                                console.warn(`[VOICEVOX_NAME] 設定されたID ${targetId} はリストに見つからなかったわ...`);
-                            }
-
-                        } catch (e) {
-                            display.textContent = '（JSONパースエラーよ...）';
-                            display.style.color = '#d9534f';
-                            console.error('[VOICEVOX_NAME] JSONパースエラー:', e);
-                        }
-                    } else {
-                        // 200以外のステータス
-                        display.textContent = `（APIエラー: ${response.status}）`;
-                        display.style.color = '#d9534f';
-                    }
-                },
-                onerror: function(error) {
-                    currentSpeakerNameXhr = null;
-                    display.textContent = '（接続エラーよ...）';
-                    display.style.color = '#d9534f';
-                    // 接続エラーをログ出力
-                    console.error('[VOICEVOX_NAME] 接続エラー！', error);
-                },
-            });
-        }
-
-        // 入力値が変わったら更新
-        speakerInput.addEventListener('input', (e) => {
-            updateSpeakerNameDisplay(e.target.value);
-        });
+        panel.appendChild(speakerGroup);
 
         // サンプル再生ボタン
         const sampleGroup = document.createElement('div');
@@ -712,7 +608,7 @@
         keyInput.id = 'shortcutKey';
         keyInput.value = config.shortcutKey;
         keyInput.classList.add('mei-input-field');
-        keyInput.style.cssText = 'background-color: #2c2c2c; width: 160px; flex-grow: 0;'; // 幅を固定
+        keyInput.style.cssText = 'width: 160px; flex-grow: 0; cursor: pointer;'; // 幅を固定
         keyInput.readOnly = true;
         keyGroup.appendChild(keyInput);
         panel.appendChild(keyGroup);
@@ -728,7 +624,7 @@
         keyInput.addEventListener('click', () => {
             if (isRecording) {
                 isRecording = false;
-                keyInput.style.backgroundColor = '#2c2c2c';
+                keyInput.style.backgroundColor = '';
                 if (keyInput.value.includes('...')) {
                     keyInput.value = config.shortcutKey; // 途中でやめたら元の値に戻す
                 }
@@ -737,7 +633,7 @@
 
             isRecording = true;
             keyInput.value = 'キーを押してください...';
-            keyInput.style.backgroundColor = '#4d4d4d';
+            keyInput.style.backgroundColor = '#3c4043';
         });
 
         const recordKey = (e) => {
@@ -799,7 +695,7 @@
 
             // 成功
             keyInput.value = shortcut;
-            keyInput.style.backgroundColor = '#2c2c2c';
+            keyInput.style.backgroundColor = '';
             isRecording = false;
         };
 
@@ -856,11 +752,8 @@
         overlay.appendChild(panel);
         document.body.appendChild(overlay);
 
-        // 初期表示時に実行
-        updateSpeakerNameDisplay(config.speakerId);
-
         saveBtn.addEventListener('click', () => {
-            const newSpeakerId = parseInt(speakerInput.value, 10);
+            const newSpeakerId = parseInt(document.getElementById('speakerId').value, 10);
             const newApiUrl = apiInput.value.trim();
             const newAutoPlay = autoPlayInput.checked;
             const newShortcutKey = keyInput.value.trim();
@@ -906,6 +799,66 @@
             showToast('設定を保存したわ！', true);
             document.removeEventListener('keydown', escListener);
             overlay.remove();
+        });
+    }
+
+    // VOICEVOXの話者リストを取得して、セレクトボックスを構築するわ
+    async function setupSpeakerSelector(container, currentId, apiUrl) {
+        const select = document.createElement('select');
+        select.id = 'speakerId';
+        select.classList.add('mei-input-field');
+        select.style.cssText = 'width: 100%; max-width: 240px; margin-top: 5px;';
+
+        // ヘルパー関数：エラー時などに1行だけメッセージを表示するわ
+        const setSingleOption = (text) => {
+            select.textContent = ''; // 安全なクリア方法
+            const opt = document.createElement('option');
+            opt.textContent = text;
+            select.appendChild(opt);
+        };
+
+        // ロード中の表示
+        setSingleOption('話者リストを取得中...');
+        container.appendChild(select);
+
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: `${apiUrl}/speakers`,
+            onload: function(response) {
+                if (response.status === 200) {
+                    try {
+                        const speakers = JSON.parse(response.responseText);
+                        select.textContent = ''; // リストをクリア
+
+                        let foundCurrent = false;
+                        speakers.forEach(speaker => {
+                            speaker.styles.forEach(style => {
+                                const option = document.createElement('option');
+                                option.value = style.id;
+                                option.textContent = `${speaker.name}（${style.name}）`;
+
+                                if (style.id === parseInt(currentId, 10)) {
+                                    option.selected = true;
+                                    foundCurrent = true;
+                                }
+                                select.appendChild(option);
+                            });
+                        });
+
+                        if (!foundCurrent && speakers.length > 0) {
+                            console.warn(`[VOICEVOX] 保存されたID ${currentId} がリストにないわよ。`);
+                        }
+                    } catch (e) {
+                        setSingleOption('リストの解析に失敗したわ');
+                        console.error('[VOICEVOX] JSON Parse Error:', e);
+                    }
+                } else {
+                    setSingleOption(`APIエラー (${response.status})`);
+                }
+            },
+            onerror: () => {
+                setSingleOption('接続エラーよ。VOICEVOXは起動してる？');
+            },
         });
     }
 
@@ -2576,6 +2529,7 @@
         GM_setValue(LAST_CACHE_HASH, cacheKey);
         GM_setValue(LAST_CACHE_DATA, base64WavData);
 
+        updateDownloadButtonState(); // 保存直後にダウンロードボタンをONにする
         console.log(`[Cache] 💾 ${source}音声をキャッシュに保存したわ！ (Key: ${cacheKey.substring(0, 50)}...)`);
     }
 
@@ -3081,6 +3035,45 @@
         }
     }
 
+    /**
+     * ダウンロードボタンの状態（有効/無効）を、現在の回答とキャッシュの整合性に基づいて更新するわ。
+     */
+    function updateDownloadButtonState() {
+        const dlButton = document.getElementById('downloadButton');
+        if (!dlButton) {
+            return;
+        }
+
+        // 合成中や開始処理中は、古いキャッシュをダウンロードさせないために無効化
+        if (isConversionStarting || currentXhrs.length > 0) {
+            dlButton.disabled = true;
+            dlButton.style.backgroundColor = ''; // 無効にする場合（GM_addStyleのdisabledに任せる）
+            return;
+        }
+
+        const currentConfig = GM_getValue(STORE_KEY, config);
+        const currentText = getGeminiAnswerText();
+
+        if (!currentText) {
+            dlButton.disabled = true;
+            dlButton.style.backgroundColor = '';
+            return;
+        }
+
+        // 現在の画面上の回答から「あるべきハッシュ」を生成
+        const currentHash = generateCacheKey(currentText, currentConfig);
+        // 保存されている「最後に成功したキャッシュのハッシュ」を取得
+        const cachedHash = GM_getValue(LAST_CACHE_HASH, null);
+
+        // ハッシュが完全に一致する場合のみ有効化（青色にする）
+        const isMatch = (cachedHash !== null && currentHash === cachedHash);
+
+        if (dlButton.disabled !== !isMatch) {
+            dlButton.disabled = !isMatch;
+        }
+        dlButton.style.backgroundColor = isMatch ? '#007bff' : '';
+    }
+
     // 再生ボタンの状態を更新するわ！
     function updateButtonState() {
         const button = document.getElementById('convertButton');
@@ -3144,30 +3137,7 @@
                 console.log(`[Debug] [${getFormattedDateTime()}] 再生`);
             }
         }
-
-        const dlButton = document.getElementById('downloadButton');
-        if (dlButton) {
-            const cachedData = GM_getValue(LAST_CACHE_DATA, null);
-
-            // --- 追加：現在の画面上のテキストを取得 ---
-            const currentGeminiText = getGeminiAnswerText();
-
-            // キャッシュが存在＆Geminiの回答と一致
-            const isMatch = cachedData && (currentGeminiText === cachedData.text);
-
-            const shouldBeDisabled = !isMatch; // 一致しないなら無効（グレー）
-
-            if (dlButton.disabled !== shouldBeDisabled) {
-                dlButton.disabled = shouldBeDisabled;
-            }
-
-            if (isMatch) {
-                dlButton.style.backgroundColor = '#007bff'; // 有効な色
-            } else {
-                // 無効にする場合（GM_addStyleのdisabledセレクタに任せる
-                dlButton.style.backgroundColor = '';
-            }
-        }
+        updateDownloadButtonState();
     }
 
     // ボタンを追加するDOM操作の初期化処理
@@ -3368,11 +3338,11 @@
             clearTimeout(debounceTimerId);
             debounceTimerId = setTimeout(function() {
                 addConvertButton();
+                updateButtonState();
 
                 if (audioContext && isPause && audioContext.currentTime > 0) {
                     isPause = false;
                     isPlaying = true;
-                    updateButtonState();
                     showToast('🔊 再生開始！素敵な声が聞こえてくるわ！', true);
                 }
 

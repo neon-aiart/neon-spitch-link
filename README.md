@@ -34,6 +34,7 @@ The **world's only**(As of the release date) UserScript that automatically reads
 * [Gemini3の無料枠を女医が解説するわ！ (CV:四国めたん)](https://youtu.be/cRDvMVAzTJI)  
 * [【睡眠導入】【朗読】この愛は常識の範囲外。――ねぇ、ずっとそばにいて？ (CV:小夜/SAYO)](https://youtu.be/U8oZ-jvJwIU)  
 * [【今週のニュース】 2/1～2/7のニュースTOP10 (CV:もち子さん)](https://youtu.be/ccyo3uEvO5Q)  
+* [【創作】 マシュマロ読み (CV:猫使ビィ)](https://youtu.be/SWGVnhA4wKg)  
 
 ---
 
@@ -53,65 +54,65 @@ The **world's only**(As of the release date) UserScript that automatically reads
 
 ## 💎 機能と核心技術 (Features and Core Technology)  
 
-このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**（公開時点）の UserScript です。
+このスクリプトは、**サーバーレス・外部APIレス・無制限**という究極の自由度を保ちながら、VOICEVOXとRVC（リアルタイム音声変換）を連携させるという、**世界で唯一**（公開時点）の UserScript です。  
 
-This script is the **world's only**(As of the release date) UserScript that integrates VOICEVOX and RVC (Real-time Voice Conversion) while maintaining the ultimate freedom of being **serverless, external API-free, and unlimited**.
+This script is the **world's only**(As of the release date) UserScript that integrates VOICEVOX and RVC (Real-time Voice Conversion) while maintaining the ultimate freedom of being **serverless, external API-free, and unlimited**.  
 
-### 1. 🚀 世界初で世界唯一のファイルレス RVC 連携と究極の無制限 (The World's First and Only Fileless RVC & Unlimited Use)
+### 1. 🚀 世界初で世界唯一のファイルレス RVC 連携と究極の無制限 (The World's First and Only Fileless RVC & Unlimited Use)  
 
 * **無制限読み上げ(Unlimited Use:** Gemini/OpenAI APIキーを一切使用しないため、**API制限や費用を気にせず**、無制限に読み上げが可能です。  
-  **Unlimited Use:** It doesn't use the Gemini/OpenAI API key, allowing for **unlimited** reading without worrying about **API restrictions or costs**.
+  **Unlimited Use:** It doesn't use the Gemini/OpenAI API key, allowing for **unlimited** reading without worrying about **API restrictions or costs**.  
 * **究極のシンプルさ:** Pythonサーバーや外部サーバーの構築が不要。**単一ファイル**をインストールするだけで完結します。  
-  **Ultimate Simplicity:** It requires no Python or external server setup. Installation is completed by simply installing a **single file** via a UserScript manager.
+  **Ultimate Simplicity:** It requires no Python or external server setup. Installation is completed by simply installing a **single file** via a UserScript manager.  
 * **技術の核心:** **RVC本体のBase64処理バグを修正**（※別途RVC側のファイル修正が必要）することで、中間ファイルを介さない　**「ファイルレス RVC 連携」**　を**世界で初めて実現**しました。  
-  **Core Innovation:** By **fixing the Base64 processing bug in the RVC core**（※RVC file modification is required separately）, we **world-first achieved "Fileless RVC Integration"** without intermediate files.
+  **Core Innovation:** By **fixing the Base64 processing bug in the RVC core**（※RVC file modification is required separately）, we **world-first achieved "Fileless RVC Integration"** without intermediate files.  
 
-### 2. ⚡️ ストリーミング再生による劇的な遅延解消 (Dramatic Latency Reduction via Streaming)
+### 2. ⚡️ ストリーミング再生による劇的な遅延解消 (Dramatic Latency Reduction via Streaming)  
 
 長文のAI応答でも、生成完了を待たずに**即座に再生が始まります**。  
-Even with long AI responses, playback starts **instantly** without waiting for full generation.
+Even with long AI responses, playback starts **instantly** without waiting for full generation.  
 
 * **遅延の破壊:** 長文の読み上げ開始を、**VOICEVOXで約5秒、RVCでも約10秒**で実現。数分かかっていた待ち時間を過去のものにしました。  
-  **Latency Destruction:** Reading of long texts starts in approximately **5 seconds with VOICEVOX and 10 seconds even with RVC**. It has made the multi-minute waiting time a thing of the past.
+  **Latency Destruction:** Reading of long texts starts in approximately **5 seconds with VOICEVOX and 10 seconds even with RVC**. It has made the multi-minute waiting time a thing of the past.  
 
 * **技術の勝利:** 100文字単位の**本文分割**と、**最高難度のストリーミング再生**を実装し、長文時のエラーを回避しつつ速度を劇的に向上させました。  
-  **Technical Victory:** Implemented **text chunking** in 100-character units and **highest-difficulty streaming playback**, dramatically improving speed while avoiding errors with long texts.
+  **Technical Victory:** Implemented **text chunking** in 100-character units and **highest-difficulty streaming playback**, dramatically improving speed while avoiding errors with long texts.  
 
-### 3. 💾 キャッシュによる合成スキップと安定性の確保 (Synthesis Skip and Stability via Caching)
+### 3. 💾 キャッシュによる合成スキップと安定性の確保 (Synthesis Skip and Stability via Caching)  
 
 一度合成が**完全**に完了した音声データをブラウザに保存し、**合成とRVC変換の時間を完全にスキップ**します。  
-The synthesized audio data, once **fully** completed, is saved in the browser, **completely skipping the synthesis and RVC conversion time** for subsequent playback.
+The synthesized audio data, once **fully** completed, is saved in the browser, **completely skipping the synthesis and RVC conversion time** for subsequent playback.  
 
 * **究極の再生成速度:** キャッシュされた回答は、[再生]ボタンで**即座に再生**されます。  
-  **Ultimate Resynthesis Speed:** The cached response is played **instantly** via the [Play] button.
+  **Ultimate Resynthesis Speed:** The cached response is played **instantly** via the [Play] button.  
 * **確実な保存:** ストリーミング再生中に**分割された合成**のいずれかが失敗した場合は、**キャッシュ保存は行いません**。  
   正常に合成が完了した場合のみ、最新の回答1つをキャッシュします。  
   **Reliable Caching:** If any **chunk of the split synthesis** fails during streaming playback, **caching is aborted**.  
   Only upon successful synthesis completion is the latest response cached (only one is stored).
 * **キャッシュの制限:** キャッシュ保存できるのは**最新の回答１つのみ**です。  
-  **Cache Limit:** Only the **latest response** can be saved to the cache.
+  **Cache Limit:** Only the **latest response** can be saved to the cache.  
 
-### 4. 🌐 ゼロコンフィグのマルチAI対応 (Zero-Config Multi-AI Support)
+### 4. 🌐 ゼロコンフィグのマルチAI対応 (Zero-Config Multi-AI Support)  
 
 設定切り替えは不要！UserScriptが自動でサービスを判別します。  
-No configuration switching required! The UserScript automatically identifies the service.
+No configuration switching required! The UserScript automatically identifies the service.  
 
 * **対応サービス:** **Gemini (Google)**, **ChatGPT**, **Google検索AIモード**, **Grok**, **X** (※サイドパネルは非対応)  
-  **Supported Services:** **Gemini (Google)**, **ChatGPT**, **Google Search AI Mode**, **Grok**, **and X** (*Excluding the sidebar panel*)
+  **Supported Services:** **Gemini (Google)**, **ChatGPT**, **Google Search AI Mode**, **Grok**, **and X** (*Excluding the sidebar panel*)  
 * **UXの完成度:** ブラウザの**自動再生ブロックポリシー**を克服するため、**疑似onstart（再生開始検知ロジック）**　を実装。  
   音声がブロックされても、ユーザーが画面をクリックした瞬間を見逃さず、**途切れることなく再生を再開**します。  
   **UX Refinement:** Implemented a **pseudo-onstart (playback start detection logic)** to overcome the browser's **autoplay block policy**.  
-  Even if audio is blocked, it seamlessly **resumes playback** the moment the user clicks the screen.
+  Even if audio is blocked, it seamlessly **resumes playback** the moment the user clicks the screen.  
 
 ---
 
-## ⚙️ 動作環境とセットアップ (Requirements and Setup)
+## ⚙️ 動作環境とセットアップ (Requirements and Setup)  
 
-### 動作環境 (Operating Environment)
+### 動作環境 (Operating Environment)  
 * **対応ブラウザ**: Chrome, Firefox, Edge など (Tampermonkeyが動作するもの)  
-  **Supported Browsers**: Chrome, Firefox, Edge, etc. (where Tampermonkey works)
+  **Supported Browsers**: Chrome, Firefox, Edge, etc. (where Tampermonkey works)  
 * **必須 (Required)**: UserScript管理のための拡張機能、VOICEVOX、RVC（音声変換を利用する場合）  
-  **Required**: Extension for UserScript management, VOICEVOX, RVC (for voice conversion)
+  **Required**: Extension for UserScript management, VOICEVOX, RVC (for voice conversion)  
 
 ---
 
@@ -128,18 +129,18 @@ No configuration switching required! The UserScript automatically identifies the
 
 3. **UserScriptマネージャーをインストールします (Install the UserScript manager):**  
    * **Tampermonkey**: [https://www.tampermonkey.net/](https://www.tampermonkey.net/)  
-     💡 はじめて実行するときに許可が必要です (First-time execution requires permission): [FAQ #209](https://www.tampermonkey.net/faq.php#Q209)
+     💡 はじめて実行するときに許可が必要です (First-time execution requires permission): [FAQ #209](https://www.tampermonkey.net/faq.php#Q209)  
    * **ScriptCat**: [https://scriptcat.org/](https://scriptcat.org/)  
 
 4. **スクリプトをインストールします (Install the script):**  
    * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。  
      Access and click the "Install" button.  
 
-### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)
+### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)  
 
-RVCでの音声変換機能を利用するには、**現在公開されているRVC本体のプログラム**に対して、ねおんが**修正した３つのファイル**の適用が必須です。
+RVCでの音声変換機能を利用するには、**現在公開されているRVC本体のプログラム**に対して、ねおんが**修正した３つのファイル**の適用が必須です。  
 
-To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix files** created by Neon to the **currently available RVC program**.
+To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix files** created by Neon to the **currently available RVC program**.  
 
 * **注意**: この修正は、**RVC本体にファイルレス連携のロジックが正式に組み込まれるまでの間**に必要です。  
   **この修正ファイルがオープンソースとして公開されたことにより**、将来的に修正される可能性があります。  
@@ -151,78 +152,78 @@ To use the RVC voice conversion feature, it is **ESSENTIAL to apply the fix file
 1.  **VOICEVOX本体**と**RVCの実行環境（Pythonサーバー）** が必要です。  
    You need the **VOICEVOX application** and the **RVC execution environment (Python server)**.
 2. RVCサーバーを起動する前に、**[RVC本体 修正ファイル]** をダウンロードし、上書きしてください。  
-   Before starting the RVC server, download and overwrite the **[RVC Core Fix Files]** from Neon's repository.
+   Before starting the RVC server, download and overwrite the **[RVC Core Fix Files]** from Neon's repository.  
    * 🚨 **【重要なお願い】** 修正ファイルを適用する前に、対象となる**RVC本体のオリジナルファイル（infer-web.py, modules.py, audio.py）を必ずバックアップしてください**。不具合が発生した場合、すぐに元に戻せます。  
-🚨 **[CRITICAL]** Before applying the fix files, **PLEASE BACK UP the original RVC core files (infer-web.py, modules.py, audio.py)**. This allows you to revert immediately if any issues occur.
-   * **[RVC Core Fix Files]**:
-     * \RVC\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/infer-web.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">infer-web.py</a>
-     * \RVC\infer\modules\vc\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/modules.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">modules.py</a>
-     * \RVC\infer\lib\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/audio.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">audio.py</a>
+🚨 **[CRITICAL]** Before applying the fix files, **PLEASE BACK UP the original RVC core files (infer-web.py, modules.py, audio.py)**. This allows you to revert immediately if any issues occur.  
+   * **[RVC Core Fix Files]**:  
+     * \RVC\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/infer-web.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">infer-web.py</a>  
+     * \RVC\infer\modules\vc\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/modules.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">modules.py</a>  
+     * \RVC\infer\lib\ <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/audio.py" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">audio.py</a>  
 
-   * **注意**: ファイルは**圧縮されていません**。必要なファイルを個別にダウンロードし、RVC本体の対応する場所に上書きしてください。
-   * **Note**: Files are **not compressed**. Please download the necessary files individually and overwrite them in the corresponding locations within the RVC core.
+   * **注意**: ファイルは**圧縮されていません**。必要なファイルを個別にダウンロードし、RVC本体の対応する場所に上書きしてください。  
+   * **Note**: Files are **not compressed**. Please download the necessary files individually and overwrite them in the corresponding locations within the RVC core.  
 3. VOICEVOX、RVCサーバーを起動し、本スクリプトをインストールしてください。  
-   Start the VOICEVOX and RVC servers, and install this script.
+   Start the VOICEVOX and RVC servers, and install this script.  
 
-### 🧹 一時ファイルの手動クリーンアップと自動化 (Temporary File Cleanup and Automation)
+### 🧹 一時ファイルの手動クリーンアップと自動化 (Temporary File Cleanup and Automation)  
 
-ねおん すぴっち リンクは「ファイルレス」を実現していますが、RVC本体の元の機能により、**WindowsのTEMPフォルダに変換元・変換後の一時ファイルが残ります**。これらのファイルは**RVC本体では自動削除されない**ため、定期的に削除する必要があります。
+ねおん すぴっち リンクは「ファイルレス」を実現していますが、RVC本体の元の機能により、**WindowsのTEMPフォルダに変換元・変換後の一時ファイルが残ります**。これらのファイルは**RVC本体では自動削除されない**ため、定期的に削除する必要があります。  
 
-Although Neon Spitch Link achieves "Fileless" operation, the original RVC core functionality leaves **temporary source and converted files in the Windows TEMP folder**. Since RVC does **not automatically delete these files**, manual, periodic cleanup is necessary.
+Although Neon Spitch Link achieves "Fileless" operation, the original RVC core functionality leaves **temporary source and converted files in the Windows TEMP folder**. Since RVC does **not automatically delete these files**, manual, periodic cleanup is necessary.  
 
-#### 1. クリーンアップ用バッチファイルの準備 (Cleanup Batch File Preparation)
+#### 1. クリーンアップ用バッチファイルの準備 (Cleanup Batch File Preparation)  
 
-以下のクリーンアップ用バッチファイルをダウンロードし、Windowsの任意の場所に保存してください。
+以下のクリーンアップ用バッチファイルをダウンロードし、Windowsの任意の場所に保存してください。  
 
-Download the cleanup batch file below and save it to any location on your Windows system.
+Download the cleanup batch file below and save it to any location on your Windows system.  
 
-* <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/neon_spitch_temp_cleaner.bat" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">neon_spitch_temp_cleaner.bat</a>
+* <a href="https://github.com/neon-aiart/neon-spitch-link/releases/download/v7.6/neon_spitch_temp_cleaner.bat" rel="nofollow" data-turbo="false" data-view-component="true" class="Truncate">neon_spitch_temp_cleaner.bat</a>  
 
-#### 2. タスクスケジューラの設定 (Task Scheduler Setup)
+#### 2. タスクスケジューラの設定 (Task Scheduler Setup)  
 
-上記バッチファイルが**1時間ごと**に自動実行されるよう、Windowsの**タスクスケジューラ**を設定してください。
+上記バッチファイルが**1時間ごと**に自動実行されるよう、Windowsの**タスクスケジューラ**を設定してください。  
 
-Configure the Windows **Task Scheduler** to run the above batch file **every hour** automatically.
+Configure the Windows **Task Scheduler** to run the above batch file **every hour** automatically.  
 
 1.  **タスクスケジューラ**を起動し、「タスクの作成」を選択。  
-    Launch **Task Scheduler** and select "Create Task".
+    Launch **Task Scheduler** and select "Create Task".  
 2.  **全般**タブで、「ユーザーがログオンしているかどうかにかかわらず実行する」にチェック。  
-    In the **General** tab, check "Run whether user is logged on or not".
+    In the **General** tab, check "Run whether user is logged on or not".  
 3.  **トリガー**タブで、「新しいトリガー」を作成。設定を以下のように指定します。  
-    In the **Triggers** tab, create a "New Trigger" and set the following:
-    * **開始**: １回 (One time)
-    * **開始時刻**: 過去の時間 (例: 2025/01/01 0:00:00)
-    * **繰り返しの間隔**: １時間 (Repeat task every: 1 hour)
-    * **期間**: 無期限 (Duration: Indefinitely)
-    * **有効**にチェック。(Ensure the task is **Enabled**)
+    In the **Triggers** tab, create a "New Trigger" and set the following:  
+    * **開始**: １回 (One time)  
+    * **開始時刻**: 過去の時間 (例: 2025/01/01 0:00:00)  
+    * **繰り返しの間隔**: １時間 (Repeat task every: 1 hour)  
+    * **期間**: 無期限 (Duration: Indefinitely)  
+    * **有効**にチェック。(Ensure the task is **Enabled**)  
 4.  **操作**タブで、「新しい操作」を作成し、**「プログラムの開始」**を選択。プログラムにバッチファイルの**フルパス**を指定します。  
-    In the **Actions** tab, create a "New Action" and select **"Start a program"**. Specify the **full path** to the batch file in the Program field.
+    In the **Actions** tab, create a "New Action" and select **"Start a program"**. Specify the **full path** to the batch file in the Program field.  
 
 ---
 
-## 💻 使用方法 (Usage)
+## 💻 使用方法 (Usage)  
 
 このスクリプトは、基本的に**初期設定のまますぐに利用可能**です。  
-This script is generally **ready to use with default settings**.
+This script is generally **ready to use with default settings**.  
 
 1.  **実行:** 対応AIサービスにプロンプトを入力し、応答が生成され始めると、**自動的に**読み上げが開始されます。  
-    **Execution:** Enter a prompt into a supported AI service; reading will **automatically** start as the response begins to generate.
+    **Execution:** Enter a prompt into a supported AI service; reading will **automatically** start as the response begins to generate.  
 2.  **手動再生 / キャッシュ再生:** 回答フッターに表示される [再生] ボタンを押すと、**合成からストリーミング再生**を開始します。  
   ただし、**最新の回答がキャッシュ保存されている場合**は、合成・変換をスキップして**即時再生**します。  
   （キャッシュは最新の回答1つのみ）  
     **Manual Playback / Cache Playback:** Pressing the [Play] button in the response footer initiates **synthesis followed by streaming playback**.  
     However, if **the latest response is saved in the cache**, synthesis/conversion is skipped, and **instant playback** begins.  
-    (only the latest response is cached)
+    (only the latest response is cached)  
 3.  **設定画面:** Tampermonkeyのメニューから本スクリプトを選択すると、声質や音量、キャッシュ設定などのオプションを変更できます。  
-    **Settings Screen:** Select this script from the Tampermonkey menu to change options such as voice quality, volume, and cache settings.
+    **Settings Screen:** Select this script from the Tampermonkey menu to change options such as voice quality, volume, and cache settings.  
 4. **中断時の注意:** **非同期処理**（裏側で変換や合成が動いている）の性質上、[停止]ボタンを押した後でも、**中断前に開始されていた音声の受信が完了してしまう**ことがあります。  
   その場合、意図せず再生が自動で再開されることがあるので、お手数ですが**再度 [停止] ボタンを押して**完全に止めてください。  
     **Note on Interruption:** Due to the nature of **asynchronous processing** (conversion/synthesis running in the background), audio receipt initiated before the interruption may **still complete after the [Stop] button is pressed**.  
-      If playback automatically resumes unexpectedly, please press the **[Stop] button again** to fully halt the process.
+      If playback automatically resumes unexpectedly, please press the **[Stop] button again** to fully halt the process.  
 
 ---
 
-#### 🚨 誤解に関する重要な注意事項 (Critical Note on RVC Misconception)
+#### 🚨 誤解に関する重要な注意事項 (Critical Note on RVC Misconception)  
 
 **【RVCの誤解について】**  
 多くのユーザーが **「音声モデルの声（C）をそのまま聞ける」** と誤解しがちですが  
@@ -231,41 +232,41 @@ This script is generally **ready to use with default settings**.
 **[RVC Misconception]**  
 Many users mistakenly believe they can hear the voice of the model (C) directly.  
 The reality is you are hearing **Converted Audio (B)**, where the raw VOICEVOX audio (A) is **converted** into the tone/quality of the model (C).  
-Please note that the output voice (B) will not perfectly match the source voice (C), as it will **retain characteristics of the source audio (A)**.
+Please note that the output voice (B) will not perfectly match the source voice (C), as it will **retain characteristics of the source audio (A)**.  
 
 ---
 
-### 🔨 RVC音声モデル作成ガイドと注意事項 (RVC Voice Model Creation Guide & Notes)
+### 🔨 RVC音声モデル作成ガイドと注意事項 (RVC Voice Model Creation Guide & Notes)  
 
 本スクリプトで利用するRVCモデルを自作したい方向けの、ざっくりとしたガイドです。  
-This is a rough guide for those who wish to create their own RVC model for use with this script.
+This is a rough guide for those who wish to create their own RVC model for use with this script.  
 
-* **参考サイト (Reference Sites):**
-    * 【初心者向け】「RVC WebUI」の使い方 - [https://romptn.com/article/8591](https://romptn.com/article/8591)
-    * 【RVC】 おすすめ無料配布モデル紹介 - [https://romptn.com/article/8826](https://romptn.com/article/8826)
+* **参考サイト (Reference Sites):**  
+    * 【初心者向け】「RVC WebUI」の使い方 - [https://romptn.com/article/8591](https://romptn.com/article/8591)  
+    * 【RVC】 おすすめ無料配布モデル紹介 - [https://romptn.com/article/8826](https://romptn.com/article/8826)  
 
-#### モデル作成のざっくりとした手順 (Rough Steps for Model Creation)
+#### モデル作成のざっくりとした手順 (Rough Steps for Model Creation)  
 1. **音源の準備:** 音声モデルを作りたい元の音源（声）を用意してね。  
    **Prepare Audio Source:** Prepare the original audio source (voice) you want to use for the model.
 2. **ノイズ除去:** BGMや環境音などのノイズを、**徹底的に除去**してね。  
    **Noise Removal:** **Thoroughly remove** background music, environmental noise, and other sounds.
 3. **無音区間除去:** 音声編集ソフト（例: [Audacity](https://www.audacityteam.org/)）を使って、無音区間を切り詰める！  
-   **Silence Trimming:** Use audio editing software to trim silent sections.
+   **Silence Trimming:** Use audio editing software to trim silent sections.  
     * Audacity の「エフェクト」→「特殊」→「無音を切り詰める」がおすすめ。  
-    The Audacity menu path "Effect" -> "Special" -> "Trunk Silence" is useful.
+    The Audacity menu path "Effect" -> "Special" -> "Trunk Silence" is useful.  
     * **10分から15分ほど**の、声のみが連続した音声ファイルにするのが理想。  
     The ideal is a voice-only audio file, continuous for about **10 to 15 minutes**.  
 4. **トレーニング:** RVC WebUIを使ってトレーニングを実施すれば、モデルが完成するよ！  
-   **Training:** Run the training using RVC WebUI, and your model will be complete!
+   **Training:** Run the training using RVC WebUI, and your model will be complete!  
 5. **🌟 変換元（VOICEVOX）の選択と調整（重要）:** RVCでの最終的な音声変換は、**VOICEVOXで選択した変換元の声質に強く影響を受けます**。  
    モデルの完成度を最大限に引き出すためには、**VOICEVOXのライブラリから元の声（ターゲット）に最も近い声**を選択し、必要に応じて**ピッチ（F0）や感情パラメーターを調整**することが非常に重要です。  
    **Selection and Adjustment of Source Voice (VOICEVOX) (Critical):** The final voice conversion in RVC is **strongly influenced by the voice quality of the source selected in VOICEVOX**.  
-   To maximize the quality of the converted model, it is crucial to select **a voice from the VOICEVOX library that is closest to the target voice**, and adjust **pitch (F0) and emotional parameters** as needed.
+   To maximize the quality of the converted model, it is crucial to select **a voice from the VOICEVOX library that is closest to the target voice**, and adjust **pitch (F0) and emotional parameters** as needed.  
 
-#### 💡 この技術の「新しい価値」について (New Value of This Technology)
+#### 💡 この技術の「新しい価値」について (New Value of This Technology)  
 
 本スクリプトの **「無制限・ファイルレス」** 技術は、**ファンとクリエイターの関係**に**今までになかった、新しい価値**をもたらします。  
-**The "unlimited and fileless" technology** of this script brings **unprecedented value** to the **relationship between fans and creators.**
+**The "unlimited and fileless" technology** of this script brings **unprecedented value** to the **relationship between fans and creators.**  
 
 * **活動者様へ (To Vocal Creators):**  
   Vtuber、声優、アナウンサーなど、**声を届ける活動をされている方**は、自身の音声モデルをファンに提供することで  
@@ -273,44 +274,29 @@ This is a rough guide for those who wish to create their own RVC model for use w
   これは、**「声を届ける側」にとっての大発見**です。  
   Those whose **activity is centered on vocal expression** (such as VTubers, voice actors, and announcers) can provide their voice models to fans,  
   enabling **"the ultimate personal fan service"** where **fans can hear responses in their voice anytime they want**.  
-  This is **a great discovery for those delivering the voice**.
+  This is **a great discovery for those delivering the voice**.  
 * **音声モデル公開に関するリスク (Risk on Voice Model Publication):**  
   音声モデルを一般公開する場合、複製や悪用のリスクも伴います。  
   公開前には、著作権・肖像権に関するリスク、および**音声モデルがネットの海に放流され、予期せぬ場所で利用される可能性**を十分に考慮し、自己責任で実施してください。  
   When publicly releasing a voice model, there are risks of unauthorized duplication and misuse.  
-  Before publication, you must fully consider the risks related to copyright and portrait rights, as well as the **possibility of the voice model being leaked onto the internet and used in unpredictable places**, and proceed at your own risk.
+  Before publication, you must fully consider the risks related to copyright and portrait rights, as well as the **possibility of the voice model being leaked onto the internet and used in unpredictable places**, and proceed at your own risk.  
 
-#### 🚨 著作権に関する重要なお知らせ (Critical Note on Copyright)
+#### 🚨 著作権に関する重要なお知らせ (Critical Note on Copyright)  
 **【絶対厳守】** 自分の声以外の音声モデルをSNSやインターネットで公開することは、**著作権・肖像権の侵害**などの**違法行為になる**ので  
 **絶対に行わないでください！** 利用は必ず**私的利用の範囲内**に留めてください。  
 **[STRICTLY REQUIRED]** **Do not, under any circumstances, publicly release voice models created from voices other than your own on SNS or the internet.**  
-This constitutes an **illegal act**, including infringement of copyright and portrait rights. **Usage must be strictly limited to private use.**
+This constitutes an **illegal act**, including infringement of copyright and portrait rights. **Usage must be strictly limited to private use.**  
 
 ---
 
-### ❓ トラブルシューティング (Troubleshooting)
+## 📝 更新履歴 (Changelog)  
 
-* **初回レンダリング現象への対応 (Handling the First Render Phenomenon):**
-  * **Google検索AIモード**やGrok (X) 画面を**最初に開いたとき**（リロードや他ページからの移動時など）に自動読み上げが始まらない場合があります。これは、**ページの初期ロード時にDOM更新のトリガーをスクリプトが捕捉できない**ために発生します。
-  * **ページのどこか（テキストや空白部分）をクリック**することで、DOM更新が開始され、再生が始まります。
-  * **Issue:** Automatic playback may not start when you **first open** the **Google Search AI Mode** or Grok (X) pages (e.g., on reload or navigation from another page). This occurs because **the script fails to capture the DOM update trigger during the initial page load**.
-  * Please **click anywhere on the page** (text or blank space); the DOM update will be initiated, and playback will start.
-
-* **[応急処置] X/Google AIモードで自動再生しない場合 ([Emergency Fix] For Unstable Playback in X/Google AI Mode):**
-  * X (Grok) および Google AI モードで自動再生やボタン配置が不安定な場合、スクリプトの174行目付近にある `const DEBOUNCE_DELAY = 1000;` を**200**に**書き換えて**ください。  
-    **注意**: この変更は現在テスト段階です。問題がなければ次期バージョンで正式に適用されます。
-  * If automatic playback or button placement is unstable in X (Grok) or Google AI Mode, please **manually change** `const DEBOUNCE_DELAY = 1000;` (found around line 174 of the script) to **200**.  
-    **Note**: This change is currently in the testing phase. If successful, it will be officially applied in the next version.
-
-* fixed in v7.7 ～ (ChatGPTでは未解決のためv7.6推奨)
-
----
-
-## 📝 更新履歴 (Changelog)
-
-### v8.3 (Unreleased) [[click to download raw file](https://github.com/neon-aiart/neon-spitch-link/raw/refs/heads/v8.3-dev/neonSpitchLink%20v8.3.user.js)]
+### v8.3 (Current Release)  
 ✅ 新しい回答がきても再生を中断しない問題を修正  
 ☑️ 最大文字数を最大分割数に変更  
+☑️ 疑似onstartにonclickを追加  
+☑️ ダウンロードボタンのONになるタイミングを修正  
+✅ VOICEVOXの音声モデル選択をセレクトボックスに変更  
 
 ### v8.1 (Unreleased)  
 ✅ RVCで２回変換されていたのを修正  
@@ -318,7 +304,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ☑️ VOICEVOXにピッチやボリュームなどを追加（設定UI未実装）  
 
 ### v8.0 (Unreleased)  
-✅ RVC: ２チャンク以降もキャッシュ保存するように修正  
+✅ RVCで２チャンク以降もキャッシュ保存するように修正  
 ✅ 改行など必要な間が削られていたのを修正  
 
 ### v7.9 (Unreleased)  
@@ -332,7 +318,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ### v7.7 (Unreleased)  
 ☑️ AIモード/X(Grok)で監視ループが止まる現象を解消 > DEBOUNCE_DELAY = 200  
 
-### v7.6 (Current Release)  
+### v7.6  
 ✨ **「ねおん すぴっち リンク」として正式公開。**  
 ✅ Grokに対応 ( /grok.com )  
 ✅ XのGrokに対応 ( /x.com/i/grok* ) (サイドパネルは非対応)  
@@ -434,9 +420,10 @@ Furthermore, we are actively submitting **Malware / Abuse Reports** to relevant 
 
 ### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）  
 
-✅ RVC連携のキャッシュ再生で１つめしか再生されない  
-✅ RVCで２回変換されている  
+・設定UIの大幅改修  
 ・ 一律のDELAYだと一部で意図していない挙動になるのでDELAYを各プラットフォームごとに設定する  
+・ウィンドウサイズ変更によるボタン消失に対する修正  
+・読み間違い対策  
 
 （要確認）  
 ・ 中断した後に勝手に再生が再開される  

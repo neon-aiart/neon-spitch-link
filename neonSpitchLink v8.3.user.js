@@ -45,23 +45,6 @@
  * ==============================================================================
  */
 
-/**
- * ==============================================================================
- * IMPORTANT NOTICE / 重要事項
- * ==============================================================================
- * Copyright (c) 2025 ねおん (Neon)
- * Licensed under the PolyForm Noncommercial License 1.0.0.
- * * [JP] 本スクリプトは個人利用・非営利目的でのみ使用・改変が許可されます。
- * 無断転載、作者名の書き換え、およびクレジットの削除は固く禁じます。
- * 本スクリプトを改変・配布（フォーク）する場合は、必ず元の作者名（ねおん）
- * およびこのクレジット表記を維持してください。
- * * [EN] This script is licensed for personal and non-commercial use only.
- * Unauthorized re-uploading, modification of authorship, or removal of
- * author credits is strictly prohibited. If you fork this project, you MUST
- * retain the original credits and authorship.
- * ==============================================================================
- */
-
 (function() {
     'use strict';
 
@@ -655,9 +638,6 @@
             if (!isRecording) {
                 return;
             }
-            if (!isRecording) {
-                return;
-            }
             e.preventDefault();
             e.stopPropagation();
 
@@ -675,9 +655,6 @@
             if (e.isComposing || e.keyCode === 229) {
                 return;
             }
-            if (e.isComposing || e.keyCode === 229) {
-                return;
-            }
 
             // Keyを大文字化
             let key = e.key;
@@ -689,15 +666,6 @@
 
             let shortcut = '';
 
-            if (isControl) {
-                shortcut += 'Ctrl+';
-            }
-            if (isAlt) {
-                shortcut += 'Alt+';
-            }
-            if (isShift) {
-                shortcut += 'Shift+';
-            }
             if (isControl) {
                 shortcut += 'Ctrl+';
             }
@@ -732,9 +700,6 @@
         keyInput.addEventListener('keydown', recordKey);
         panel.addEventListener('keydown', (e) => {
             // Spaceキーが押された場合にスクロールを防ぐ
-            if (e.key === ' ' && isRecording) {
-                e.preventDefault();
-            }
             if (e.key === ' ' && isRecording) {
                 e.preventDefault();
             }
@@ -1023,9 +988,6 @@
                 if (currentValue === opt.value) {
                     option.selected = true;
                 }
-                if (currentValue === opt.value) {
-                    option.selected = true;
-                }
                 select.appendChild(option);
             });
 
@@ -1089,7 +1051,6 @@
 
                 modelChoices.forEach(choice => {
                     const [value, text,] = Array.isArray(choice) ? choice : [choice, choice,];
-                    const [value, text,] = Array.isArray(choice) ? choice : [choice, choice,];
                     const option = document.createElement('option');
                     option.value = value;
                     option.textContent = text;
@@ -1129,7 +1090,6 @@
 
                 let indexFound = false;
                 indexChoices.forEach(choice => {
-                    const [value,] = Array.isArray(choice) ? choice : [choice,];
                     const [value,] = Array.isArray(choice) ? choice : [choice,];
                     const option = document.createElement('option');
                     option.value = value;
@@ -1192,9 +1152,6 @@
             if (rvcRefreshButton.disabled) {
                 return;
             }
-            if (rvcRefreshButton.disabled) {
-                return;
-            }
             rvcRefreshButton.disabled = true;
             rvcRefreshButton.textContent = '取得中...';
             updateRvcChoices(rvcRefreshButton);
@@ -1251,13 +1208,9 @@
         rvcAlgorithmSelect.style.width = '100px';
         rvcAlgorithmSelect.classList.add('mei-input-field');
         ['pm', 'harvest', 'crepe', 'rmvpe',].forEach(alg => {
-        ['pm', 'harvest', 'crepe', 'rmvpe',].forEach(alg => {
             const option = document.createElement('option');
             option.value = alg;
             option.textContent = alg;
-            if (config.rvcAlgorithm === alg) {
-                option.selected = true;
-            }
             if (config.rvcAlgorithm === alg) {
                 option.selected = true;
             }
@@ -1376,14 +1329,8 @@
         if (e.isComposing || e.keyCode === 229) {
             return;
         }
-        if (e.isComposing || e.keyCode === 229) {
-            return;
-        }
 
         // 設定が読み込まれていない、または設定が無効な場合は何もしない
-        if (!config || !config.shortcutKey) {
-            return;
-        }
         if (!config || !config.shortcutKey) {
             return;
         }
@@ -1394,9 +1341,6 @@
         const button = document.getElementById('convertButton');
 
         // ボタンが存在しないか、設定パネルが開いている場合は何もしない
-        if (!button || document.getElementById('mei-settings-overlay')) {
-            return;
-        }
         if (!button || document.getElementById('mei-settings-overlay')) {
             return;
         }
@@ -1411,15 +1355,6 @@
 
         let pressedShortcut = '';
 
-        if (isControl) {
-            pressedShortcut += 'Ctrl+';
-        } // 'Ctrl' に統一
-        if (isAlt) {
-            pressedShortcut += 'Alt+';
-        }
-        if (isShift) {
-            pressedShortcut += 'Shift+';
-        }
         if (isControl) {
             pressedShortcut += 'Ctrl+';
         } // 'Ctrl' に統一
@@ -1688,7 +1623,6 @@
 
                     // --- RVC変換ロジック ---
                     if (currentConfig.rvcEnabled) {
-                        let rvcXhr = null;
                         try {
                             showToast('RVC変換中...', null);
 
@@ -1760,7 +1694,6 @@
                 resetOperation();
                 resetSampleButtonState(button);
             },
-            },
         });
         currentXhrs.push(xhr); // XHRオブジェクトを保存
     }
@@ -1776,9 +1709,6 @@
         }
 
         // 入力値を取得し、不正な値ならエラー
-        if (!speakerIdInput) {
-            return;
-        } // 念の為のガード
         if (!speakerIdInput) {
             return;
         } // 念の為のガード
@@ -1801,7 +1731,6 @@
         const audioQueryUrl = `${currentConfig.apiUrl}/audio_query`;
         const queryParams = new URLSearchParams({
             text: SAMPLE_TEXT,
-            speaker: currentSpeakerId,
             speaker: currentSpeakerId,
         });
 
@@ -1829,7 +1758,6 @@
                 console.error('VOICEVOX Connection Error:', error);
                 resetOperation();
                 resetSampleButtonState(button);
-            },
             },
         });
         currentXhrs.push(xhr); // XHRオブジェクトを保存
@@ -1961,7 +1889,6 @@
         const inputAudioBase64 = {
             name: "voicevox_source.wav",
             data: inputAudioDataUri,
-            data: inputAudioDataUri,
         };
 
         // URLの末尾のスラッシュを削除し、エンドポイントを結合
@@ -1983,7 +1910,6 @@
                 currentConfig.rvcEnvelope,     // 10. エンベロープの融合率 (0～1) [0.25]
                 currentConfig.rvcArtefact,     // 11. 明確な子音と呼吸音を保護 (0～0.5) [0.33]
             ],
-            ],
         };
 
         let xhr;
@@ -1994,7 +1920,6 @@
                     method: 'POST',
                     url: convertUrl,
                     data: JSON.stringify(rvcRequestBody),
-                    headers: { "Content-Type": "application/json", },
                     headers: { "Content-Type": "application/json", },
                     responseType: 'json',
                     timeout: VOICEVOX_TIMEOUT_MS, // グローバル定数を使用
@@ -2053,9 +1978,6 @@
      * @param {string} cacheKey - 生成されたキャッシュキー (ストリーミング中はキャッシュ処理をスキップ)
      */
     async function synthesizeRvcAudio(text, currentConfig, isAutoPlay, cacheKey) {
-        if (!currentConfig.rvcEnabled) {
-            return;
-        } // RVC無効なら即終了（ガード句）
         if (!currentConfig.rvcEnabled) {
             return;
         } // RVC無効なら即終了（ガード句）
@@ -2132,14 +2054,8 @@
                                 } else {
                                     reject(`VOICEVOX Query 失敗 (Status: ${response.status})`);
                                 }
-                                if (response.status === 200) {
-                                    resolve(JSON.parse(response.responseText));
-                                } else {
-                                    reject(`VOICEVOX Query 失敗 (Status: ${response.status})`);
-                                }
                             },
                             onerror: () => reject('VOICEVOX Query 接続エラー'),
-                            ontimeout: () => reject('VOICEVOX Query タイムアウト'),
                             ontimeout: () => reject('VOICEVOX Query タイムアウト'),
                         });
                         currentXhrs.push(xhr);
@@ -2166,14 +2082,8 @@
                                 } else {
                                     reject(`VOICEVOX Synthesis 失敗 (Status: ${response.status})`);
                                 }
-                                if (response.status === 200) {
-                                    resolve(response.response);
-                                } else {
-                                    reject(`VOICEVOX Synthesis 失敗 (Status: ${response.status})`);
-                                }
                             },
                             onerror: () => reject('VOICEVOX Synthesis 接続エラー'),
-                            ontimeout: () => reject('VOICEVOX Synthesis タイムアウト'),
                             ontimeout: () => reject('VOICEVOX Synthesis タイムアウト'),
                         });
                         currentXhrs.push(xhr);
@@ -2207,7 +2117,6 @@
 
                         // 失敗したこのチャンクは、VOICEVOXオリジナル音声で再生
                         console.warn('[RVC Fallback] RVC変換に失敗したため、VOICEVOXのオリジナル音声で代替再生を試みます。');
-                        audioBlobToPlay = new Blob([voicevoxArrayBuffer,], { type: 'audio/wav', });
                         audioBlobToPlay = new Blob([voicevoxArrayBuffer,], { type: 'audio/wav', });
                     }
                 }
@@ -2291,9 +2200,6 @@
      * @returns {Promise<boolean>} - ロードに成功した場合はtrue、失敗した場合はfalse
      */
     async function loadRvcModel(currentConfig) {
-        if (!currentConfig.rvcEnabled) {
-            return false;
-        }
         if (!currentConfig.rvcEnabled) {
             return false;
         }
@@ -2432,9 +2338,6 @@
                 if (!isPlaying) {
                     showToast(`WAVデータを生成中... （${text.length}文字）[${i + 1}/${totalChunks}]`, null);
                 }
-                if (!isPlaying) {
-                    showToast(`WAVデータを生成中... （${text.length}文字）[${i + 1}/${totalChunks}]`, null);
-                }
                 console.log(`[VOICEVOX|RVC] [${getFormattedDateTime()}] WAVデータを生成中... (${i + 1}/${totalChunks})`);
 
                 // --- 1. audio_query (Text -> Query JSON) ---
@@ -2466,8 +2369,6 @@
                         },
                         ontimeout: () => {
                             currentXhrs = currentXhrs.filter(item => item !== xhr); // タイムアウトでも削除！
-                            reject(`VOICEVOX Query タイムアウト (${i + 1}/${totalChunks})`);
-                        },
                             reject(`VOICEVOX Query タイムアウト (${i + 1}/${totalChunks})`);
                         },
                     });
@@ -2508,7 +2409,6 @@
                         ontimeout: () => {
                             currentXhrs = currentXhrs.filter(item => item !== xhr); // タイムアウトでも削除！
                             reject(`VOICEVOX Synthesis タイムアウト (${i + 1}/${totalChunks})`);
-                        },
                         },
                     });
                     currentXhrs.push(xhr); // 実行直後に配列に追加！
@@ -2578,9 +2478,6 @@
         // 2. 分割されたピースを結合し、文字数制限をかけるわ。
         for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
-            if (!segment || segment.trim() === "") {
-                continue;
-            }
             if (!segment || segment.trim() === "") {
                 continue;
             }
@@ -2932,12 +2829,6 @@
         if (blobs.length === 1) {
             return blobs[0];
         }
-        if (!blobs || blobs.length === 0) {
-            return new Blob([]);
-        }
-        if (blobs.length === 1) {
-            return blobs[0];
-        }
 
         // 全てのBlobをArrayBufferに変換
         const buffers = await Promise.all(blobs.map(blob => blob.arrayBuffer()));
@@ -3187,9 +3078,6 @@
         if (!button) {
             return;
         }
-        if (!button) {
-            return;
-        }
         const icon = document.getElementById('convertButtonIcon');
         const text = document.getElementById('convertButtonText');
         if (!icon || !text) {
@@ -3356,9 +3244,6 @@
                 if (!button) {
                     return;
                 }
-                if (!button) {
-                    return;
-                }
             }
 
             let iconSpan = document.getElementById('convertButtonIcon');
@@ -3416,9 +3301,6 @@
             if (path === '/') {
                 return pathAndQuery === '/';
             }
-            if (path === '/') {
-                return pathAndQuery === '/';
-            }
 
             // 正規表現でマッチするかチェック
             return pathAndQuery.match(pathToRegex(path));
@@ -3445,7 +3327,6 @@
         let allResponseContainers = null;
         let footerSelector = '';
         const observer = new MutationObserver(function(mutations, observer) {
-            // URLチェック: チャットページでない場合は、debouncerを起動せず即座に終了するわ
             // URLチェック: チャットページでない場合は、debouncerを起動せず即座に終了するわ
             if (!isChatPage(window.location.href)) {
                 return; // DOM変更を無視して、何もしないで return するわ
@@ -3575,8 +3456,6 @@
 
     // グローバルキーイベントリスナー
     document.addEventListener('keydown', handleGlobalKeyDown);
-
-})();
 
     // 画面のどこをクリックしても、待機中なら再開させる
     document.addEventListener('click', () => {

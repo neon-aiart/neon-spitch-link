@@ -5,8 +5,8 @@
 **AIとの会話を、あなたの好きな声で自動読み上げするUserScriptです。**  
 **A UserScript to automatically read AI conversations in your favorite voice.**  
 
-➡️ [**いますぐインストール！**](#-インストール方法-installation-guide) (Skip to Installation)  
-💡 [**声を届ける活動者様へ**](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)  
+➡️ [いますぐインストール！](#-インストール方法-installation-guide) (Skip to Installation)  
+💡 [声を届ける活動者様へ](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)  
 
 ⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)<br clear="right">  
 

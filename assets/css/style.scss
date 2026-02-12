@@ -64,3 +64,22 @@ footer.site-footer,
 
 /* 余計な枠線や影も消す */
 .site-header { border: none !important; }
+
+/* detailsの三角形（マーカー）と中身を横に並べる */
+details summary {
+    display: list-item;      /* 三角形を表示するための設定 */
+    cursor: pointer;
+    padding: 10px 0;
+}
+
+/* summaryの中に入ってしまった余計なdivやpをインライン化する */
+details summary div,
+details summary p,
+details summary pre,
+details summary code {
+    display: inline !important; /* ブロック要素を強制的にインライン化 */
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important; /* 余計な背景色も抹殺 */
+    border: none !important;
+}

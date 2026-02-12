@@ -37,15 +37,19 @@ The **world's only**(As of the release date) UserScript that automatically reads
 
 ## 🎨 インフォグラフィック (Infographic)  
 
-<details>
-    <summary><b>🇯🇵 日本語版を表示 (View Japanese Version)</b></summary>
-    <img src="neon-spitch-link info JP.png" alt="Infographic JP" width="100%">
-</details>  
+<details><summary>
 
-<details>
-    <summary><b>🇺🇸 English Version (View English Version)</b></summary>
+    <b>🇯🇵 日本語版を表示 (View Japanese Version)</b>  
+    <img src="neon-spitch-link info JP.png" alt="Infographic JP" width="100%">  
+
+</summary></details>  
+
+<details><summary>
+
+    <b>🇺🇸 English Version (View English Version)</b>
     <img src="neon-spitch-link info EN.png" alt="Infographic EN" width="100%">
-</details>  
+
+</details></summary>  
 
 ---
 

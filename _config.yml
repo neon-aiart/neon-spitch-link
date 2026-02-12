@@ -11,6 +11,6 @@ kramdown:
   input: GFM # GitHub Flavored Markdownを使用
   parse_block_html: true
   hard_wrap: false
-  # syntax_highlighter: rouge # disableにするより、こっちが標準的
+  syntax_highlighter: rouge # disableにするより、こっちが標準的
   # syntax_highlighter_opts:
    # disable: true # タグがコードブロック扱いされるのを防ぐ

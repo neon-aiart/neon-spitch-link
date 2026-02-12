@@ -6,8 +6,7 @@ header_pages: []
 
 markdown: commonmark
 commonmarker:
-  options: [RAW_HTML]
-  options: [RAW_HTML, UNSAFE] # UNSAFEを追加
+  options: [RAW_HTML, UNSAFE]
 kramdown:
   input: GFM # GitHub Flavored Markdownを使用
   parse_block_html: true

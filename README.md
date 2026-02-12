@@ -21,10 +21,10 @@ The **world's only**(As of the release date) UserScript that automatically reads
 ### 📺 紹介動画 (Overview Video)  
 
 <a href="https://youtu.be/qfQjXGMedZs">
-<p align="center">
-<img src="https://img.youtube.com/vi/qfQjXGMedZs/maxresdefault.jpg" alt="Neon Spitch Link Overview" style="width:100%; max-width:600px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"><br />
-▶️ クリックしてYouTubeで再生 (Click to play on YouTube)
-</p>
+    <p align="center">
+        <img src="https://img.youtube.com/vi/qfQjXGMedZs/maxresdefault.jpg" alt="Neon Spitch Link Overview" style="width:100%; max-width:600px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"><br />
+        ▶️ クリックしてYouTubeで再生 (Click to play on YouTube)
+    </p>
 </a>  
 
 ### 💬 サンプル動画 (Sample Video)  

@@ -7,6 +7,6 @@ header_pages: []
 commonmarker:
   options: [RAW_HTML]
 kramdown:
-  parse_block_html: true
-  syntax_highlighter_opts:
-    disable: true # タグがコードブロック扱いされるのを防ぐ
+  input: GFM # GitHub Flavored Markdownを使用
+  hard_wrap: false
+  syntax_highlighter: rouge # disableにするより、こっちが標準的

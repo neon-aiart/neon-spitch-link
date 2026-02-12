@@ -427,6 +427,8 @@ Furthermore, we are actively submitting **Malware / Abuse Reports** to relevant 
 
 ### 📝 現状の課題 / 今後のタスク （ ✅解決済み ）  
 
+・RVC連携で、中断時に連携失敗のトーストがでるときがある
+
 ・設定UIの大幅改修  
 ・ 一律のDELAYだと一部で意図していない挙動になるのでDELAYを各プラットフォームごとに設定する  
 ・ウィンドウサイズ変更によるボタン消失に対する修正  

@@ -208,7 +208,7 @@
 
     let debounceTimerId = null;
     const DEBOUNCE_DELAY = 200;    // Gemini/ChatGPTは1000で安定 (ミリ秒)
-    const DEBUG = true;            // デバッグログ出力フラグ (開発用)
+    const DEBUG = false;           // デバッグログ出力フラグ (開発用)
     const DEBUG_BUTTON = false;    // ボタン更新のデバッグログ出力フラグ (開発用)
     const DEBUG_TEXT = false;      // NGワード除去前後のデバッグログ出力フラグ (開発用)
     const DEBUG_DETECTION = false; // DOM検出のデバッグログ出力フラグ (開発用)

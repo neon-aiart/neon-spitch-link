@@ -5,12 +5,12 @@ description: "neon-aiart.github.io: Profile and Projects Showcase"
 header_pages: []
 
 markdown: commonmark
-commonmarker:
-  options: [RAW_HTML, UNSAFE]
+# commonmarker:
+#   options: [RAW_HTML, UNSAFE]
 kramdown:
   input: GFM # GitHub Flavored Markdownを使用
   parse_block_html: true
-  hard_wrap: false
+#   hard_wrap: false
   syntax_highlighter: rouge # disableにするより、こっちが標準的
-  syntax_highlighter_opts:
-    disable: true # タグがコードブロック扱いされるのを防ぐ
+#   syntax_highlighter_opts:
+#     disable: true # タグがコードブロック扱いされるのを防ぐ

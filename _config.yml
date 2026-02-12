@@ -9,6 +9,7 @@ commonmarker:
   options: [RAW_HTML]
 kramdown:
   input: GFM # GitHub Flavored Markdownを使用
+  options: [RAW_HTML, UNSAFE] # UNSAFEを追加
   parse_block_html: true
   hard_wrap: false
   syntax_highlighter: rouge # disableにするより、こっちが標準的

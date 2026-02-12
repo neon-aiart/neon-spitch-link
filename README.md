@@ -39,7 +39,9 @@ The **world's only**(As of the release date) UserScript that automatically reads
 
 <details>
 
-<summary><b>🇯🇵 日本語版を表示 (View Japanese Version)</b></summary>
+<summary>
+    <b>🇯🇵 日本語版を表示 (View Japanese Version)</b>
+</summary>
 
 <img src="neon-spitch-link info JP.png" alt="Infographic JP" width="100%">  
 </details>  

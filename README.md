@@ -27,11 +27,17 @@ The **world's only**(As of the release date) UserScript that automatically reads
 
 ### 💬 サンプル動画 (Sample Video)  
 * [お前を消す方法 (CV:小夜/SAYO)](https://youtu.be/i8ZkpUy8kTU)  
-* [すぴっちリンクを紹介するのだ (CV:ずんだもん)](https://youtu.be/SFSfAoHYki0)  
-* [Gemini3の無料枠を女医が解説するわ！ (CV:四国めたん)](https://youtu.be/cRDvMVAzTJI)  
-* [【睡眠導入】【朗読】この愛は常識の範囲外。――ねぇ、ずっとそばにいて？ (CV:小夜/SAYO)](https://youtu.be/U8oZ-jvJwIU)  
-* [【今週のニュース】 2/1～2/7のニュースTOP10 (CV:もち子さん)](https://youtu.be/ccyo3uEvO5Q)  
-* [【創作】 マシュマロ読み (CV:猫使ビィ)](https://youtu.be/SWGVnhA4wKg)  
+* [すぴっちリンクを紹介するのだ (CV: ずんだもん)](https://youtu.be/SFSfAoHYki0)  
+* [Gemini3の無料枠を女医が解説するわ！ (CV: 四国めたん)](https://youtu.be/cRDvMVAzTJI)  
+* [【睡眠導入】【朗読】この愛は常識の範囲外。――ねぇ、ずっとそばにいて？ (CV: 小夜/SAYO)](https://youtu.be/U8oZ-jvJwIU)  
+* [【今週のニュース】 2/1～2/7のニュースTOP10 (CV: もち子さん)](https://youtu.be/ccyo3uEvO5Q)  
+* [【創作】 マシュマロ読み (CV: 猫使ビィ)](https://youtu.be/SWGVnhA4wKg)  
+* [【睡眠導入】【朗読】【ちょこっとホラー】 存在しない同居人 (CV: 東北ずん子)](https://youtu.be/GnCDaQEpuVQ)  
+* [【今週のニュース】 2/8～2/14のニュースTOP10 (CV: 小夜/SAYO)](https://youtu.be/H1S-54p3sjU)  
+* [【創作】 マシュマロ読み (CV: 小夜/SAYO)](https://youtu.be/Vo8xGhq1JS4)  
+* [AEDの使い方を広めたい！ (CV: ナースロボ_タイプT)](https://youtu.be/4OiSsYQ4M54)  
+* [【睡眠導入】【朗読】月の裏側から届いた、忘れられた愛の遺産 (CV: 猫使ビィ)](https://youtu.be/BcrCJS10hRo)  
+* [【今週のニュース】 2/15～2/21のニュースTOP10 (CV: 小夜/SAYO)](https://youtu.be/r5gmGqN8Myg)  
 
 ---
 

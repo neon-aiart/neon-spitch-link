@@ -8,7 +8,9 @@
 ➡️ [いますぐインストール！](#-インストール方法-installation-guide) (Skip to Installation)  
 💡 [声を届ける活動者様へ](#-rvc音声モデル作成ガイドと注意事項-rvc-voice-model-creation-guide--notes) (To Vocal Creators)  
 
-⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)<br clear="right">  
+⭐ [スター](https://github.com/neon-aiart/neon-spitch-link/)をポチッとお願いします✨ (Please hit the [Star] button!)
+
+<br clear="right">  
 
 ---
 
@@ -291,9 +293,11 @@ This constitutes an **illegal act**, including infringement of copyright and por
 * [Gemini3の無料枠を女医が解説するわ！ (CV: 四国めたん)](https://youtu.be/cRDvMVAzTJI)  
 * [【睡眠導入】【朗読】この愛は常識の範囲外。――ねぇ、ずっとそばにいて？ (CV: 小夜/SAYO)](https://youtu.be/U8oZ-jvJwIU)  
 * [【今週のニュース】 2/1～2/7のニュースTOP10 (CV: もち子さん)](https://youtu.be/ccyo3uEvO5Q)  
+
 * [【創作】 マシュマロ読み (CV: 猫使ビィ)](https://youtu.be/SWGVnhA4wKg)  
 * [【睡眠導入】【朗読】【ちょこっとホラー】 存在しない同居人 (CV: 東北ずん子)](https://youtu.be/GnCDaQEpuVQ)  
 * [【今週のニュース】 2/8～2/14のニュースTOP10 (CV: 小夜/SAYO)](https://youtu.be/H1S-54p3sjU)  
+
 * [【創作】 マシュマロ読み (CV: 小夜/SAYO)](https://youtu.be/Vo8xGhq1JS4)  
 * [AEDの使い方を広めたい！ (CV: ナースロボ_タイプT)](https://youtu.be/4OiSsYQ4M54)  
 * [【睡眠導入】【朗読】月の裏側から届いた、忘れられた愛の遺産 (CV: 猫使ビィ)](https://youtu.be/BcrCJS10hRo)  

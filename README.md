@@ -26,7 +26,7 @@ The **world's only**(As of the release date) UserScript that automatically reads
 </a></p>  
 
 ### 💬 サンプル動画 (Sample Video)  
-* [お前を消す方法 (CV:小夜/SAYO)](https://youtu.be/i8ZkpUy8kTU)  
+* [お前を消す方法 (CV: 小夜/SAYO)](https://youtu.be/i8ZkpUy8kTU)  
 * [すぴっちリンクを紹介するのだ (CV: ずんだもん)](https://youtu.be/SFSfAoHYki0)  
 * [Gemini3の無料枠を女医が解説するわ！ (CV: 四国めたん)](https://youtu.be/cRDvMVAzTJI)  
 * [【睡眠導入】【朗読】この愛は常識の範囲外。――ねぇ、ずっとそばにいて？ (CV: 小夜/SAYO)](https://youtu.be/U8oZ-jvJwIU)  
@@ -38,6 +38,7 @@ The **world's only**(As of the release date) UserScript that automatically reads
 * [AEDの使い方を広めたい！ (CV: ナースロボ_タイプT)](https://youtu.be/4OiSsYQ4M54)  
 * [【睡眠導入】【朗読】月の裏側から届いた、忘れられた愛の遺産 (CV: 猫使ビィ)](https://youtu.be/BcrCJS10hRo)  
 * [【今週のニュース】 2/15～2/21のニュースTOP10 (CV: 小夜/SAYO)](https://youtu.be/r5gmGqN8Myg)  
+* [【創作】 マシュマロ読み (CV: ナースロボ_タイプT)](https://youtu.be/zXHQxlYIhG8)  
 
 ---
 

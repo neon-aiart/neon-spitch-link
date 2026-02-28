@@ -313,7 +313,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ☑️ キャッシュクリアボタンを追加  
 ☑️ VOICEVOX接続エラー時にSpeakerIDを保存しない  
 ☑️ VOICEVOX API URLに更新ボタンを追加
-☑️ マジック・リンク同期エンジンを実装
+✅ マジック・リンク同期エンジンを実装
 work in progress...  
 
 ### v8.3 (Current Release)  

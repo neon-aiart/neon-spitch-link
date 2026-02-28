@@ -5,7 +5,7 @@
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>
-// @version        8.3
+// @version        8.4
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -23,9 +23,8 @@
 // @grant          GM_registerMenuCommand
 // @grant          GM_unregisterMenuCommand
 // @connect        localhost
+// @connect        trycloudflare.com
 // @license        PolyForm Noncommercial 1.0.0; https://polyformproject.org/licenses/noncommercial/1.0.0/
-// @downloadURL    https://update.greasyfork.org/scripts/552996/%E3%81%AD%E3%81%8A%E3%82%93%20%E3%81%99%E3%81%B4%E3%81%A3%E3%81%A1%20%E3%83%AA%E3%83%B3%E3%82%AF.user.js
-// @updateURL      https://update.greasyfork.org/scripts/552996/%E3%81%AD%E3%81%8A%E3%82%93%20%E3%81%99%E3%81%B4%E3%81%A3%E3%81%A1%20%E3%83%AA%E3%83%B3%E3%82%AF.meta.js
 // ==/UserScript==
 
 /**
@@ -48,7 +47,7 @@
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '8.3';
+    const SCRIPT_VERSION = '8.4';
     const STORE_KEY = 'gemini_voicevox_config';
 
     // ========= グローバルな再生・操作制御変数 =========
@@ -213,9 +212,12 @@
     const DEBUG_TEXT = false;      // NGワード除去前後のデバッグログ出力フラグ (開発用)
     const DEBUG_DETECTION = false; // DOM検出のデバッグログ出力フラグ (開発用)
 
-    let settingsMenuId = null;
-    let rvcSettingsMenuId = null;
-    let DownloadMenuId = null;
+    let menuIds = {
+        settings: null,
+        rvc: null,
+        download: null,
+        cache: null,
+    };
 
     // スタイル定義（GM_addStyle）
     GM_addStyle(`
@@ -416,11 +418,53 @@
         return `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
     }
 
+    // --- ✨ マジック・リンク同期エンジン ---
+    (function handleMagicLinkSync() {
+        const hash = window.location.hash;
+        // プレフィックスを決めておくわ（例: #sync_v_）
+        if (hash.startsWith('#sync_v_')) {
+            try {
+                // #sync_v_ 以降を取り出してデコード
+                const encodedData = hash.substring(8);
+                const decodedData = decodeURIComponent(atob(encodedData));
+                const params = JSON.parse(decodedData);
+
+                // params = { vv: "URL", rvc: "URL", ts: 123456789 } みたいな構造を想定
+                let updated = false;
+
+                if (params.vv && params.vv !== config.apiUrl) {
+                    config.apiUrl = params.vv;
+                    updated = true;
+                }
+                // RVC側の設定もあればここで更新（将来用）
+                if (params.rvc && params.rvc !== config.rvcApiUrl) {
+                    config.rvcApiUrl = params.rvc;
+                    updated = true;
+                }
+
+                if (updated) {
+                    GM_setValue(STORE_KEY, config);
+                    showToast('✨ Colabと同期してURLを更新したわ！', true);
+                }
+
+                // --- 証拠隠滅（URLを綺麗にする） ---
+                // 履歴に残さないように replaceState を使うのがスマートよ
+                const cleanUrl = window.location.origin + window.location.pathname + window.location.search;
+                window.history.replaceState(null, null, cleanUrl);
+
+            } catch (e) {
+                console.error('同期失敗:', e);
+                showToast('⚠️ 同期リンクの形式が正しくないみたい', false);
+            }
+        }
+    })();
+
     // ========= VOICEVOX連携 設定UI =========
     function openSettings() {
         if (document.getElementById('mei-settings-overlay')) {
             return;
         }
+        refreshMenuCommands();
 
         config = GM_getValue(STORE_KEY, config);
 
@@ -514,9 +558,41 @@
         apiInput.type = 'url';
         apiInput.id = 'apiUrl';
         apiInput.value = config.apiUrl;
-        apiInput.style.cssText = 'flex-grow: 1;';
+        apiInput.style.cssText = 'flex-grow: 1; min-width: 0;'; // min-width: 0 は幅が突き抜けないためのおまじない
         apiInput.classList.add('mei-input-field');
         apiGroup.appendChild(apiInput);
+
+        const apiRefreshBtn = document.createElement('button');
+        apiRefreshBtn.textContent = '🔄 更新';
+
+        // style.cssText の中に margin-left を含めつつ、!important を使わずに「flex-shrink: 0」で潰されないようにするわ
+        apiRefreshBtn.style.cssText = `
+            margin-left: 12px !important;
+            padding: 0 12px;
+            height: 32px;
+            background: #4a4a4a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.85em;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        apiRefreshBtn.onclick = () => {
+            const tempUrl = apiInput.value.trim();
+            if (!tempUrl) {
+                showToast('URLを入力してね！', false);
+                return;
+            }
+            // リスト取得関数を呼び出す（現在のセレクトボックスを再利用）
+            setupSpeakerSelector(speakerSelectorContainer, config.speakerId, tempUrl);
+        };
+        apiGroup.appendChild(apiRefreshBtn);
+
         panel.appendChild(apiGroup);
 
         // 自動再生 ON/OFF トグル
@@ -760,10 +836,6 @@
             const maxChunksInput = document.getElementById('maxChunks');
             const newMaxChunks = parseInt(maxChunksInput.value, 10);
 
-            if (isNaN(newSpeakerId) || newSpeakerId < 0) {
-                showToast('スピーカーIDは半角数字で、0以上の値を入力してね！', false);
-                return;
-            }
             if (newShortcutKey === 'キーを押してください...' || newShortcutKey.includes('は必須よ！') || newShortcutKey.includes('じゃないわ...')) {
                 showToast('ショートカットキーを正しく設定してね！', false);
                 return;
@@ -800,33 +872,42 @@
         });
     }
 
-    // VOICEVOXの話者リストを取得して、セレクトボックスを構築するわ
+    // VOICEVOXの話者リストを取得して、セレクトボックスを構築・更新するわ
     async function setupSpeakerSelector(container, currentId, apiUrl) {
-        const select = document.createElement('select');
-        select.id = 'speakerId';
-        select.classList.add('mei-input-field');
-        select.style.cssText = 'width: 100%; max-width: 240px; margin-top: 5px;';
+        // 既にセレクトボックスがあるかチェック、なければ作る
+        let select = document.getElementById('speakerId');
+        if (!select) {
+            select = document.createElement('select');
+            select.id = 'speakerId';
+            select.classList.add('mei-input-field');
+            select.style.cssText = 'width: 100%; max-width: 240px; margin-top: 5px;';
+            container.appendChild(select);
+        }
 
-        // ヘルパー関数：エラー時などに1行だけメッセージを表示するわ
-        const setSingleOption = (text) => {
-            select.textContent = ''; // 安全なクリア方法
-            const opt = document.createElement('option');
-            opt.textContent = text;
-            select.appendChild(opt);
+        // --- ここから取得ロジック ---
+        // 取得中は今の値を保持したまま「取得中...」を表示
+        select.textContent = '';
+        const loadingOpt = document.createElement('option');
+        loadingOpt.value = currentId;
+        loadingOpt.textContent = `⏳ 取得中... (ID: ${currentId})`;
+        loadingOpt.selected = true;
+        select.appendChild(loadingOpt);
+
+        const handleConnectionError = (type) => {
+            const msg = type === 'timeout' ? 'タイムアウト' : '接続失敗';
+            loadingOpt.textContent = `⚠️ ${msg} - ID: ${currentId}`;
+            showToast(`${msg}よ。URLを確認してみて！`, false);
         };
-
-        // ロード中の表示
-        setSingleOption('話者リストを取得中...');
-        container.appendChild(select);
 
         GM_xmlhttpRequest({
             method: 'GET',
             url: `${apiUrl}/speakers`,
+            timeout: 5000,
             onload: function(response) {
                 if (response.status === 200) {
                     try {
                         const speakers = JSON.parse(response.responseText);
-                        select.textContent = ''; // リストをクリア
+                        select.textContent = ''; // 成功したらクリアして作り直し
 
                         let foundCurrent = false;
                         speakers.forEach(speaker => {
@@ -834,7 +915,6 @@
                                 const option = document.createElement('option');
                                 option.value = style.id;
                                 option.textContent = `${speaker.name}（${style.name}）`;
-
                                 if (style.id === parseInt(currentId, 10)) {
                                     option.selected = true;
                                     foundCurrent = true;
@@ -843,20 +923,18 @@
                             });
                         });
 
-                        if (!foundCurrent && speakers.length > 0) {
-                            console.warn(`[VOICEVOX] 保存されたID ${currentId} がリストにないわよ。`);
-                        }
+                        showToast('✅ 話者リストを更新したわ！', true);
+
                     } catch (e) {
-                        setSingleOption('リストの解析に失敗したわ');
-                        console.error('[VOICEVOX] JSON Parse Error:', e);
+                        loadingOpt.textContent = `⚠️ 解析失敗 - ID: ${currentId}`;
+                        showToast('リストの解析に失敗しちゃった', false);
                     }
                 } else {
-                    setSingleOption(`APIエラー (${response.status})`);
+                    loadingOpt.textContent = `⚠️ エラー(${response.status}) - ID: ${currentId}`;
                 }
             },
-            onerror: () => {
-                setSingleOption('接続エラーよ。VOICEVOXは起動してる？');
-            },
+            onerror: () => handleConnectionError('error'),
+            ontimeout: () => handleConnectionError('timeout'),
         });
     }
 
@@ -2599,6 +2677,22 @@
         }
     }
 
+    // キャッシュクリア
+    async function clearCached() {
+        // 1. Tampermonkeyのストレージから、キャッシュのハッシュと音声データを削除するわ
+        GM_deleteValue(LAST_CACHE_HASH);
+        GM_deleteValue(LAST_CACHE_DATA);
+
+        // 2. キャッシュが消えたので、ダウンロードボタンの状態を更新して無効化するわよ
+        if (typeof updateDownloadButtonState === 'function') {
+            updateDownloadButtonState();
+        }
+
+        // 3. 撮影の目安になるようにトーストを表示
+        showToast('🗑️ キャッシュを削除したよ！', false);
+        console.log('[Cache] 🗑️ キャッシュクリア完了（これで次の再生で文字数トーストが出るわよ）');
+    }
+
     // メインの再生のトリガー
     async function startConversion(isAutoPlay = false) {
         const currentConfig = GM_getValue(STORE_KEY, config);
@@ -2683,9 +2777,9 @@
             }
         } catch (error) {
             // RVC/VOICEVOXの内部処理でハンドルされなかった、予期せぬ致命的なエラーをキャッチ
-            // console.error('[SYNTHESIS_FATAL_ERROR] 予期せぬ合成処理エラー:', error);
-            // const shortMessage = (typeof error === 'string') ? error : (error.message || '不明なエラー');
-            // showToast(`😭 致命的な合成エラー: ${shortMessage.substring(0, 30)}...`, false);
+            console.error('[SYNTHESIS_FATAL_ERROR] 予期せぬ合成処理エラー:', error);
+            const shortMessage = (typeof error === 'string') ? error : (error.message || '不明なエラー');
+            showToast(`😭 致命的な合成エラー: ${shortMessage.substring(0, 30)}...`, false);
             await stopPlayback(true); // XHRを確実に中止して状態をリセットするわ！
         } finally {
             isConversionStarting = false; // 処理終了時（成功・失敗問わず）にフラグをリセット
@@ -3337,6 +3431,7 @@
             debounceTimerId = setTimeout(function() {
                 addConvertButton();
                 updateButtonState();
+                refreshMenuCommands();
 
                 if (audioContext && isPause && audioContext.currentTime > 0) {
                     isPause = false;
@@ -3433,23 +3528,27 @@
     }
 
     // メニュー登録
-    if (settingsMenuId) {
-        GM_unregisterMenuCommand(settingsMenuId);
+    function refreshMenuCommands() {
+        if (menuIds.settings) {
+            GM_unregisterMenuCommand(menuIds.settings);
+        }
+        menuIds.settings = GM_registerMenuCommand('🔊 VOICEVOX連携 設定', openSettings);
+        if (menuIds.rvc) {
+            GM_unregisterMenuCommand(menuIds.rvc);
+        }
+        menuIds.rvc = GM_registerMenuCommand('🔊 RVC連携 設定', openRvcSettings);
+        if (menuIds.download) {
+            GM_unregisterMenuCommand(menuIds.download);
+        }
+        menuIds.download = GM_registerMenuCommand('💾 ダウンロード', startVoiceDownload);
+        if (menuIds.cache) {
+            GM_unregisterMenuCommand(menuIds.cache);
+        }
+        menuIds.cache = GM_registerMenuCommand('🗑️ キャッシュクリア', clearCached);
+        console.log(`メニュー登録`);
     }
-    if (rvcSettingsMenuId) {
-        GM_unregisterMenuCommand(rvcSettingsMenuId);
-    }
-    if (DownloadMenuId) {
-        GM_unregisterMenuCommand(DownloadMenuId);
-    }
-    settingsMenuId = GM_registerMenuCommand('🔊 VOICEVOX連携 設定', openSettings);
-    rvcSettingsMenuId = GM_registerMenuCommand('🔊 RVC連携 設定', openRvcSettings);
-    DownloadMenuId = GM_registerMenuCommand('💾 ダウンロード', startVoiceDownload);
 
-    const initialConfig = GM_getValue(STORE_KEY, config);
-    if (!initialConfig.autoPlay) {
-        loadRvcModel(initialConfig); // RVCモデルを初回起動時にロード（自動読み上げOFF時）
-    }
+    refreshMenuCommands();
 
     // DOM監視を開始
     observeDOMChanges();

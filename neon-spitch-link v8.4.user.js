@@ -51,6 +51,7 @@
     const STORE_KEY = 'gemini_voicevox_config';
 
     // ========= グローバルな再生・操作制御変数 =========
+    let debounceTimerId = null;
     let currentAudio = null;
     let currentXhrs = [];               // 合成中のXHRを配列として定義（中断用）
     let isConversionStarting = false;   // 合成処理全体が開始したことを示すフラグ
@@ -83,95 +84,7 @@
     const LAST_CACHE_HASH = 'latest_audio_cache_hash'; // テキストと設定のハッシュを保存
     const LAST_CACHE_DATA = 'latest_audio_cache_data'; // Base64 WAVデータを保存
 
-    // クエリ検索（コンテナ・フッター）
-    const SELECTORS_RESPONSE = [ {
-        // Gemini
-        container: 'response-container',
-        footer: '.more-menu-button-container',
-    }, {
-        // ChatGPT
-        container: 'article[data-turn="assistant"]',
-        footer: 'button',
-    }, {
-        // Google AIモード
-        container: 'div[data-container-id="main-col"]',
-        footer: 'button',
-    }, {
-        // Grok
-        container: 'div[id^="response-"].items-start',
-        footer: '.group-focus-within\\:opacity-100',
-    }, {
-        // x.com/i/grok*
-        container: 'div.r-16lk18l.r-13qz1uu',
-        footer: 'div.r-18u37iz.r-1jnkns4',
-    }, {
-        // x.com/i/grok* （予備）
-        container: 'div:has(div > div > div > div > div > button > div > svg path[d^="M21.869 16h-3.5c-.77"])',
-        footer: 'button:has(svg path[d^="M21.869 16h-3.5c-.77"])',
-    }, ];
-
-    // URL制御用セクレタ配列（shouldExecuteで使用）
-    const WHITELIST_PATHS = [
-        '/app*', '/gem*', '/u/*/app*', '/u/*/gem*', '/c', '/c/*', '/g/*', '/search?*udm=50*', '/i/grok*',
-    ];
-    const BLACKLIST_PATHS = [
-        '/saved-info', '/apps', '/sharing', '/gems/*', '/settings',
-        '/u/*/saved-info', '/u/*/apps', '/u/*/sharing', '/u/*/gems/*', '/u/*/settings',
-        '/faq', '/privacy', '/terms',
-    ];
-
-    // DOM除去用セクレタ配列（getGeminiAnswerTextで使用）
-    const SELECTORS_TO_REMOVE = [
-        '#convertButtonWrapper',
-        '.extension-processing-state',
-        '.attachment-container',
-        '.hide-from-message-actions',
-        '.cdk-visually-hidden',
-        '.gpi-static-text-loader',
-        '.avatar-gutter',
-        '.legacy-sources-sidebar-button',
-        '.thoughts-header',
-        '.bot-name', '.sr-only',
-        '.tool-summary',
-        'pre', 'code-block', 'mat-paginator', 'immersive-entry-chip', 'inline-location', 'user-notice',
-        'model-thoughts', 'deletion-candidate-memories-response-block',
-        'div[style*="display: none"]', 'div[role="status"]', 'span.cgpt-timestamp',
-        'div[role="link"]', 'button', '.action-buttons', '.text-secondary',
-        'div[jscontroller="a5f0he"]', // Google検索AIモードのボタン群 '役になった/役に立たない'
-    ];
-
-    // 処理中断用セクレタ配列（getGeminiAnswerTextで使用）
-    const SELECTORS_TO_INTERRUPT = [
-        '.processing-state',      // 応答生成中（例：「思考中」）
-        '.stopped-draft-message', // 応答生成が停止された場合
-    ];
-
-    // テキスト内容で除去する定型文/NGワードの配列（getGeminiAnswerTextで使用）
-    // これらの文字列は、抽出されたテキスト全体から除去されるわ
-    // 除去したい単語や定型文を文字列で追加してね。正規表現として解釈されるわ！
-    const TEXTS_TO_REMOVE_REGEX = [
-        // 日本語版（アプリ アクティビティ）
-        "なお、各種アプリのすべての機能を使用するには、Gemini アプリ アクティビティを有効にする必要があります[。\\.]?\\s*",
-        // 英語版（Apps Activity notification）
-        "Note:\\s?To use all features of the apps?,\\s?you need to enable the Gemini Apps Activity[\\s\\.\\:]?",
-
-        /* 💡 NGワード機能として使う例: "今日は", // 「おはよう、今日は晴れです」 -> 「おはよう、晴れです」
-         *** 正規表現 ***
-         ** 1. 最初の「それでは」より前、ワードを対象に含めない, 対象に含める
-         *   > "^[\\s\\S]*?(?=それでは)", "^[\\s\\S]*?それでは",
-         ** 2. 最後の「ここまで」より前、ワードを対象に含めない, 対象に含める
-         *   > "^[\\s\\S]*(?=ここまで)", "^[\\s\\S]*ここまで",
-         ** 3. 最初の「おつかれ」から最後まで、ワードを対象に含めない, 対象に含める
-         *   > "(?<=おつかれ)[\\s\\S]*$", "おつかれ[\\s\\S]*$",
-         ** 4. 最後の「つづくよ」から最後まで、ワードを対象に含めない, 対象に含める
-         *   > "(?<=つづくよ)(?![\\s\\S]*つづくよ)[\\s\\S]*$", "つづくよ(?![\\s\\S]*つづくよ)[\\s\\S]*$",
-         ** 5. 最初の「ここから」より前と最後の「そこまで」から最後まで、ワードを対象に含めない, 対象に含める
-         *   > "^[\\s\\S]*?(?=ここから)|(?<=そこまで)(?![\\s\\S]*そこまで)[\\s\\S]*$",
-         *   > "^[\\s\\S]*?ここから|そこまで(?![\\s\\S]*そこまで)[\\s\\S]*$",
-         ***/
-    ];
-
-    // ========= 永続化された設定値の読み込み =========
+    // ========= 設定値の読み込み =========
     const DEFAULT_CONFIG = {
         speakerId: 4,
         apiUrl: 'http://localhost:50021',
@@ -197,6 +110,99 @@
         rvcEnvelope: 0.25,                   // 入力ソースと出力の音量エンベロープの融合率 (0～1)
         rvcArtefact: 0.33,                   // 明確な子音と呼吸音を保護 (0～0.5)
         rvcMedianFilter: 3,                  // ミュートを減衰させるためのメディアンフィルタ (0～7)
+
+        // Gemini/ChatGPTは1000, AIモード/Grokは200で安定 (ミリ秒)
+        debounceDelay: 200,
+
+        // クエリ検索（コンテナ・フッター）
+        selectorsResponse: [ {
+            // Gemini
+            container: 'response-container',
+            footer: '.more-menu-button-container',
+        }, {
+            // ChatGPT
+            container: 'article[data-turn="assistant"]',
+            footer: 'button',
+        }, {
+            // Google AIモード
+            container: 'div[data-container-id="main-col"]',
+            footer: 'button',
+        }, {
+            // Grok
+            container: 'div[id^="response-"].items-start',
+            footer: '.group-focus-within\\:opacity-100',
+        }, {
+            // x.com/i/grok*
+            container: 'div.r-16lk18l.r-13qz1uu',
+            footer: 'div.r-18u37iz.r-1jnkns4',
+        }, {
+            // x.com/i/grok* （予備）
+            container: 'div:has(div > div > div > div > div > button > div > svg path[d^="M21.869 16h-3.5c-.77"])',
+            footer: 'button:has(svg path[d^="M21.869 16h-3.5c-.77"])',
+        }, ],
+
+        // URL制御用セクレタ配列（shouldExecuteで使用）
+        whitelistPaths: [
+            '/app*', '/gem*', '/u/*/app*', '/u/*/gem*', '/c', '/c/*', '/g/*', '/search?*udm=50*', '/i/grok*',
+        ],
+        blacklistPaths: [
+            '/saved-info', '/apps', '/sharing', '/gems/*', '/settings',
+            '/u/*/saved-info', '/u/*/apps', '/u/*/sharing', '/u/*/gems/*', '/u/*/settings',
+            '/faq', '/privacy', '/terms',
+        ],
+
+        // DOM除去用セクレタ配列（responseAnswerTextで使用）
+        selectorsToRemove: [
+            '#convertButtonWrapper',
+            '.extension-processing-state',
+            '.attachment-container',
+            '.hide-from-message-actions',
+            '.cdk-visually-hidden',
+            '.gpi-static-text-loader',
+            '.avatar-gutter',
+            '.legacy-sources-sidebar-button',
+            '.thoughts-header',
+            '.bot-name', '.sr-only',
+            '.tool-summary',
+            'pre', 'code-block', 'mat-paginator', 'immersive-entry-chip', 'inline-location', 'user-notice',
+            'model-thoughts', 'deletion-candidate-memories-response-block',
+            'div[style*="display: none"]', 'div[role="status"]', 'span.cgpt-timestamp',
+            'div[role="link"]', 'button', '.action-buttons', '.text-secondary',
+            'div[jscontroller="a5f0he"]', // Google検索AIモードのボタン群 '役になった/役に立たない'
+        ],
+
+        // 処理中断用セクレタ配列（responseAnswerTextで使用）
+        selectorsToInterrupt: [
+            '.processing-state',      // 応答生成中（例：「思考中」）
+            '.stopped-draft-message', // 応答生成が停止された場合
+        ],
+
+        // テキスト内容で除去する定型文/NGワードの配列（responseAnswerTextで使用）
+        // これらの文字列は、抽出されたテキスト全体から除去されるわ
+        // 除去したい単語や定型文を文字列で追加してね。正規表現として解釈されるわ！
+        textsToRemoveRegex: [
+            // 日本語版（アプリ アクティビティ）
+            "なお、各種アプリのすべての機能を使用するには、Gemini アプリ アクティビティを有効にする必要があります[。\\.]?\\s*",
+            // 英語版（Apps Activity notification）
+            "Note:\\s?To use all features of the apps?,\\s?you need to enable the Gemini Apps Activity[\\s\\.\\:]?",
+
+            /* 💡 NGワード機能として使う例: "今日は", // 「おはよう、今日は晴れです」 -> 「おはよう、晴れです」
+            *** 正規表現 ***
+            ** 1. 最初の「それでは」より前、ワードを対象に含めない, 対象に含める
+            *   > "^[\\s\\S]*?(?=それでは)", "^[\\s\\S]*?それでは",
+            ** 2. 最後の「ここまで」より前、ワードを対象に含めない, 対象に含める
+            *   > "^[\\s\\S]*(?=ここまで)", "^[\\s\\S]*ここまで",
+            ** 3. 最初の「おつかれ」から最後まで、ワードを対象に含めない, 対象に含める
+            *   > "(?<=おつかれ)[\\s\\S]*$", "おつかれ[\\s\\S]*$",
+            ** 4. 最後の「つづくよ」から最後まで、ワードを対象に含めない, 対象に含める
+            *   > "(?<=つづくよ)(?![\\s\\S]*つづくよ)[\\s\\S]*$", "つづくよ(?![\\s\\S]*つづくよ)[\\s\\S]*$",
+            ** 5. 最初の「ここから」より前と最後の「そこまで」から最後まで、ワードを対象に含めない, 対象に含める
+            *   > "^[\\s\\S]*?(?=ここから)|(?<=そこまで)(?![\\s\\S]*そこまで)[\\s\\S]*$",
+            *   > "^[\\s\\S]*?ここから|そこまで(?![\\s\\S]*そこまで)[\\s\\S]*$",
+            ** 6. 全角「（）」, 「【】」の中身だけを消す（カッコは残る）
+            *   > "(?<=（)[^（）]+(?=）)", "(?<=【)[^【】]+(?=】)",
+            ***/
+        ],
     };
     let savedConfig = GM_getValue(STORE_KEY, DEFAULT_CONFIG);
     let config = {
@@ -205,11 +211,10 @@
     };
     GM_setValue(STORE_KEY, config);
 
-    let debounceTimerId = null;
-    const DEBOUNCE_DELAY = 200;    // Gemini/ChatGPTは1000で安定 (ミリ秒)
     const DEBUG = false;           // デバッグログ出力フラグ (開発用)
     const DEBUG_BUTTON = false;    // ボタン更新のデバッグログ出力フラグ (開発用)
-    const DEBUG_TEXT = false;      // NGワード除去前後のデバッグログ出力フラグ (開発用)
+    const DEBUG_REGEX = false;     // NGワード除去前後のデバッグログ出力フラグ (開発用)
+    let DEBUG_TEXT = '';           // NGワード除去前後のデバッグログ用テキスト (開発用)
     const DEBUG_DETECTION = false; // DOM検出のデバッグログ出力フラグ (開発用)
 
     let menuIds = {
@@ -415,47 +420,85 @@
 
     function getFormattedDateTime() {
         const now = new Date();
-        return `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+        const pad = (num) => num.toString().padStart(2, '0'); // ２桁にする関数
+
+        const y = now.getFullYear();
+        const m = pad(now.getMonth() + 1);
+        const d = pad(now.getDate());
+        const h = pad(now.getHours());
+        const min = pad(now.getMinutes());
+        const s = pad(now.getSeconds());
+
+        return `${y}/${m}/${d} ${h}:${min}:${s}`;
     }
 
-    // --- ✨ マジック・リンク同期エンジン ---
+    // --- 🪄 マジック・リンク同期エンジン ---
     (function handleMagicLinkSync() {
         const hash = window.location.hash;
-        // プレフィックスを決めておくわ（例: #sync_v_）
-        if (hash.startsWith('#sync_v_')) {
-            try {
-                // #sync_v_ 以降を取り出してデコード
-                const encodedData = hash.substring(8);
-                const decodedData = decodeURIComponent(atob(encodedData));
-                const params = JSON.parse(decodedData);
+        if (!hash.startsWith('#sync_v_')) {
+            return;
+        }
 
-                // params = { vv: "URL", rvc: "URL", ts: 123456789 } みたいな構造を想定
-                let updated = false;
+        try {
+            // #sync_v_ 以降を取り出してデコード
+            const encodedData = hash.substring(8);
+            const decodedData = decodeURIComponent(atob(encodedData));
+            const params = JSON.parse(decodedData);
 
-                if (params.vv && params.vv !== config.apiUrl) {
-                    config.apiUrl = params.vv;
+            // params = { vv: "URL", rvc: "URL", ts: 123456789 } みたいな構造を想定
+            let updated = false;
+
+            // 1. 設定の更新: config にある項目なら保存する
+            for (const key in params) {
+                // 1. configにある項目なら、設定として上書き
+                if (key in config) {
+                    config[key] = params[key];
                     updated = true;
+                } else {
+                    // 2. configにない項目（一時パッチなど）
                 }
-                // RVC側の設定もあればここで更新（将来用）
-                if (params.rvc && params.rvc !== config.rvcApiUrl) {
-                    config.rvcApiUrl = params.rvc;
-                    updated = true;
-                }
-
-                if (updated) {
-                    GM_setValue(STORE_KEY, config);
-                    showToast('✨ Colabと同期してURLを更新したわ！', true);
-                }
-
-                // --- 証拠隠滅（URLを綺麗にする） ---
-                // 履歴に残さないように replaceState を使うのがスマートよ
-                const cleanUrl = window.location.origin + window.location.pathname + window.location.search;
-                window.history.replaceState(null, null, cleanUrl);
-
-            } catch (e) {
-                console.error('同期失敗:', e);
-                showToast('⚠️ 同期リンクの形式が正しくないみたい', false);
             }
+
+            if (updated) {
+                GM_setValue(STORE_KEY, config);
+            }
+
+            // 動的パッチ: 今のリストを壊さず、追加・修正する
+
+            // --- selectorsResponse のマージロジック ---
+            if (params.selectors) {
+                params.selectors.forEach(newSite => {
+                    // 既存のリストから、同じコンテナ名（または識別子）を持つものを探す
+                    const index = config.selectorsResponse.findIndex(s => s.container === newSite.container);
+
+                    if (index !== -1) {
+                        config.selectorsResponse[index] = newSite; // 既存を更新
+                    } else {
+                        config.selectorsResponse.unshift(newSite); // 先頭に追加
+                    }
+                });
+            }
+
+            // 一時的な微調整
+            if (params.debounce) {
+                config.debounceDelay = params.debounce;
+            }
+            // --- ngword のマージ（重複排除して追加） ---
+            if (params.ngword) {
+                params.ngword.forEach(word => {
+                    if (!config.textsToRemoveRegex.includes(word)) {
+                        config.textsToRemoveRegex.push(word);
+                    }
+                });
+            }
+
+            // URLを綺麗にする
+            window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search);
+            showToast('✨ マジック・リンクを適用したわ！', true);
+        } catch (e) {
+            console.error('同期失敗:', e);
+            showToast('⚠️ パッチの適用に失敗したみたい', false);
         }
     })();
 
@@ -1539,9 +1582,9 @@
      * 最後のGeminiの回答パネルから、読み上げ用のテキストを抽出する。
      * @returns {string} - 抽出されたクリーンなテキスト。処理中断時は空文字列。
      */
-    function getGeminiAnswerText() {
+    function responseAnswerText() {
         let allResponseContainers = [];
-        for (const selector of SELECTORS_RESPONSE) {
+        for (const selector of config.selectorsResponse) {
             const containers = document.querySelectorAll(selector.container);
             if (containers.length > 0) {
                 allResponseContainers = containers;
@@ -1588,7 +1631,7 @@
         const clonedContainer = textContainer.cloneNode(true);
 
         // 応答生成中｜停止のステータスチェック
-        const isInterrupted = SELECTORS_TO_INTERRUPT.some(selector => {
+        const isInterrupted = config.selectorsToInterrupt.some(selector => {
             return clonedContainer.querySelector(selector);
         });
         if (isInterrupted) {
@@ -1596,7 +1639,7 @@
         }
 
         // すべての除去対象要素をループで探し、除去する（グローバル配列を使用！）
-        SELECTORS_TO_REMOVE.forEach(selector => {
+        config.selectorsToRemove.forEach(selector => {
             const elements = clonedContainer.querySelectorAll(selector);
             elements.forEach(element => element.remove());
         });
@@ -1642,21 +1685,23 @@
             return p1.substring(0, 1);
         });
 
-        if (DEBUG_TEXT) {
-            console.log(`=== [Debug] [${getFormattedDateTime()}] Before Remove Regex ===\n${text.trim()}\n============`);
+        if (DEBUG_REGEX && DEBUG_TEXT != clonedContainer.innerText && clonedContainer.innerText != '') {
+            console.log(`[Debug] [${getFormattedDateTime()}] Before Remove Regex （${text.length}文字）\n${text.trim()}`);
         }
 
         // 6. 定型文・NGワードの除去
-        TEXTS_TO_REMOVE_REGEX.forEach(regexString => {
+        config.textsToRemoveRegex.forEach(regexString => {
             // gフラグ（グローバル）を追加し、全文からマッチしたものを全て除去するわ
             const regex = new RegExp(regexString, 'gi');
             // 除去した箇所を空白に置き換えて、後のクリーンアップで連続空白をまとめるわ
             text = text.replace(regex, ' ');
         });
 
-        if (DEBUG_TEXT) {
-            console.log(`------ [Debug] [${getFormattedDateTime()}] return text.trim() ------\n${text.trim()}\n------------------`);
+        if (DEBUG_REGEX && DEBUG_TEXT != clonedContainer.innerText && clonedContainer.innerText != '') {
+            console.log(`--- [Debug] [${getFormattedDateTime()}] return （${text.length}文字） ---\n${text.trim()}\n------------------`);
         }
+
+        DEBUG_TEXT = clonedContainer.innerText || '';
 
         // 最後に、前後の余計なスペースをトリミングして完成！
         return text.trim();
@@ -1871,7 +1916,7 @@
     // ダウンロード
     async function startVoiceDownload() {
         try {
-            let text = getGeminiAnswerText();
+            let text = responseAnswerText();
             if (!text || text.trim() === '') {
                 // showToast('回答テキストが取得できなかったか、全て除去されたわ...', false);
                 return;
@@ -1886,7 +1931,10 @@
                 const cachedData = GM_getValue(LAST_CACHE_DATA, null); // Base64 URI
                 if (cachedData) {
                     const wavBlob = base64UriToBlob(cachedData, 'audio/wav'); // 変換
-                    downloadBlob(wavBlob, `neon_spitch_${getFormattedDateTime()}.wav`);
+
+                    // 「/ または :」をハイフンに置換し、半角スペースをアンダースコアに
+                    const filename = getFormattedDateTime().replace(/[/:]/g, '-').replace(' ', '_');
+                    downloadBlob(wavBlob, `neon_spitch_${filename}.wav`);
                 }
             }
         } catch (e) {
@@ -2050,7 +2098,7 @@
 
     /**
      * RVC連携の全処理（VOICEVOX Query/Synthesis + RVC変換）をストリーミングで実行する
-     * @param {string} text - 合成するテキスト（getGeminiAnswerText()の結果）
+     * @param {string} text - 合成するテキスト（responseAnswerText()の結果）
      * @param {Object} currentConfig - 現在の設定オブジェクト
      * @param {boolean} isAutoPlay - 自動再生フラグ
      * @param {string} cacheKey - 生成されたキャッシュキー (ストリーミング中はキャッシュ処理をスキップ)
@@ -2739,7 +2787,7 @@
         }
 
         console.log(`[VOICEVOX|RVC] [${getFormattedDateTime()}] Geminiの回答を取得中...`);
-        let text = getGeminiAnswerText();
+        let text = responseAnswerText();
         if (!text || text.trim() === '') {
             showToast('回答テキストが取得できなかったか、全て除去されたわ...', false);
             return;
@@ -3144,7 +3192,7 @@
         }
 
         const currentConfig = GM_getValue(STORE_KEY, config);
-        const currentText = getGeminiAnswerText();
+        const currentText = responseAnswerText();
 
         if (!currentText) {
             dlButton.disabled = true;
@@ -3242,7 +3290,7 @@
         let lastAnswerPanel = null;
         let footerSelector = null;
 
-        for (const selector of SELECTORS_RESPONSE) {
+        for (const selector of config.selectorsResponse) {
             const containers = document.querySelectorAll(selector.container);
             if (containers.length > 0) {
                 lastAnswerPanel = containers[containers.length - 1];
@@ -3301,9 +3349,8 @@
                 wrapper.appendChild(button);
 
                 // ダウンロードボタンの作成
-                const currentConfig = GM_getValue(STORE_KEY, DEFAULT_CONFIG);
-                if (currentConfig.dlBtnEnabled) {
-                    let dlButton = document.createElement('button');
+                if (config.dlBtnEnabled) {
+                    const dlButton = document.createElement('button');
                     dlButton.id = dlButtonId;
                     dlButton.disabled = true;
 
@@ -3390,7 +3437,7 @@
         };
 
         // --- 1. ホワイトリストチェック (許可パターン) ---
-        const isWhiteListed = WHITELIST_PATHS.some(path => {
+        const isWhiteListed = config.whitelistPaths.some(path => {
             // ルート ('/') は完全一致で確認するわ
             if (path === '/') {
                 return pathAndQuery === '/';
@@ -3406,7 +3453,7 @@
         }
 
         // --- 2. ブラックリストチェック (除外パターン) ---
-        const isBlackListed = BLACKLIST_PATHS.some(path => {
+        const isBlackListed = config.blacklistPaths.some(path => {
             return pathAndQuery.match(pathToRegex(path));
         });
 
@@ -3446,7 +3493,7 @@
                 // 自動再生がONで、ボタンが存在し、再生/合成中でなく、まだ自動再生されていない場合
                 if (currentConfig.autoPlay && button) {
                     // 正確な最新回答パネルの特定
-                    for (const selector of SELECTORS_RESPONSE) {
+                    for (const selector of config.selectorsResponse) {
                         const containers = document.querySelectorAll(selector.container);
                         if (containers.length > 0) {
                             allResponseContainers = containers;
@@ -3460,13 +3507,10 @@
                     const answerContainer = allResponseContainers[allResponseContainers.length - 1]; // 最後の回答パネルを取得
                     const hasFooter = (answerContainer && footerSelector) ? answerContainer.querySelector(footerSelector) : null;
                     const minLength = currentConfig.minTextLength || 0;
-                    const currentText = getGeminiAnswerText();
+                    const currentText = responseAnswerText();
 
                     // フッターがあり＆最小文字数を超えている＆キャッシュと比較して別のものの場合に自動再生
                     if (currentText && currentText !== lastAutoPlayedText && currentText.length > 0) {
-                        if (DEBUG_TEXT) {
-                            console.log(`--- [Debug] [${getFormattedDateTime()}] mutation: ---\n${currentText}\n------------`);
-                        }
                         if (currentText.length <= minLength) {
                             console.log(`読み上げテキストが最小文字数(${minLength}文字)以下です（${currentText.length}文字）: ${currentText.substring(0, 40)}...`);
                         } else if (hasFooter) {
@@ -3475,7 +3519,7 @@
                         }
                     }
                 }
-            }, DEBOUNCE_DELAY);
+            }, config.debounceDelay);
         });
 
         const observerConfig = {
@@ -3545,7 +3589,6 @@
             GM_unregisterMenuCommand(menuIds.cache);
         }
         menuIds.cache = GM_registerMenuCommand('🗑️ キャッシュクリア', clearCached);
-        console.log(`メニュー登録`);
     }
 
     refreshMenuCommands();

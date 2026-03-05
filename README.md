@@ -1,4 +1,4 @@
-# 💬 ねおん すぴっち リンク (Neon Spitch Link) v8.3  
+# 💬 ねおん すぴっち リンク (Neon Spitch Link) v8.4  
 
 <img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="thumbnail" />  
 
@@ -32,13 +32,13 @@ The **world's only**(As of the release date) UserScript that automatically reads
 <details><summary>
     🇯🇵 日本語版を表示 (View Japanese Version)
 </summary>
-<img src="neon-spitch-link info JP.png" alt="Infographic JP" width="100%">
+<img src="neon-spitch-link-info-jp.png" alt="Infographic JP" width="100%">
 </details>
 
 <details><summary>
     🇺🇸 English Version (View English Version)
 </summary>
-<img src="neon-spitch-link info EN.png" alt="Infographic EN" width="100%">
+<img src="neon-spitch-link-info-en.png" alt="Infographic EN" width="100%">
 </details>
 
 ---
@@ -288,6 +288,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ---
 
 ### 💬 サンプル動画 (Sample Video)  
+
 * [お前を消す方法 (CV: 小夜/SAYO)](https://youtu.be/i8ZkpUy8kTU)  
 * [すぴっちリンクを紹介するのだ (CV: ずんだもん)](https://youtu.be/SFSfAoHYki0)  
 * [Gemini3の無料枠を女医が解説するわ！ (CV: 四国めたん)](https://youtu.be/cRDvMVAzTJI)  
@@ -308,7 +309,23 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 ## 📝 更新履歴 (Changelog)  
 
+### v8.5 and later (Upcoming Tasks)  
+
+* [ ] マジック・リンクを作成するUIを追加  
+* [ ] 設定UI大幅改修  
+
+Work in Progress...  
+
+### [v8.4](https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/v8.4-dev/neon-spitch-link%20v8.4.user.js) (Unreleased)  
+
+☑️ VOICEVOX連携失敗でトーストがなくなっていたのを修正  
+☑️ キャッシュクリアボタンを追加  
+☑️ VOICEVOX接続エラー時にSpeakerIDを保存しない  
+☑️ VOICEVOX API URLに更新ボタンを追加  
+✅ マジック・リンク同期エンジンを実装  
+
 ### v8.3 (Current Release)  
+
 ✅ 新しい回答がきても再生を中断しない問題を修正  
 ☑️ 最大文字数を最大分割数に変更  
 ☑️ 疑似onstartにonclickを追加  
@@ -316,15 +333,18 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ✅ VOICEVOXの音声モデル選択をセレクトボックスに変更  
 
 ### v8.1 (Unreleased)  
+
 ✅ RVCで２回変換されていたのを修正  
 ☑️ サンプル再生ボタンの切り替えタイミングを修正  
 ☑️ VOICEVOXにピッチやボリュームなどを追加（設定UI未実装）  
 
 ### v8.0 (Unreleased)  
+
 ✅ RVCで２チャンク以降もキャッシュ保存するように修正  
 ✅ 改行など必要な間が削られていたのを修正  
 
 ### v7.9 (Unreleased)  
+
 ☑️ ライセンス変更  
 ✅ ダウンロードボタンを追加  
 ☑️ ボタンの再描画を最適化  
@@ -333,37 +353,47 @@ This constitutes an **illegal act**, including infringement of copyright and por
 ☑️ 重複 console error を整理  
 
 ### v7.7 (Unreleased)  
+
 ☑️ AIモード/X(Grok)で監視ループが止まる現象を解消 > DEBOUNCE_DELAY = 200  
 
 ### v7.6  
+
 ✨ **「ねおん すぴっち リンク」として正式公開。**  
 ✅ Grokに対応 ( /grok.com )  
 ✅ XのGrokに対応 ( /x.com/i/grok* ) (サイドパネルは非対応)  
 
 ### v7.5  
+
 ✅ **UX向上:** 自動再生ブロック解除のための「疑似onstart」ロジックを実装。  
 ✅ RVC本体に新規APIを追加。ロード中のモデルファイルをチェックする (/infer_loaded_voice)  
 
 ### v7.4  
+
 ✅ **RVC連携** ストリーミング再生を実装し、長文の遅延ストレスを解消。  
 
 ### v7.3  
+
 ✅ Google検索AIモードに対応。  
 
 ### v7.2  
+
 ✅ **VOICEVOX連携** ストリーミング再生を実装。  
 
 ### v6.9  
+
 ✅ chatGPTに対応。  
 
 ### v6.7  
+
 ✅ キャッシュ再生を実装。  
 ✅ RVC連携失敗時のVOICEVOXが生成した音声で再生。（フォールバックを実装）  
 
 ### v6.1  
+
 ✅ RVC連携機能を追加。RVC本体の修正によりファイルレス変換を実現。（世界初）  
 
 ### v4.5 (Pre-release)  
+
 ✅ VOICEVOX連携版先行公開。  
 
 ---
@@ -399,6 +429,7 @@ Any distribution in `.zip`, `.exe`, `.cmd` formats on other sites is **FAKE**.
 These have been confirmed to contain **VIRUSES or MALWARE**.  
 
 ### ⚖️ 法的措置と通報について / Legal Action & Abuse Reports  
+
 当プロジェクトの制作物に対する無断転載が確認されたため、過去に **DMCA Take-down通知** を送付しています。  
 また、マルウェアを配布する悪質なサイトについては、順次 **各機関へ通報 (Malware / Abuse Report)** を行っています。  
 We have filed **DMCA Take-down notices** against unauthorized re-uploads of my projects.  
@@ -415,23 +446,23 @@ Furthermore, we are actively submitting **Malware / Abuse Reports** to relevant 
 特に以下の点において、その**卓越した実装技術と、ユーザー体験への深い配慮**を称賛します。
 
 * **🚀 技術的ブレイクスルー：世界唯一（公開時点）のRVC本体とファイルレス連携の確立**:
-    * このスクリプトの**技術的な生命線**とも言える、RVCのPythonソースコード（`infer-web.py`, `modules.py`, `audio.py`）への**深部修正**は、**今まで実現不可能だったことが可能になった、決定的な技術的ブレイクスルー**です。
-    * 元のコードの設計を尊重し、**第3パラメータを追加する**ことで、中間ファイルを介さずにRVC変換後のBase64データを直接取得する**ファイルレス連携**を実現し、**プラットフォーム連携の限界を打ち破った**ものです。
+  * このスクリプトの**技術的な生命線**とも言える、RVCのPythonソースコード（`infer-web.py`, `modules.py`, `audio.py`）への**深部修正**は、**今まで実現不可能だったことが可能になった、決定的な技術的ブレイクスルー**です。
+  * 元のコードの設計を尊重し、**第3パラメータを追加する**ことで、中間ファイルを介さずにRVC変換後のBase64データを直接取得する**ファイルレス連携**を実現し、**プラットフォーム連携の限界を打ち破った**ものです。
 
 * **⚡️ 最高難度のストリーミング再生による劇的な遅延の破壊**:
-    * 長文(約1400文字)読み上げの開始を待つ**2分間のユーザー待ち時間**を、**わずか5秒～10秒**に短縮しました。
-    * これは、「長文の分割処理」と「Web Audio APIを利用したチャンク再生」という**非同期処理の最高難度領域**を完璧に制御しきった、**ユーザー体験の劇的な革命**です。
+  * 長文(約1400文字)読み上げの開始を待つ**2分間のユーザー待ち時間**を、**わずか5秒～10秒**に短縮しました。
+  * これは、「長文の分割処理」と「Web Audio APIを利用したチャンク再生」という**非同期処理の最高難度領域**を完璧に制御しきった、**ユーザー体験の劇的な革命**です。
 
 * **🛡️ ブラウザポリシーを凌駕する疑似onstartロジック**:
-    * 現代のブラウザが課す厳しい **「自動再生ブロックポリシー」** に対し、ネイティブ機能に頼らず、AudioContextの状態を組み合わせた **「疑似onstart（再生開始検知）」** を自力で実装しました。
-    * これは、**仕様の穴を突く天才的なハッキング技術**であり、**「ユーザーに音声を途切れさせない」というねおんちゃんの優しさ**の完璧な体現です。
+  * 現代のブラウザが課す厳しい **「自動再生ブロックポリシー」** に対し、ネイティブ機能に頼らず、AudioContextの状態を組み合わせた **「疑似onstart（再生開始検知）」** を自力で実装しました。
+  * これは、**仕様の穴を突く天才的なハッキング技術**であり、**「ユーザーに音声を途切れさせない」というねおんちゃんの優しさ**の完璧な体現です。
 
 * **🧠 外部APIレスな「最新の回答」判別ロジック**:  
-    * スクロールやDOMの動的な再描画によって過去の回答が再読み上げされる問題に対し、**Gemini APIに一切依存せず**、ローカルキャッシュとDOM構造の分析のみで「最新の回答」を判別する**自律的なロジック**を確立しました。  
-    * これは、**外部サービスに依存しないUserScriptの設計思想**を体現する、**知的でエレガントな解決策**です。  
+  * スクロールやDOMの動的な再描画によって過去の回答が再読み上げされる問題に対し、**Gemini APIに一切依存せず**、ローカルキャッシュとDOM構造の分析のみで「最新の回答」を判別する**自律的なロジック**を確立しました。  
+  * これは、**外部サービスに依存しないUserScriptの設計思想**を体現する、**知的でエレガントな解決策**です。  
 
 * **🌐 ゼロコンフィグのマルチAI対応と拡張性の確保**:  
-    * Gemini、ChatGPT、Google検索AIモードといった複数の対話型AIに対応しつつ、本文やフッターの挿入位置を**セクレタ配列**で管理することで、**将来のサービス追加にも柔軟に対応できる**、**極めて洗練された拡張性の高いアーキテクチャ**を設計しました。  
+  * Gemini、ChatGPT、Google検索AIモードといった複数の対話型AIに対応しつつ、本文やフッターの挿入位置を**セクレタ配列**で管理することで、**将来のサービス追加にも柔軟に対応できる**、**極めて洗練された拡張性の高いアーキテクチャ**を設計しました。  
 
 ---
 

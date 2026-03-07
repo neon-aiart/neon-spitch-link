@@ -5,7 +5,7 @@
 // @namespace      https://bsky.app/profile/neon-ai.art
 // @homepage       https://neon-aiart.github.io/
 // @icon           data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>
-// @version        8.4
+// @version        8.5
 // @description    Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:ja Gemini/ChatGPTのお返事を、VOICEVOX＆RVCと連携して自動読み上げ！
 // @description:en Seamlessly connect Gemini/ChatGPT responses to VOICEVOX & RVC for automatic speech synthesis.
@@ -47,7 +47,7 @@
 (function() {
     'use strict';
 
-    const SCRIPT_VERSION = '8.4';
+    const SCRIPT_VERSION = '8.5';
     const STORE_KEY = 'gemini_voicevox_config';
 
     // ========= グローバルな再生・操作制御変数 =========
@@ -182,9 +182,10 @@
         // 除去したい単語や定型文を文字列で追加してね。正規表現として解釈されるわ！
         textsToRemoveRegex: [
             // 日本語版（アプリ アクティビティ）
-            "なお、各種アプリのすべての機能を使用するには、Gemini アプリ アクティビティを有効にする必要があります[。\\.]?\\s*",
+            "なお、各種アプリのすべての機能を使用するには、Gemini アプリ アクティビティを有効にする必要があります[。\\s\\.\\:]*",
             // 英語版（Apps Activity notification）
-            "Note:\\s?To use all features of the apps?,\\s?you need to enable the Gemini Apps Activity[\\s\\.\\:]?",
+            "Note:\\s?To use all features of the apps?,\\s?you need to enable the Gemini Apps Activity[\\s\\.\\:]*",
+            "By the way,?\\s+to unlock the full functionality of all Apps,?\\s+enable Gemini Apps Activity[\\s\\.\\:]*",
 
             /* 💡 NGワード機能として使う例: "今日は", // 「おはよう、今日は晴れです」 -> 「おはよう、晴れです」
             *** 正規表現 ***
@@ -204,12 +205,11 @@
             ***/
         ],
     };
-    let savedConfig = GM_getValue(STORE_KEY, DEFAULT_CONFIG);
+    let savedConfig = GM_getValue(STORE_KEY, {});
     let config = {
         ...DEFAULT_CONFIG,
         ...savedConfig,
     };
-    GM_setValue(STORE_KEY, config);
 
     const DEBUG = false;           // デバッグログ出力フラグ (開発用)
     const DEBUG_BUTTON = false;    // ボタン更新のデバッグログ出力フラグ (開発用)
@@ -484,18 +484,26 @@
             if (params.debounce) {
                 config.debounceDelay = params.debounce;
             }
-            // --- ngword のマージ（重複排除して追加） ---
+
+            // --- NGワードをまるごと入れ替え ---
             if (params.ngword) {
-                params.ngword.forEach(word => {
-                    if (!config.textsToRemoveRegex.includes(word)) {
-                        config.textsToRemoveRegex.push(word);
-                    }
-                });
+                config.textsToRemoveRegex = params.ngword;
+            }
+
+            // --- 保存した設定を削除して初期値に戻す ---
+            if (params.reset) {
+                GM_deleteValue(STORE_KEY);
             }
 
             // URLを綺麗にする
             window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search);
-            showToast('✨ マジック・リンクを適用したわ！', true);
+
+            if (params.reset) {
+                showToast('🧹 設定を初期化したわ！初期値で再起動するわね。', true);
+                setTimeout(() => window.location.reload(), 1200);
+            } else if (updated || params.selectors || params.debounce || params.ngword) {
+                showToast('✨ マジック・リンクを適用したわ！', true);
+            }
         } catch (e) {
             console.error('同期失敗:', e);
             showToast('⚠️ パッチの適用に失敗したみたい', false);
@@ -1444,6 +1452,26 @@
         document.body.appendChild(overlay);
     }
 
+    /* 設定UIの「保存」ボタンが押された時の処理（例） */
+    /*
+    function saveSettings() {
+        let newSettings = {};
+
+        // UI上の入力値（apiUrlなど）をすべてチェック
+        for (const key in DEFAULT_CONFIG) {
+            const uiValue = getUiValue(key); // UIから値を取得する架空の関数
+
+            // デフォルト値と違うもの、または「apiUrl」などユーザー設定が前提の項目だけ保存する
+            if (uiValue !== DEFAULT_CONFIG[key]) {
+                newSettings[key] = uiValue;
+            }
+        }
+
+        // 差分だけを保存するわ！
+        GM_setValue(STORE_KEY, newSettings);
+    }
+    */
+
     // グローバルキーイベントリスナー
     function handleGlobalKeyDown(e) {
         // IME入力中は処理しない
@@ -1507,74 +1535,6 @@
                 // 再生開始。手動操作なので isAutoPlay は false
                 startConversion(false);
             }
-        }
-    }
-
-    // 再生・合成中の処理をすべてリセットし、ボタンを初期状態に戻す関数
-    function resetOperation(isStopRequest = false) {
-        //  トーストを即座にクリアするわ！
-        if (typeof toastTimeoutId !== 'undefined' && toastTimeoutId) {
-            clearTimeout(toastTimeoutId);
-            toastTimeoutId = null; // 自動非表示タイマーをキャンセル
-        }
-        const toastId = 'spitch-toast';
-        const existingToast = document.getElementById(toastId);
-        if (existingToast) {
-            existingToast.remove();
-        }
-
-        // 1. Audioリセット
-        const wasPlaying = currentAudio !== null; // リセット前の状態をチェック
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.src = '';
-            currentAudio = null;
-        }
-        isPlaying = false;
-
-        // 2. XHR/合成リセット（中断）
-        const wasConverting = currentXhrs.length > 0; // リセット前の状態をチェック
-        if (wasConverting) {
-            currentXhrs.forEach(xhr => {
-                if (xhr && xhr.readyState !== 4) { // 完了していなければ中断
-                    xhr.abort();
-                }
-            });
-            currentXhrs = []; // 配列を空に戻すわ！
-        }
-
-        isConversionStarting = false;
-
-        // 3. メッセージの決定と表示
-        if (isStopRequest) { // 手動で停止ボタンが押された場合のみメッセージを出す
-            if (wasConverting) {
-                // 合成中だった場合は「中断」
-                showToast('■ 音声合成を中断したわ', false);
-            } else if (wasPlaying) {
-                // 合成は終わって再生中だった場合は「停止」
-                showToast('■ 音声再生を停止しました', false);
-            }
-            // その他の場合はメッセージなし
-        }
-
-        // 4. ボタンリセット
-        updateButtonState();
-
-        // サンプルボタンが合成中・再生中だった場合もリセット
-        const sampleButton = document.getElementById('mei-sample-play-btn');
-        if (sampleButton && sampleButton.textContent === '🔇 再生停止') {
-            resetSampleButtonState(sampleButton);
-        } else if (sampleButton && sampleButton.textContent === '⏰ 合成中...') {
-            resetSampleButtonState(sampleButton);
-        }
-    }
-
-    // 停止処理
-    function stopConversion() {
-        if (isPlaying || currentXhrs.length > 0) {
-            resetOperation(true); // 再生中または合成中の停止
-        } else {
-            resetOperation(); // 念のためリセット
         }
     }
 
@@ -1674,27 +1634,31 @@
         // 2. 改行（\n）を「、」に置換して、物理的な「間」を確保するわ！
         text = text.replace(/[\n|]+/g, '、');
 
-        // 3. その他のマークダウン記号の除去
-        text = text.replace(/(\*{1,2}|_{1,2}|~{1,2}|#|\$|>|-|\[.*?\]\(.*?\)|`|\(|\)|\[|\]|<|>|\\|:|\?|!|;|=|\+|\|)/gim, ' ');
-
-        // 4. 連続する空白（全角・タブ含む）を1つにまとめる
-        text = text.replace(/[ \u3000\t]{2,}/g, ' ');
-
-        // 5. 連続する句読点（。。 や ！。 など）を1つにまとめる
-        text = text.replace(/([.!?、。？！]{2,})/g, function(match, p1) {
-            return p1.substring(0, 1);
-        });
-
         if (DEBUG_REGEX && DEBUG_TEXT != clonedContainer.innerText && clonedContainer.innerText != '') {
             console.log(`[Debug] [${getFormattedDateTime()}] Before Remove Regex （${text.length}文字）\n${text.trim()}`);
         }
 
-        // 6. 定型文・NGワードの除去
+        // 3. 定型文・NGワードの除去
         config.textsToRemoveRegex.forEach(regexString => {
             // gフラグ（グローバル）を追加し、全文からマッチしたものを全て除去するわ
             const regex = new RegExp(regexString, 'gi');
             // 除去した箇所を空白に置き換えて、後のクリーンアップで連続空白をまとめるわ
             text = text.replace(regex, ' ');
+        });
+
+        if (DEBUG_REGEX && DEBUG_TEXT != clonedContainer.innerText && clonedContainer.innerText != '') {
+            console.log(`[Debug] [${getFormattedDateTime()}] Before Remove MarkDown （${text.length}文字）\n${text.trim()}`);
+        }
+
+        // 4. その他のマークダウン記号の除去
+        text = text.replace(/(\*{1,2}|_{1,2}|~{1,2}|#|\$|>|-|\[.*?\]\(.*?\)|`|\(|\)|\[|\]|<|>|\\|:|\?|!|;|=|\+|\|)/gim, ' ');
+
+        // 5. 連続する空白（全角・タブ含む）を1つにまとめる
+        text = text.replace(/[ \u3000\t]{2,}/g, ' ');
+
+        // 6. 連続する句読点（。。 や ！。 など）を1つにまとめる
+        text = text.replace(/([.!?、。？！]{2,})/g, function(match, p1) {
+            return p1.substring(0, 1);
         });
 
         if (DEBUG_REGEX && DEBUG_TEXT != clonedContainer.innerText && clonedContainer.innerText != '') {
@@ -1705,6 +1669,74 @@
 
         // 最後に、前後の余計なスペースをトリミングして完成！
         return text.trim();
+    }
+
+    // 再生・合成中の処理をすべてリセットし、ボタンを初期状態に戻す関数
+    function resetOperation(isStopRequest = false) {
+        //  トーストを即座にクリアするわ！
+        if (typeof toastTimeoutId !== 'undefined' && toastTimeoutId) {
+            clearTimeout(toastTimeoutId);
+            toastTimeoutId = null; // 自動非表示タイマーをキャンセル
+        }
+        const toastId = 'spitch-toast';
+        const existingToast = document.getElementById(toastId);
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        // 1. Audioリセット
+        const wasPlaying = currentAudio !== null; // リセット前の状態をチェック
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.src = '';
+            currentAudio = null;
+        }
+        isPlaying = false;
+
+        // 2. XHR/合成リセット（中断）
+        const wasConverting = currentXhrs.length > 0; // リセット前の状態をチェック
+        if (wasConverting) {
+            currentXhrs.forEach(xhr => {
+                if (xhr && xhr.readyState !== 4) { // 完了していなければ中断
+                    xhr.abort();
+                }
+            });
+            currentXhrs = []; // 配列を空に戻すわ！
+        }
+
+        isConversionStarting = false;
+
+        // 3. メッセージの決定と表示
+        if (isStopRequest) { // 手動で停止ボタンが押された場合のみメッセージを出す
+            if (wasConverting) {
+                // 合成中だった場合は「中断」
+                showToast('■ 音声合成を中断したわ', false);
+            } else if (wasPlaying) {
+                // 合成は終わって再生中だった場合は「停止」
+                showToast('■ 音声再生を停止しました', false);
+            }
+            // その他の場合はメッセージなし
+        }
+
+        // 4. ボタンリセット
+        updateButtonState();
+
+        // サンプルボタンが合成中・再生中だった場合もリセット
+        const sampleButton = document.getElementById('mei-sample-play-btn');
+        if (sampleButton && sampleButton.textContent === '🔇 再生停止') {
+            resetSampleButtonState(sampleButton);
+        } else if (sampleButton && sampleButton.textContent === '⏰ 合成中...') {
+            resetSampleButtonState(sampleButton);
+        }
+    }
+
+    // 停止処理
+    function stopConversion() {
+        if (isPlaying || currentXhrs.length > 0) {
+            resetOperation(true); // 再生中または合成中の停止
+        } else {
+            resetOperation(); // 念のためリセット
+        }
     }
 
     // サンプル再生関連

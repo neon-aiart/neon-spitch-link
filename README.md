@@ -310,7 +310,6 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 * [【シチュボ】【朗読】私の努力、バカにした報い。 (CV: 四国めたん)](https://youtu.be/nOP2_FiT8zQ)  
 
-
 ---
 
 ## 📝 更新履歴 (Changelog)  

@@ -303,7 +303,12 @@ This constitutes an **illegal act**, including infringement of copyright and por
 * [AEDの使い方を広めたい！ (CV: ナースロボ_タイプT)](https://youtu.be/4OiSsYQ4M54)  
 * [【睡眠導入】【朗読】月の裏側から届いた、忘れられた愛の遺産 (CV: 猫使ビィ)](https://youtu.be/BcrCJS10hRo)  
 * [【今週のニュース】 2/15～2/21のニュースTOP10 (CV: 小夜/SAYO)](https://youtu.be/r5gmGqN8Myg)  
+
 * [【創作】 マシュマロ読み (CV: ナースロボ_タイプT)](https://youtu.be/zXHQxlYIhG8)  
+* [【解説】ちょこっと陰謀論 (CV: 四国めたん)](https://youtu.be/N-peXyQlND4)  
+* [【今週のニュース】 2/22～2/28のニュースTOP10 (CV: もち子さん)](https://youtu.be/73io_AZimnk)  
+
+* [【シチュボ】【朗読】私の努力、バカにした報い。 (CV: 四国めたん)](https://youtu.be/nOP2_FiT8zQ)  
 
 ---
 

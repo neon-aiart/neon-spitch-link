@@ -1,4 +1,4 @@
-# 💬 ねおん すぴっち リンク (Neon Spitch Link) v8.4  
+# 💬 ねおん すぴっち リンク (Neon Spitch Link) v8.5  
 
 <img src="https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/main/00304-377108198.png" style="height: 200px; width: 200px; object-fit: contain;" align="right" alt="thumbnail" />  
 
@@ -309,14 +309,20 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 ## 📝 更新履歴 (Changelog)  
 
-### v8.5 and later (Upcoming Tasks)  
+### v8.6 and later (Upcoming Tasks)  
 
-* [ ] マジック・リンクを作成するUIを追加  
 * [ ] 設定UI大幅改修  
+* [ ] マジック・リンクを作成するUIを追加  
 
 Work in Progress...  
 
-### [v8.4](https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/v8.4-dev/neon-spitch-link%20v8.4.user.js) (Unreleased)  
+### [v8.5](https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/v8.5-dev/neon-spitch-link%20v8.5.user.js) (Unreleased)  
+
+☑️ 初期値が保存されて変更できなくなっていたバグを修正  
+✅ マジック・リンクに設定を削除するコード（初期化）を追加  
+  &emsp; 🧹 Reset Link: [https://gemini.google.com/#sync_v_eyJyZXNldCI6dHJ1ZX0=](https://gemini.google.com/#sync_v_eyJyZXNldCI6dHJ1ZX0=)  
+
+### v8.4 (Unreleased)  
 
 ☑️ VOICEVOX連携失敗でトーストがなくなっていたのを修正  
 ☑️ キャッシュクリアボタンを追加  

@@ -316,7 +316,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 Work in Progress...  
 
-### [v8.4](https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/v8.4-dev/neon-spitch-link%20v8.4.user.js) (Unreleased)  
+### v8.4 (Unreleased)  
 
 ☑️ VOICEVOX連携失敗でトーストがなくなっていたのを修正  
 ☑️ キャッシュクリアボタンを追加  

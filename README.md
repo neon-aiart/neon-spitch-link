@@ -316,6 +316,7 @@ This constitutes an **illegal act**, including infringement of copyright and por
 
 ### v8.6 and later (Upcoming Tasks)  
 
+* [ ] 設定が保存すると設定UIに未実装の値も保存されて変更できなくなるバグを修正
 * [ ] 設定UI大幅改修  
 * [ ] マジック・リンクを作成するUIを追加  
 
@@ -323,7 +324,7 @@ Work in Progress...
 
 ### [v8.5](https://raw.githubusercontent.com/neon-aiart/neon-spitch-link/v8.5-dev/neon-spitch-link%20v8.5.user.js) (Unreleased)  
 
-☑️ 初期値が保存されて変更できなくなっていたバグを修正  
+☑️ 初期値が保存されて変更できなくなっていたバグを修正（不完全なので続きはv8.6で）  
 ✅ マジック・リンクに設定を削除するコード（初期化）を追加  
   &emsp; 🧹 Reset Link: [https://gemini.google.com/#sync_v_eyJyZXNldCI6dHJ1ZX0=](https://gemini.google.com/#sync_v_eyJyZXNldCI6dHJ1ZX0=)  
 

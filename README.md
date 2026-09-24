@@ -122,7 +122,7 @@ No configuration switching required! The UserScript automatically identifies the
    * **ScriptCat**: [https://scriptcat.org/](https://scriptcat.org/)  
 
 4. **スクリプトをインストールします (Install the script):**  
-   * [Greasy Fork](https://greasyfork.org/ja/scripts/552996) にアクセスし、「インストール」ボタンを押してください。  
+   * [Greasy Fork](https://greasyfork.org/scripts/552996) にアクセスし、「インストール」ボタンを押してください。  
      Access and click the "Install" button.  
 
 ### ⚠️ RVC連携のための重要な前提条件 (Critical Prerequisite for RVC Integration)  
